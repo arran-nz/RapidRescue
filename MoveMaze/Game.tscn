@@ -1,0 +1,66 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Scripts/Grid.gd" type="Script" id=1]
+[ext_resource path="res://Path.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scripts/LineDrawer.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/Block.gd" type="Script" id=4]
+[ext_resource path="res://icon.png" type="Texture" id=5]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
+
+[node name="Game" type="Node" index="0"]
+
+[node name="Grid" type="TileMap" parent="." index="0"]
+
+mode = 0
+tile_set = null
+cell_size = Vector2( 64, 64 )
+cell_quadrant_size = 16
+cell_custom_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+cell_half_offset = 2
+cell_tile_origin = 0
+cell_y_sort = false
+cell_clip_uv = false
+collision_use_kinematic = false
+collision_friction = 1.0
+collision_bounce = 0.0
+collision_layer = 1
+collision_mask = 1
+occluder_light_mask = 1
+format = 1
+tile_data = PoolIntArray(  )
+script = ExtResource( 1 )
+_sections_unfolded = [ "Cell", "Visibility" ]
+
+[node name="Path" parent="Grid" index="0" instance=ExtResource( 2 )]
+
+[node name="LineDrawer" type="Node2D" parent="Grid" index="1"]
+
+script = ExtResource( 3 )
+_sections_unfolded = [ "Material", "Visibility" ]
+
+[node name="Block" type="KinematicBody2D" parent="Grid" index="2"]
+
+editor/display_folded = true
+position = Vector2( 16, 16 )
+input_pickable = false
+collision_layer = 1
+collision_mask = 1
+collision/safe_margin = 0.08
+script = ExtResource( 4 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="Sprite" type="Sprite" parent="Grid/Block" index="0"]
+
+scale = Vector2( 0.9, 0.9 )
+texture = ExtResource( 5 )
+_sections_unfolded = [ "Transform", "Z Index" ]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Grid/Block" index="1"]
+
+shape = SubResource( 1 )
+
+
