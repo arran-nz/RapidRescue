@@ -8,8 +8,8 @@ var LINE_WIDTH = 2
 
 onready var grid_obj = get_parent()
 
-func _ready():
-	pass
+func _process(delta):
+	update()
 
 func _draw():
 
@@ -37,7 +37,6 @@ func _draw():
 
 	
 func draw_path():
-	
 	for x in range(grid_obj.map_size.x):
 		for y in range(grid_obj.map_size.y):
 			var item = grid_obj.path_cells[x][y]
@@ -48,8 +47,6 @@ func draw_path():
 			
 			if item == null:
 				break
-				
-				
 				
 			if item.Connections['S']:
 				draw_line(

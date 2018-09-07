@@ -1,4 +1,4 @@
-extends Node2D
+extends KinematicBody2D
 
 var Connections
 var Moveable
@@ -9,6 +9,7 @@ var grid_obj
 
 func _ready():
 	grid_obj = get_parent()
+	_target_pos = position
 	pass
 	
 func setup(connections, moveable, item=null):
@@ -16,15 +17,23 @@ func setup(connections, moveable, item=null):
 	Moveable = moveable
 	Item = item
 	
-func slide(direction, speed):
-	_target_pos = grid_obj.get_next_cell_position(position, direction)
-	var vel = (_target_pos - position).normalized() * speed
+func _process(delta):
+	if _target_pos == position: 
+		pass
+	
+	var vel = (_target_pos - position).normalized() * 200
 
 	if (_target_pos - position).length() > 5:
 		move_and_slide(vel)
 	else:
 		position = _target_pos
-	pass
+
+func move_to(target, is_instant=false):
+	if is_instant:
+		position = target
+	else:
+		_target_pos = target
+
 
 func collect_item():
 	

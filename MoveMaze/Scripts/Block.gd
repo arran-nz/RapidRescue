@@ -1,45 +1,44 @@
 extends KinematicBody2D
 
-var direction = Vector2()
-const NONE = Vector2()
-const UP = Vector2(0, -1)
-const RIGHT = Vector2(1, 0)
-const DOWN = Vector2(0, 1)
-const LEFT = Vector2(-1, 0)
 
 var moving = false
 
 var grid_obj
 var speed = 200
-var velocity = Vector2()
 
-var t_pos = Vector2()
+var _target_pos
 
 func _ready():
 	grid_obj = get_parent()
+	_target_pos = position
 
 func _process(delta):
+	_input_check()
 	
+	if _target_pos == position: 
+		pass
 	
-	if Input.is_action_just_pressed("ui_up"):
-		direction = UP
-	elif Input.is_action_just_pressed("ui_down"):
-		direction = DOWN
-	elif Input.is_action_just_pressed("ui_left"):
-		direction = LEFT
-	elif Input.is_action_just_pressed("ui_right"):
-		direction = RIGHT
-	else:
-		direction = NONE
-	
-	if direction != NONE:
-		t_pos = grid_obj.get_next_cell_position(position, direction)
-		
-	
-	#position = t_pos
-	var vel = (t_pos - position).normalized() * speed
-	
-	if (t_pos - position).length() > 5:
+	var vel = (_target_pos - position).normalized() * 200
+
+	if (_target_pos - position).length() > 5:
 		move_and_slide(vel)
 	else:
-		position = t_pos
+		position = _target_pos
+
+func _input_check():
+	
+	if Input.is_action_just_pressed("ui_up"):
+		var direction = grid_obj.DIRECTION['N']
+		_target_pos = grid_obj.get_next_cell_position(position, direction)
+		
+	elif Input.is_action_just_pressed("ui_down"):
+		var direction = grid_obj.DIRECTION['S']
+		_target_pos = grid_obj.get_next_cell_position(position, direction)
+		
+	elif Input.is_action_just_pressed("ui_left"):
+		var direction = grid_obj.DIRECTION['W']
+		_target_pos = grid_obj.get_next_cell_position(position, direction)
+		
+	elif Input.is_action_just_pressed("ui_right"):
+		var direction = grid_obj.DIRECTION['E']
+		_target_pos = grid_obj.get_next_cell_position(position, direction)

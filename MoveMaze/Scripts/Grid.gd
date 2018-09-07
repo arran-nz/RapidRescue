@@ -17,18 +17,35 @@ var DEFAULT_MAP = 	[
 				'NES', '', 'NEW', '', 'NSW', '', 'NWS',
 				'', '', '', '', '', '', '',
 				'NE', '', 'NEW', '', 'NEW', '', 'NW',
-				]
+	]
 
 var PATH_TYPES = { 
 				'T' : ['ESW', 'NSW', 'NEW', 'NES'],
 				'I' : ['NS', 'EW'],
 				'L' : ['NE', 'SE', 'SW', 'NW'] 
-				}
+	}
+				
+var DIRECTION = {
+				'N' : Vector2(0, -1),
+				'E' : Vector2(1, 0),
+				'S' : Vector2(0, 1),
+				'W' : Vector2(-1, 0),
+	}
 
 
 func _ready():
 	_create_paths()
+	
+func _process(delta):
+	if Input.is_action_just_pressed("ui_accept"):
+		_move_row(1)
 		
+func _move_row(index):
+	print("Moving Row")
+	for x in range(map_size.x):
+		var cell = path_cells[x][index]
+		var target = get_next_cell_position(cell.position, DIRECTION['W'])
+		cell.move_to(target)
 
 func _create_paths():
 	randomize()
@@ -48,9 +65,10 @@ func _create_paths():
 			var px = (x * tile_size.x) + half_tile_size.x
 			var py = (y * tile_size.y) + half_tile_size.y
 			temp_path.position = Vector2(px + (tile_padding.x), py + (tile_padding.y))
-			add_child(temp_path)
 			path_cells[x][y] = temp_path
 			
+			add_child(path_cells[x][y])
+
 			index+=1
 	
 func _setup_path_tile(index, path_tile):

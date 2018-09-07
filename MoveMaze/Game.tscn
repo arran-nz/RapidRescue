@@ -44,7 +44,6 @@ _sections_unfolded = [ "Material", "Visibility" ]
 
 [node name="Block" type="KinematicBody2D" parent="Grid" index="2"]
 
-editor/display_folded = true
 position = Vector2( 16, 16 )
 input_pickable = false
 collision_layer = 1
