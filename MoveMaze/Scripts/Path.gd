@@ -3,6 +3,7 @@ extends KinematicBody2D
 var Connections
 var Moveable
 var Item
+var Index
 
 var _target_pos
 var grid_obj
@@ -12,15 +13,18 @@ func _ready():
 	_target_pos = position
 	pass
 	
-func setup(connections, moveable, item=null):
+func init(index, connections, moveable, item=null):
+	Index = index
 	Connections = connections
 	Moveable = moveable
 	Item = item
 	
 func _process(delta):
-	if _target_pos == position: 
-		pass
-	
+	if _target_pos != position:
+		_move_toward_target()
+		
+func _move_toward_target():
+
 	var vel = (_target_pos - position).normalized() * 200
 
 	if (_target_pos - position).length() > 5:
@@ -28,7 +32,7 @@ func _process(delta):
 	else:
 		position = _target_pos
 
-func move_to(target, is_instant=false):
+func set_target(target, is_instant=false):
 	if is_instant:
 		position = target
 	else:

@@ -6,24 +6,8 @@ var half_tile_size = tile_size / 2
 var grid_size = Vector2(9,9)
 var map_size = Vector2(7,7)
 var path_cells
+var injectors = []
 
-onready var path_t = preload("res://Path.tscn")
-
-var DEFAULT_MAP = 	[
-				'SE', '', 'ESW', '', 'ESW', '', 'SW',
-				'', '', '', '', '', '', '',
-				'NES', '', 'NES', '', 'ESW', '', 'NSW',
-				'', '', '', '', '', '', '',
-				'NES', '', 'NEW', '', 'NSW', '', 'NWS',
-				'', '', '', '', '', '', '',
-				'NE', '', 'NEW', '', 'NEW', '', 'NW',
-	]
-
-var PATH_TYPES = { 
-				'T' : ['ESW', 'NSW', 'NEW', 'NES'],
-				'I' : ['NS', 'EW'],
-				'L' : ['NE', 'SE', 'SW', 'NW'] 
-	}
 				
 var DIRECTION = {
 				'N' : Vector2(0, -1),
@@ -31,72 +15,123 @@ var DIRECTION = {
 				'S' : Vector2(0, 1),
 				'W' : Vector2(-1, 0),
 	}
+	
 
+# Load the class resource when calling new().
+onready var obj_path = preload("res://Objects/Path.tscn")
+onready var obj_injector = preload("res://Objects/Path_Injector.tscn")
+var _board_gen_res = load("res://Scripts/BoardGenerator.gd")
 
 func _ready():
-	_create_paths()
+	var _board_generator = _board_gen_res.new()	
+	path_cells = _board_generator.gen_board(map_size, obj_path)
+	
+	var tile_padding =  _calc_board_padding()
+	
+	_spawn_paths(tile_padding)
+	_spawn_injectors(tile_padding)
+
+func _spawn_injectors(tile_padding):
+	pass
+	
+	var x_indices = []
+	for x in range(map_size.x):
+		if path_cells[x][0].Moveable:
+			x_indices.append(x)
+			
+	var y_indices = []
+	for y in range(map_size.y):
+		if path_cells[0][y].Moveable:
+			y_indices.append(y)
+	
+	var NW = world_to_map((path_cells[0][0].position))
+	var SW = world_to_map((path_cells[0][map_size.y - 1].position))
+	
+	#NORTH AND SOUTH SIDES
+	for x_i in x_indices:
+		
+		var n_index = Vector2(NW.x + x_i, NW.y + DIRECTION['N'].y)
+		var temp_north_inj = obj_injector.instance()
+		temp_north_inj.position = map_to_world(n_index) + half_tile_size
+		
+		injectors.append(temp_north_inj)
+		add_child(temp_north_inj)
+		
+		var s_index = Vector2(NW.x + x_i, SW.y + DIRECTION['S'].y)
+		var temp_south_inj = obj_injector.instance()
+		temp_south_inj.position = map_to_world(s_index) + half_tile_size
+		
+		injectors.append(temp_south_inj)
+		add_child(temp_south_inj)
+	
+	#EAST AND WEST SIDES
+	for y_i in y_indices:
+		
+		var e_index = Vector2(SW.x + (map_size.x - 1) + DIRECTION['E'].x, SW.y - y_i)
+		var temp_east_inj = obj_injector.instance()
+		temp_east_inj.position = map_to_world(e_index) + half_tile_size
+		
+		injectors.append(temp_east_inj)
+		add_child(temp_east_inj)
+		
+		var w_index = Vector2(SW.x + DIRECTION['W'].x, SW.y - y_i)
+		var temp_west_inj = obj_injector.instance()
+		temp_west_inj.position = map_to_world(w_index) + half_tile_size
+
+		injectors.append(temp_west_inj)
+		add_child(temp_west_inj)
+	
+		
+
+func _spawn_paths(tile_padding):
+	
+	for x in range(map_size.y):
+		for y in range(map_size.x):
+			var px = (x * tile_size.x)
+			var py = (y * tile_size.y)
+			path_cells[x][y].position = Vector2(px, py) + (tile_padding * tile_size) + half_tile_size
+			add_child(path_cells[x][y])
 	
 func _process(delta):
 	if Input.is_action_just_pressed("ui_accept"):
-		_move_row(1)
+		_move_row(1, DIRECTION['E'])
+	
+func _calc_board_padding():
+	"""Centers the board."""
+	var padding = ((grid_size - map_size) / 2) * tile_size
+	
+	# If the padding does not align with a tile, add half a tile to fix alignment
+	var xv = int(padding.x) % int(tile_size.x)
+	if  xv != 0:
+		padding.x += half_tile_size.x
 		
-func _move_row(index):
-	print("Moving Row")
+	var yv = int(padding.y) % int(tile_size.y)
+	if yv != 0:
+		padding.y += half_tile_size.y
+	
+	padding /= tile_size
+	
+	print(padding)
+	return padding
+
+
+func _move_row(index, dir):
 	for x in range(map_size.x):
 		var cell = path_cells[x][index]
-		var target = get_next_cell_position(cell.position, DIRECTION['W'])
-		cell.move_to(target)
-
-func _create_paths():
-	randomize()
+		if(!cell.Moveable):
+			print("EXC: CANT MOVE THIS ROW")
 		
-	path_cells = _create_2d_array(map_size.x, map_size.y, null)
-	
-	var tile_padding = ((grid_size - map_size) / 2) * tile_size
-	
-	var index = 0
+		var target = get_next_cell_position(cell.position, dir)
+		cell.set_target(target)
+		
+func _move_column(index, dir):
 	for y in range(map_size.y):
-		for x in range(map_size.x):
+		var cell = path_cells[index][y]
+		if(!cell.Moveable):
+			print("EXC: CANT MOVE THIS COLUMN")
 			
-			var temp_path = path_t.instance()
-			
-			_setup_path_tile(index, temp_path)
-			
-			var px = (x * tile_size.x) + half_tile_size.x
-			var py = (y * tile_size.y) + half_tile_size.y
-			temp_path.position = Vector2(px + (tile_padding.x), py + (tile_padding.y))
-			path_cells[x][y] = temp_path
-			
-			add_child(path_cells[x][y])
-
-			index+=1
-	
-func _setup_path_tile(index, path_tile):
-	var is_default = true
-	var content = DEFAULT_MAP[index]
-	
-	#If there is no default tile set, get a random path_type and a rotation
-
-	if content == '': 
-		content = _get_random_path_type('TIL')
-		is_default = false
-		
-	var connections = {
-			'N': false,
-			'E': false,
-			'S': false,
-			'W': false
-			}
-			
-	for c in content:
-		connections[c] = true
-		
-	path_tile.setup(connections, is_default)
-
-func _get_random_path_type(type_selection):
-	var p_type = type_selection[rand_range(0, type_selection.length())]
-	var selection = rand_range(0, PATH_TYPES[p_type].size())
-	return PATH_TYPES[p_type][selection]	
+		var target = get_next_cell_position(cell.position, dir)
+		cell.set_target(target)
 
 func get_next_cell_position(pos, direction):
 	var g_pos = world_to_map(pos)
@@ -105,24 +140,10 @@ func get_next_cell_position(pos, direction):
 	if(_in_grid(new_grid_pos)):
 		return map_to_world(new_grid_pos) + half_tile_size
 	else:	
-		return map_to_world(g_pos) + half_tile_size
-	
+		return map_to_world(g_pos) + half_tile_size	
 	
 func _in_grid(g_pos):
 	if g_pos.x < grid_size.x and g_pos.x >= 0:
 		if g_pos.y < grid_size.y and g_pos.y >= 0:
 			return true
-	return false
-	
-	
-func _create_2d_array(width, height, value):
-    var a = []
-
-    for x in range(width):
-        a.append([])
-        a[x].resize(height)
-
-        for y in range(height):
-            a[x][y] = value
-
-    return a
+	return false	
