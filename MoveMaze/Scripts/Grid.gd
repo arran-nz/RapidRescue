@@ -8,6 +8,8 @@ var map_size = Vector2(7,7)
 var path_cells
 var injectors = []
 
+
+var _tile_padding
 				
 var DIRECTION = {
 				'N' : Vector2(0, -1),
@@ -26,10 +28,10 @@ func _ready():
 	var _board_generator = _board_gen_res.new()	
 	path_cells = _board_generator.gen_board(map_size, obj_path)
 	
-	var tile_padding =  _calc_board_padding()
+	_tile_padding =  _calc_board_padding()
 	
-	_spawn_paths(tile_padding)
-	_spawn_injectors(tile_padding)
+	_spawn_paths(_tile_padding)
+	_spawn_injectors()
 
 func _injector_call(injector):
 	if injector.push_direction == DIRECTION['S'] \
@@ -39,17 +41,17 @@ func _injector_call(injector):
 		_move_row(injector.index, injector.push_direction)
 	pass
 
-func _spawn_injectors(tile_padding):
+func _spawn_injectors():
 	pass
 	
 	var x_indices = []
 	for x in range(map_size.x):
-		if path_cells[x][0].Moveable:
+		if path_cells[x][0].moveable:
 			x_indices.append(x)
 			
 	var y_indices = []
 	for y in range(map_size.y):
-		if path_cells[0][y].Moveable:
+		if path_cells[0][y].moveable:
 			y_indices.append(y)
 	
 	var NW = world_to_map((path_cells[0][0].position))
@@ -129,23 +131,49 @@ func _calc_board_padding():
 	return padding
 
 
-func _move_row(index, dir):
-	for x in range(map_size.x):
-		var cell = path_cells[x][index]
-		if(!cell.Moveable):
-			print("EXC: CANT MOVE THIS ROW")
-		else:
-			var target = get_next_cell_position(cell.position, dir)
-			cell.set_target(target)
+func _move_row(y_index, dir):
+	var row = _get_row(y_index)
+	for cell in row:
+		var target = _get_adjacnet_world_position(cell, dir)
+		var t_index = _get_adjacent_index(cell, dir)
+		cell.set_target(target)
+		cell.update_index(t_index)
 		
-func _move_column(index, dir):
-	for y in range(map_size.y):
-		var cell = path_cells[index][y]
-		if(!cell.Moveable):
-			print("EXC: CANT MOVE THIS COLUMN")
-		else:
-			var target = get_next_cell_position(cell.position, dir)
-			cell.set_target(target)
+func _move_column(x_index, dir):
+	var col = _get_col(x_index)
+	for cell in col:
+		var target = _get_adjacnet_world_position(cell, dir)
+		var t_index = _get_adjacent_index(cell, dir)
+		cell.set_target(target)
+		cell.update_index(t_index)
+			
+func _get_col(x_index):
+	var col = []
+	for x in range(map_size.x):
+		for y in range(map_size.y):
+			var temp_cell = path_cells[x][y]
+			if temp_cell.index.x == x_index:
+				col.append(temp_cell)
+	
+	return col
+	
+func _get_row(y_index):
+	var row = []	
+	for x in range(map_size.x):
+		for y in range(map_size.y):
+			var temp_cell = path_cells[x][y]
+			if temp_cell.index.y == y_index:
+				row.append(temp_cell)
+	
+	return row
+
+func _get_adjacent_index(cell, dir):
+	var index = cell.index + dir
+	return index
+	
+func _get_adjacnet_world_position(cell, dir):
+	var pos = cell.position + (tile_size * dir)
+	return pos
 
 func get_next_cell_position(pos, direction):
 	var g_pos = world_to_map(pos)

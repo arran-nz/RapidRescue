@@ -77,31 +77,31 @@ func draw_path():
 				break
 			
 			var current_color
-			if(item.Moveable): current_color = Palletes[CURRENT_PALLETE][2]
+			if(item.moveable): current_color = Palletes[CURRENT_PALLETE][2]
 			else: current_color = Palletes[CURRENT_PALLETE][3]
 				
-			if item.Connections['S']:
+			if item.connections['S']:
 				draw_line(
 					item.position,
 					item.position + Vector2(0, grid_obj.tile_size.y / 2),
 					current_color,
 					LINE_WIDTH,
 					_AA)
-			if item.Connections['N']:
+			if item.connections['N']:
 				draw_line(
 					item.position,
 					item.position - Vector2(0, grid_obj.tile_size.y / 2),
 					current_color,
 					LINE_WIDTH,
 					_AA)
-			if item.Connections['W']:
+			if item.connections['W']:
 				draw_line(
 					item.position,
 					item.position - Vector2(grid_obj.tile_size.x / 2, 0),
 					current_color,
 					LINE_WIDTH,
 					_AA)
-			if item.Connections['E']:
+			if item.connections['E']:
 				draw_line(
 					item.position,
 					item.position + Vector2(grid_obj.tile_size.x / 2, 0),
