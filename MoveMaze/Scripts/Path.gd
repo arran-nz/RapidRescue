@@ -3,10 +3,15 @@ extends KinematicBody2D
 var Connections
 var Moveable
 var Item
+# Index Relative to the playing board
 var Index
 
 var _target_pos
 var grid_obj
+
+const _SPEED = 10000
+# Target Threshold in Pixels
+const _TARGET_THRESHOLD = 2
 
 func _ready():
 	grid_obj = get_parent()
@@ -21,14 +26,13 @@ func init(index, connections, moveable, item=null):
 	
 func _process(delta):
 	if _target_pos != position:
-		_move_toward_target()
+		_move_toward_target(delta)
 		
-func _move_toward_target():
+func _move_toward_target(delta):
+	var vel = (_target_pos - position).normalized() * _SPEED * delta
 
-	var vel = (_target_pos - position).normalized() * 200
-
-	if (_target_pos - position).length() > 5:
-		move_and_slide(vel)
+	if (_target_pos - position).length() > _TARGET_THRESHOLD:
+		move_and_slide(vel )
 	else:
 		position = _target_pos
 

@@ -31,6 +31,14 @@ func _ready():
 	_spawn_paths(tile_padding)
 	_spawn_injectors(tile_padding)
 
+func _injector_call(injector):
+	if injector.push_direction == DIRECTION['S'] \
+	or injector.push_direction == DIRECTION['N']:
+		_move_column(injector.index, injector.push_direction)
+	else:
+		_move_row(injector.index, injector.push_direction)
+	pass
+
 func _spawn_injectors(tile_padding):
 	pass
 	
@@ -54,32 +62,38 @@ func _spawn_injectors(tile_padding):
 		var temp_north_inj = obj_injector.instance()
 		temp_north_inj.position = map_to_world(n_index) + half_tile_size
 		
+		temp_north_inj.init(DIRECTION['S'], x_i)
 		injectors.append(temp_north_inj)
 		add_child(temp_north_inj)
 		
-		var s_index = Vector2(NW.x + x_i, SW.y + DIRECTION['S'].y)
+		var s_index = Vector2(NW.x + x_i, NW.y + (map_size.y - 1) + DIRECTION['S'].y)
 		var temp_south_inj = obj_injector.instance()
 		temp_south_inj.position = map_to_world(s_index) + half_tile_size
 		
+		temp_south_inj.init(DIRECTION['N'], x_i)
 		injectors.append(temp_south_inj)
 		add_child(temp_south_inj)
 	
 	#EAST AND WEST SIDES
 	for y_i in y_indices:
-		
-		var e_index = Vector2(SW.x + (map_size.x - 1) + DIRECTION['E'].x, SW.y - y_i)
+		var e_index = Vector2(NW.x + (map_size.x - 1) + DIRECTION['E'].x, NW.y + y_i)
 		var temp_east_inj = obj_injector.instance()
 		temp_east_inj.position = map_to_world(e_index) + half_tile_size
 		
+		temp_east_inj.init(DIRECTION['W'], y_i)
 		injectors.append(temp_east_inj)
 		add_child(temp_east_inj)
 		
-		var w_index = Vector2(SW.x + DIRECTION['W'].x, SW.y - y_i)
+		var w_index = Vector2(NW.x + DIRECTION['W'].x, NW.y + y_i)
 		var temp_west_inj = obj_injector.instance()
 		temp_west_inj.position = map_to_world(w_index) + half_tile_size
 
+		temp_west_inj.init(DIRECTION['E'], y_i)
 		injectors.append(temp_west_inj)
 		add_child(temp_west_inj)
+		
+	for inj in injectors:
+		inj.connect("click_action", self, "_injector_call")
 	
 		
 
@@ -120,18 +134,18 @@ func _move_row(index, dir):
 		var cell = path_cells[x][index]
 		if(!cell.Moveable):
 			print("EXC: CANT MOVE THIS ROW")
-		
-		var target = get_next_cell_position(cell.position, dir)
-		cell.set_target(target)
+		else:
+			var target = get_next_cell_position(cell.position, dir)
+			cell.set_target(target)
 		
 func _move_column(index, dir):
 	for y in range(map_size.y):
 		var cell = path_cells[index][y]
 		if(!cell.Moveable):
 			print("EXC: CANT MOVE THIS COLUMN")
-			
-		var target = get_next_cell_position(cell.position, dir)
-		cell.set_target(target)
+		else:
+			var target = get_next_cell_position(cell.position, dir)
+			cell.set_target(target)
 
 func get_next_cell_position(pos, direction):
 	var g_pos = world_to_map(pos)

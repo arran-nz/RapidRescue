@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Grid.gd" type="Script" id=1]
 [ext_resource path="res://Objects/Path.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scripts/LineDrawer.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/Block.gd" type="Script" id=4]
 [ext_resource path="res://icon.png" type="Texture" id=5]
+[ext_resource path="res://Objects/Path_Injector.tscn" type="PackedScene" id=6]
 
 [sub_resource type="RectangleShape2D" id=1]
 
@@ -61,5 +62,7 @@ _sections_unfolded = [ "Transform", "Z Index" ]
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Grid/Block" index="1"]
 
 shape = SubResource( 1 )
+
+[node name="PathInjector" parent="Grid" index="3" instance=ExtResource( 6 )]
 
 

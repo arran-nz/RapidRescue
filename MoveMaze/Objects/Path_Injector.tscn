@@ -1,10 +1,25 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scripts/Path_Injector.gd" type="Script" id=1]
 
-[node name="Path_Injector" type="Node2D"]
+[sub_resource type="RectangleShape2D" id=1]
 
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
+
+[node name="PathInjector" type="Area2D"]
+
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+audio_bus_override = false
+audio_bus_name = "Master"
 script = ExtResource( 1 )
-_sections_unfolded = [ "Transform" ]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="0"]
+
+shape = SubResource( 1 )
 
 
