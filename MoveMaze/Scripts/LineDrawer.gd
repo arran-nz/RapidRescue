@@ -3,30 +3,19 @@ extends Node2D
 
 var Palletes = {
 
-	'Default' : 
-	[
-	'#e63946',
-	'#f1faee',
-	'#a8dadc',
-	'#457b9d',
-	'#1d3557'
-	],
+	'Vapor' :
+		['#050023', '16324f' ,'#9d0a5c','#ea638c','#75d1ff']
 	
-	'Alt' : 
-	[
-	'#d8e2dc',
-	'#ffffff',
-	'#ffcad4',
-	'#f4acb7',
-	'#9d8189'
-	]
 }
 
-var CURRENT_PALLETE = 'Alt'
 
-var LINE_WIDTH = 4
+
+var CURRENT_PALLETE = 'Vapor'
+
+var LINE_WIDTH = 5
 var GRID_LINE = 1
-var CIRCLE_RADIUS = 10
+var CIRCLE_RADIUS = 7
+var GRID_LINES_PER_CELL = 4
 
 var _AA = true
 
@@ -37,38 +26,35 @@ func _process(delta):
 
 func _draw():
 
-	draw_rect(
-		Rect2(
-			Vector2(0,0),
-			Vector2(grid_obj.grid_size.x * grid_obj.tile_size.x,
-				grid_obj.grid_size.y * grid_obj.tile_size.y)
-				),
-		Palletes[CURRENT_PALLETE][4],
-		true)
+	var view = get_viewport().size		
+	var grid_resolution = (view / grid_obj.grid_size) * GRID_LINES_PER_CELL
 	
-
-	for x in range(grid_obj.grid_size.x + 1):
-		var col_pos = x * grid_obj.tile_size.x
-		var limit = grid_obj.grid_size.y * grid_obj.tile_size.y
-		draw_line(Vector2(col_pos, 0), Vector2(col_pos, limit), Palletes[CURRENT_PALLETE][4], GRID_LINE, _AA)
+	draw_rect(Rect2(Vector2(), view), Palletes[CURRENT_PALLETE][0],true)
+	
+	for x in range(1,grid_resolution.x):
+		var col_pos = (x * grid_obj.tile_size.x) / GRID_LINES_PER_CELL
+		var col_limit = view.y
+		draw_line(Vector2(col_pos, 0), Vector2(col_pos, col_limit), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
 		
-	for y in range(grid_obj.grid_size.y + 1):
-		var row_pos = y * grid_obj.tile_size.y
-		var limit = grid_obj.grid_size.x * grid_obj.tile_size.x
-		draw_line(Vector2(0, row_pos), Vector2(limit, row_pos), Palletes[CURRENT_PALLETE][4], GRID_LINE, _AA)
+	for y in range(1, grid_resolution.y):
+		var row_pos = (y * grid_obj.tile_size.y) / GRID_LINES_PER_CELL
+		var row_limit = view.x
+		draw_line(Vector2(0, row_pos), Vector2(row_limit, row_pos), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
 		
-	draw_path()
-	draw_injectors()
 
-func draw_injectors():
+	_draw_path()
+	_draw_injectors()
+
+
+func _draw_injectors():
 	for injector in grid_obj.injectors:
 		var current_color
-		if(injector.hot): current_color = Palletes[CURRENT_PALLETE][0]
-		else: current_color = Palletes[CURRENT_PALLETE][1]
+		if(injector.hot): current_color = Palletes[CURRENT_PALLETE][1]
+		else: current_color = Palletes[CURRENT_PALLETE][4]
 		
 		draw_circle(injector.position, CIRCLE_RADIUS, current_color)
 	
-func draw_path():
+func _draw_path():
 	for x in range(grid_obj.map_size.x):
 		for y in range(grid_obj.map_size.y):
 			var item = grid_obj.path_cells[x][y]
@@ -77,8 +63,8 @@ func draw_path():
 				break
 			
 			var current_color
-			if(item.moveable): current_color = Palletes[CURRENT_PALLETE][2]
-			else: current_color = Palletes[CURRENT_PALLETE][3]
+			if(item.moveable): current_color = Palletes[CURRENT_PALLETE][3]
+			else: current_color = Palletes[CURRENT_PALLETE][2]
 				
 			if item.connections['S']:
 				draw_line(

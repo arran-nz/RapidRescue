@@ -17,9 +17,10 @@ var PATH_TYPES = {
 				'L' : ['NE', 'SE', 'SW', 'NW'] 
 	}
 	
-func gen_board(map_size, _path_ref):
+func gen_path(grid_size, map_size, tile_size, grid):
 	randomize()
 	
+	var board_padding = _calc_board_padding(grid_size, map_size, tile_size)
 	var path_cells = _create_2d_array(map_size.x, map_size.y, null)
 		
 	var index = 0
@@ -27,16 +28,41 @@ func gen_board(map_size, _path_ref):
 		for x in range(map_size.x):
 			
 			var content = DEFAULT_MAP[index]
-			var path_tile = _get_path_tile(Vector2(x,y), content, _path_ref)
+			var path_tile = _get_path_tile(Vector2(x,y), content, grid.obj_path)
 			
 			path_cells[x][y] = path_tile
+			
+			var px = (x * tile_size.x)
+			var py = (y * tile_size.y)
+			path_cells[x][y].position = Vector2(px, py) + (board_padding * tile_size) + (tile_size / 2)
+			grid.add_child(path_cells[x][y])
 			
 			index+=1
 			
 	return path_cells
 
-func _get_path_tile(index, content, _path_ref):
-	var path_tile = _path_ref.instance()
+func _calc_board_padding(grid_size, map_size, tile_size):
+	"""Centers the board."""
+	var padding = ((grid_size - map_size) / 2) * tile_size
+	var half_tile_size = tile_size / 2
+	
+	# If the padding does not align with a tile, add half a tile to fix alignment
+	var xv = int(padding.x) % int(tile_size.x)
+	if  xv != 0:
+		padding.x += half_tile_size.x
+		
+	var yv = int(padding.y) % int(tile_size.y)
+	if yv != 0:
+		padding.y += half_tile_size.y
+	
+	padding /= tile_size
+	
+	print(padding)
+	return padding
+	
+
+func _get_path_tile(index, content, obj_path):
+	var path_tile = obj_path.instance()
 	
 	var is_moveable = false
 
