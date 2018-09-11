@@ -5,7 +5,7 @@ var half_tile_size = tile_size / 2
 
 var grid_size = Vector2(9,9)
 var map_size = Vector2(7,7)
-var path_cells
+var path_cells = []
 var injectors = []
 
 
@@ -38,18 +38,19 @@ func _ready():
 func _spawn_injectors():
 	pass
 	
+	var north_row = _get_row(0)
 	var x_indices = []
-	for x in range(map_size.x):
-		if path_cells[x][0].moveable:
-			x_indices.append(x)
-			
-	var y_indices = []
-	for y in range(map_size.y):
-		if path_cells[0][y].moveable:
-			y_indices.append(y)
+	for path in north_row:
+		if path.moveable:
+			x_indices.append(path.index.x)
 	
-	var NW = world_to_map((path_cells[0][0].position))
-	var SW = world_to_map((path_cells[0][map_size.y - 1].position))
+	var west_col = _get_col(0)		
+	var y_indices = []
+	for path in west_col:
+		if path.moveable:
+			y_indices.append(path.index.y)
+	
+	var NW = world_to_map(path_cells[0].position)
 	
 	#NORTH AND SOUTH SIDES
 	for x_i in x_indices:
@@ -123,21 +124,17 @@ func _move_path(path, dir):
 			
 func _get_col(x_index):
 	var col = []
-	for x in range(map_size.x):
-		for y in range(map_size.y):
-			var temp_cell = path_cells[x][y]
-			if temp_cell.index.x == x_index:
-				col.append(temp_cell)
+	for item in path_cells:
+			if item.index.x == x_index:
+				col.append(item)
 	
 	return col
 	
 func _get_row(y_index):
 	var row = []	
-	for x in range(map_size.x):
-		for y in range(map_size.y):
-			var temp_cell = path_cells[x][y]
-			if temp_cell.index.y == y_index:
-				row.append(temp_cell)
+	for item in path_cells:
+		if item.index.y == y_index:
+			row.append(item)
 	
 	return row
 	
