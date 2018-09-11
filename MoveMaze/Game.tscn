@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/Grid.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/Hand.gd" type="Script" id=2]
-[ext_resource path="res://Scripts/LineDrawer.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/Drawer.gd" type="Script" id=3]
 
 [sub_resource type="Environment" id=1]
 
@@ -111,7 +111,7 @@ _sections_unfolded = [ "Cell", "Visibility" ]
 
 script = ExtResource( 2 )
 
-[node name="LineDrawer" type="Node2D" parent="Grid" index="1"]
+[node name="_Drawer" type="Node2D" parent="Grid" index="1"]
 
 script = ExtResource( 3 )
 _sections_unfolded = [ "Material", "Visibility" ]

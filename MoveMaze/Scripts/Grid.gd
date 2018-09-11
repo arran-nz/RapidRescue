@@ -11,7 +11,7 @@ var injectors = []
 
 var _tile_padding
 
-signal injectors_ready
+signal signal_hand
 
 				
 var DIRECTION = {
@@ -33,6 +33,9 @@ func _ready():
 	path_cells = _board_generator.gen_path(grid_size, map_size, tile_size, self)
 	
 	_spawn_injectors()
+	
+	var extra_path = _board_generator.get_path_tile(Vector2(-1,-1), '', obj_path)
+	emit_signal("signal_hand", injectors, extra_path)
 
 
 func _spawn_injectors():
@@ -59,7 +62,7 @@ func _spawn_injectors():
 		var temp_north_inj = obj_injector.instance()
 		temp_north_inj.position = map_to_world(n_index) + half_tile_size
 		
-		temp_north_inj.init(DIRECTION.S, x_i)
+		temp_north_inj.init(Vector2(x_i, 0), DIRECTION.S)
 		injectors.append(temp_north_inj)
 		add_child(temp_north_inj)
 		
@@ -67,7 +70,7 @@ func _spawn_injectors():
 		var temp_south_inj = obj_injector.instance()
 		temp_south_inj.position = map_to_world(s_index) + half_tile_size
 		
-		temp_south_inj.init(DIRECTION.N, x_i)
+		temp_south_inj.init(Vector2(x_i, map_size.y), DIRECTION.N)
 		injectors.append(temp_south_inj)
 		add_child(temp_south_inj)
 	
@@ -77,7 +80,7 @@ func _spawn_injectors():
 		var temp_east_inj = obj_injector.instance()
 		temp_east_inj.position = map_to_world(e_index) + half_tile_size
 		
-		temp_east_inj.init(DIRECTION.W, y_i)
+		temp_east_inj.init(Vector2(0, y_i), DIRECTION.W)
 		injectors.append(temp_east_inj)
 		add_child(temp_east_inj)
 		
@@ -85,20 +88,18 @@ func _spawn_injectors():
 		var temp_west_inj = obj_injector.instance()
 		temp_west_inj.position = map_to_world(w_index) + half_tile_size
 
-		temp_west_inj.init(DIRECTION.E, y_i)
+		temp_west_inj.init(Vector2(map_size.x, y_i), DIRECTION.E)
 		injectors.append(temp_west_inj)
 		add_child(temp_west_inj)
-		
-	emit_signal("injectors_ready", injectors)
 
 func inject_path(index, dir, path_item):
 	var line
 	
 	if dir == DIRECTION.S \
 	or dir == DIRECTION.N:
-		line = _get_col(index)
+		line = _get_col(index.x)
 	else:
-		line = _get_row(index)
+		line = _get_row(index.y)
 		
 	for path in line:
 		_move_path(path, dir)
