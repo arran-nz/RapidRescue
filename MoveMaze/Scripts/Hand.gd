@@ -8,24 +8,27 @@ func _ready():
 	pass
 
 func setup_hand(injectors, path):
-	current_path = path
+	collect_path(path)
 	
 	for inj in injectors:
 		inj.connect("click_action", self, "place_path")
 
-func hold_path(path):
-	if(current_path == null):
+func collect_path(path):
+	if current_path == null:
 		current_path = path
+		current_path.set_target(position, true)
 	else:
-		print("ERROR: CAN ONLY HOLD ONE PATH")
+		print("CAN ONLY HOLD ONE PATH!")
 
 func place_path(board_index, direction):
-	grid_obj.inject_path(board_index, direction, current_path)
-	
-	print("place!")
-	pass
+	if current_path != null:
+		var temp_path = current_path
+		current_path = null
+		grid_obj.inject_path(board_index, direction, temp_path, funcref(self, 'collect_path'))
+	else:
+		print("NOTHING TO PLACE!")
 
 
-func rotate_hand():
-	
+func rotate_path():
+	print("Rot")
 	pass

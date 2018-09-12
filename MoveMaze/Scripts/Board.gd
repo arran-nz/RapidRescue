@@ -58,7 +58,7 @@ func _spawn_injectors():
 		var temp_north_inj = obj_injector.instance()
 		temp_north_inj.position = map_to_world(n_index) + half_tile_size
 		
-		temp_north_inj.init(Vector2(x_i, 0), DIRECTION.S)
+		temp_north_inj.init(Vector2(x_i, n_index.y), DIRECTION.S)
 		injectors.append(temp_north_inj)
 		add_child(temp_north_inj)
 		
@@ -66,7 +66,7 @@ func _spawn_injectors():
 		var temp_south_inj = obj_injector.instance()
 		temp_south_inj.position = map_to_world(s_index) + half_tile_size
 		
-		temp_south_inj.init(Vector2(x_i, board_size.y), DIRECTION.N)
+		temp_south_inj.init(Vector2(x_i, s_index.y), DIRECTION.N)
 		injectors.append(temp_south_inj)
 		add_child(temp_south_inj)
 	
@@ -76,7 +76,7 @@ func _spawn_injectors():
 		var temp_east_inj = obj_injector.instance()
 		temp_east_inj.position = map_to_world(e_index) + half_tile_size
 		
-		temp_east_inj.init(Vector2(0, y_i), DIRECTION.W)
+		temp_east_inj.init(Vector2(e_index.x, y_i), DIRECTION.W)
 		injectors.append(temp_east_inj)
 		add_child(temp_east_inj)
 		
@@ -84,40 +84,49 @@ func _spawn_injectors():
 		var temp_west_inj = obj_injector.instance()
 		temp_west_inj.position = map_to_world(w_index) + half_tile_size
 
-		temp_west_inj.init(Vector2(board_size.x, y_i), DIRECTION.E)
+		temp_west_inj.init(Vector2(w_index.x, y_i), DIRECTION.E)
 		injectors.append(temp_west_inj)
 		add_child(temp_west_inj)
 
-func inject_path(index, dir, path_item):
-	var line
+func inject_path(index, dir, path_item, collect_method):
 	
+	# Spawn the instance
+	add_child(path_item)
+	
+	# Set World Target
+	var world_target = map_to_world(index) + half_tile_size
+	path_item.set_target(world_target, false)
+	
+	#Update index to injection location
+	path_item.update_index(index)
+	
+	#Add To Path_Cells Array
+	path_cells.append(path_item)
+	
+	#Move Line in Direction
+	var line
 	if dir == DIRECTION.S \
 	or dir == DIRECTION.N:
 		line = _get_col(index.x)
 	else:
 		line = _get_row(index.y)
-		
+			
 	for path in line:
-		_move_path(path, dir)
+		_move_path(path, dir, collect_method)
 		
-func _move_path(path, dir):
+func _move_path(path, dir, collect_method):
 	
 	var index = path.index + dir
-	var pos = path.position + (tile_size * dir)
+	#var pos = path.position + (tile_size * dir)
+	var pos = map_to_world(index) + half_tile_size
+	
+	#If the path item's index has moved of the board, collect it.
 	if !_in_board(index):
-		match dir:
-			DIRECTION.N:
-				print("N")
-			DIRECTION.E:
-				print("E")
-			DIRECTION.S:
-				print("S")
-			DIRECTION.W:
-				print("W")
-		
-	path.set_target(pos)
-
-	path.update_index(index)
+		collect_method.call_func(path)
+		path_cells.erase(path)
+	else:
+		path.update_index(index)
+		path.set_target(pos)	
 			
 func _get_col(x_index):
 	var col = []
