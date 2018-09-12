@@ -115,6 +115,7 @@ _sections_unfolded = [ "Material", "Visibility" ]
 
 [node name="Hand" type="Node2D" parent="Board" index="1"]
 
+position = Vector2( 756.854, 189.214 )
 script = ExtResource( 3 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="1"]

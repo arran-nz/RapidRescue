@@ -9,7 +9,6 @@ extents = Vector2( 10, 10 )
 
 [node name="Path" type="KinematicBody2D"]
 
-editor/display_folded = true
 position = Vector2( 128, 128 )
 input_pickable = false
 collision_layer = 1
@@ -21,5 +20,6 @@ _sections_unfolded = [ "Transform" ]
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="0"]
 
 shape = SubResource( 1 )
+disabled = true
 
 
