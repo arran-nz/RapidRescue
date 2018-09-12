@@ -10,10 +10,10 @@ var Palletes = {
 
 var CURRENT_PALLETE = 'Vapor'
 
-var LINE_WIDTH = 5
+var LINE_WIDTH = 4
 var GRID_LINE = 1
 var CIRCLE_RADIUS = 7
-var GRID_LINES_PER_CELL = 4
+var GRID_LINES_PER_CELL = 2
 
 var _AA = true
 
@@ -24,14 +24,33 @@ func _process(delta):
 	update()
 
 func _draw():
+	
+	_draw_bg()
+	_draw_board_edge()
+	_draw_board_paths()
+	_draw_injectors()
+	_draw_hand()
 
+func _draw_board_edge():
+	
+	var rect = Rect2(Vector2(), grid_obj.board_size * grid_obj.tile_size)
+	var color = Palletes[CURRENT_PALLETE][1]
+	var edge_width = GRID_LINE * 2
+	draw_line(rect.position, Vector2(rect.size.x, rect.position.y), color, edge_width, _AA)
+	draw_line(rect.position, Vector2(rect.position.x, rect.size.y), color, edge_width, _AA)
+	draw_line(Vector2(rect.size.x, rect.position.y), rect.size, color, edge_width, _AA)
+	draw_line(Vector2(rect.position.x, rect.size.y), rect.size, color, edge_width, _AA)
+
+func _draw_bg():
 	var view = get_viewport().size	
 	var grid_resolution = (view / grid_obj.board_size) * GRID_LINES_PER_CELL
 	
 	var base = Vector2(0,0) - grid_obj.position
 	
+	# Draw Background
 	draw_rect(Rect2(base, view), Palletes[CURRENT_PALLETE][0],true)
 	
+	# Draw Grid Lins
 	for x in range(1,grid_resolution.x):
 		var col_pos = (x * grid_obj.tile_size.x) / GRID_LINES_PER_CELL
 		var col_limit = view.y
@@ -41,15 +60,10 @@ func _draw():
 		var row_pos = (y * grid_obj.tile_size.y) / GRID_LINES_PER_CELL
 		var row_limit = view.x
 		draw_line(Vector2(base.x, base.y + row_pos), Vector2(row_limit, base.y + row_pos), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
-		
-
-	_draw_board_paths()
-	_draw_injectors()
-	_draw_hand()
 
 func _draw_hand():
 	if hand_obj.current_path != null:
-		_draw_path_item(hand_obj.current_path, 'FFFFFF')
+		_draw_path_item(hand_obj.current_path, Palletes[CURRENT_PALLETE][4])
 
 func _draw_injectors():
 	for injector in grid_obj.injectors:
