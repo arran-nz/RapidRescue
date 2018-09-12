@@ -83,7 +83,7 @@ adjustment_contrast = 1.25
 adjustment_saturation = 1.0
 _sections_unfolded = [ "Adjustments", "Background", "Glow" ]
 
-[node name="Game" type="Node"]
+[node name="Game" type="Node" index="0"]
 
 [node name="Board" type="TileMap" parent="." index="0"]
 

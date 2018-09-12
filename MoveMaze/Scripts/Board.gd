@@ -33,7 +33,6 @@ func _ready():
 	var extra_path = _board_generator.get_path_tile(Vector2(-1,-1), '', obj_path)
 	emit_signal("signal_hand", injectors, extra_path)
 
-
 func _spawn_injectors():
 	pass
 	
@@ -90,6 +89,8 @@ func _spawn_injectors():
 
 func inject_path(index, dir, path_item, collect_method):
 	
+	for inj in injectors:
+		inj.hot = false
 	# Spawn the instance
 	add_child(path_item)
 	
@@ -113,7 +114,7 @@ func inject_path(index, dir, path_item, collect_method):
 			
 	for path in line:
 		_move_path(path, dir, collect_method)
-		
+
 func _move_path(path, dir, collect_method):
 	
 	var index = path.index + dir
@@ -124,10 +125,11 @@ func _move_path(path, dir, collect_method):
 	if !_in_board(index):
 		collect_method.call_func(path)
 		path_cells.erase(path)
+		_get_injector(path.index + dir).hot = true
 	else:
 		path.update_index(index)
 		path.set_target(pos)	
-			
+
 func _get_col(x_index):
 	var col = []
 	for item in path_cells:
@@ -135,7 +137,7 @@ func _get_col(x_index):
 				col.append(item)
 	
 	return col
-	
+
 func _get_row(y_index):
 	var row = []	
 	for item in path_cells:
@@ -143,7 +145,12 @@ func _get_row(y_index):
 			row.append(item)
 	
 	return row
-	
+
+func _get_injector(index):
+	for inj in injectors:
+		if inj.inj_board_index == index:
+			return inj
+
 func _in_board(index):
 	if index.x < board_size.x and index.x >= 0:
 		if index.y < board_size.y and index.y >= 0:
