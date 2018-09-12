@@ -12,7 +12,7 @@ var _start_pos
 var _t
 
 # Travel time in seconds
-const TRAVEL_TIME = 0.6
+const _TRAVEL_TIME = 0.6
 # Target Threshold in Pixels
 const _TARGET_THRESHOLD = 2
 
@@ -34,7 +34,7 @@ func _process(delta):
 func _move_toward_target(delta):
 	#var vel = (_target_pos - position).normalized() * _SPEED * delta
 	
-	_t += delta / 0.6
+	_t += delta / _TRAVEL_TIME
 	var next_pos = _start_pos.linear_interpolate(_target_pos, _t)
 
 	if (_target_pos - position).length() > _TARGET_THRESHOLD:
