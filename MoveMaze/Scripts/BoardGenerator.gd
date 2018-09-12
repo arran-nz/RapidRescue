@@ -30,7 +30,6 @@ func gen_path(board_size, tile_size, grid):
 		if index > 0 and x == 0: y+=1
 		# print('{x}, {y}'.format({'x': x, 'y': y}))
 		
-		
 		var content = DEFAULT_MAP[index]
 		var path_tile = get_path_tile(Vector2(x,y), content, grid.obj_path)
 				
@@ -65,26 +64,7 @@ func get_path_tile(index, content, obj_path):
 	path_tile.init(index, connections, is_moveable)
 	
 	return path_tile
-	
-func _calc_board_padding(grid_size, board_size, tile_size):
-	"""Centers the board."""
-	var padding = ((grid_size - board_size) / 2) * tile_size
-	var half_tile_size = tile_size / 2
-	
-	# If the padding does not align with a tile, add half a tile to fix alignment
-	var xv = int(padding.x) % int(tile_size.x)
-	if  xv != 0:
-		padding.x += half_tile_size.x
-		
-	var yv = int(padding.y) % int(tile_size.y)
-	if yv != 0:
-		padding.y += half_tile_size.y
-	
-	padding /= tile_size
-	
-	print(padding)
-	return padding
-	
+
 func _get_random_path_type(type_selection):
 	var p_type = type_selection[rand_range(0, type_selection.length())]
 	var selection = rand_range(0, PATH_TYPES[p_type].size())
