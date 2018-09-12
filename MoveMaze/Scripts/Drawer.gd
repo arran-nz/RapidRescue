@@ -8,8 +8,6 @@ var Palletes = {
 	
 }
 
-
-
 var CURRENT_PALLETE = 'Vapor'
 
 var LINE_WIDTH = 5
@@ -26,20 +24,22 @@ func _process(delta):
 
 func _draw():
 
-	var view = get_viewport().size		
-	var grid_resolution = (view / grid_obj.grid_size) * GRID_LINES_PER_CELL
+	var view = get_viewport().size	
+	var grid_resolution = (view / grid_obj.board_size) * GRID_LINES_PER_CELL
 	
-	draw_rect(Rect2(Vector2(), view), Palletes[CURRENT_PALLETE][0],true)
+	var base = Vector2(0,0) - grid_obj.position
+	
+	draw_rect(Rect2(base, view), Palletes[CURRENT_PALLETE][0],true)
 	
 	for x in range(1,grid_resolution.x):
 		var col_pos = (x * grid_obj.tile_size.x) / GRID_LINES_PER_CELL
 		var col_limit = view.y
-		draw_line(Vector2(col_pos, 0), Vector2(col_pos, col_limit), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
+		draw_line(Vector2(base.x + col_pos, base.y), Vector2(col_pos + base.x, col_limit), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
 		
 	for y in range(1, grid_resolution.y):
 		var row_pos = (y * grid_obj.tile_size.y) / GRID_LINES_PER_CELL
 		var row_limit = view.x
-		draw_line(Vector2(0, row_pos), Vector2(row_limit, row_pos), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
+		draw_line(Vector2(base.x, base.y + row_pos), Vector2(row_limit, base.y + row_pos), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
 		
 
 	_draw_path()

@@ -3,13 +3,9 @@ extends TileMap
 var tile_size = get_cell_size()
 var half_tile_size = tile_size / 2
 
-var grid_size = Vector2(9,9)
-var map_size = Vector2(7,7)
+const board_size = Vector2(7,7)
 var path_cells = []
 var injectors = []
-
-
-var _tile_padding
 
 signal signal_hand
 
@@ -30,7 +26,7 @@ var _board_gen_res = load("res://Scripts/BoardGenerator.gd")
 func _ready():
 
 	var _board_generator = _board_gen_res.new()		
-	path_cells = _board_generator.gen_path(grid_size, map_size, tile_size, self)
+	path_cells = _board_generator.gen_path(board_size, tile_size, self)
 	
 	_spawn_injectors()
 	
@@ -66,17 +62,17 @@ func _spawn_injectors():
 		injectors.append(temp_north_inj)
 		add_child(temp_north_inj)
 		
-		var s_index = Vector2(NW.x + x_i, NW.y + (map_size.y - 1) + DIRECTION.S.y)
+		var s_index = Vector2(NW.x + x_i, NW.y + (board_size.y - 1) + DIRECTION.S.y)
 		var temp_south_inj = obj_injector.instance()
 		temp_south_inj.position = map_to_world(s_index) + half_tile_size
 		
-		temp_south_inj.init(Vector2(x_i, map_size.y), DIRECTION.N)
+		temp_south_inj.init(Vector2(x_i, board_size.y), DIRECTION.N)
 		injectors.append(temp_south_inj)
 		add_child(temp_south_inj)
 	
 	#EAST AND WEST SIDES
 	for y_i in y_indices:
-		var e_index = Vector2(NW.x + (map_size.x - 1) + DIRECTION.E.x, NW.y + y_i)
+		var e_index = Vector2(NW.x + (board_size.x - 1) + DIRECTION.E.x, NW.y + y_i)
 		var temp_east_inj = obj_injector.instance()
 		temp_east_inj.position = map_to_world(e_index) + half_tile_size
 		
@@ -88,7 +84,7 @@ func _spawn_injectors():
 		var temp_west_inj = obj_injector.instance()
 		temp_west_inj.position = map_to_world(w_index) + half_tile_size
 
-		temp_west_inj.init(Vector2(map_size.x, y_i), DIRECTION.E)
+		temp_west_inj.init(Vector2(board_size.x, y_i), DIRECTION.E)
 		injectors.append(temp_west_inj)
 		add_child(temp_west_inj)
 
@@ -140,13 +136,7 @@ func _get_row(y_index):
 	return row
 	
 func _in_board(index):
-	if index.x < map_size.x and index.x >= 0:
-		if index.y < map_size.y and index.y >= 0:
-			return true
-	return false	
-	
-func _in_grid(g_pos):
-	if g_pos.x < grid_size.x and g_pos.x >= 0:
-		if g_pos.y < grid_size.y and g_pos.y >= 0:
+	if index.x < board_size.x and index.x >= 0:
+		if index.y < board_size.y and index.y >= 0:
 			return true
 	return false	

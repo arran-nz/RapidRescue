@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Scripts/Grid.gd" type="Script" id=1]
-[ext_resource path="res://Scripts/Hand.gd" type="Script" id=2]
-[ext_resource path="res://Scripts/Drawer.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/Board.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Drawer.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/Hand.gd" type="Script" id=3]
 
 [sub_resource type="Environment" id=1]
 
@@ -85,8 +85,9 @@ _sections_unfolded = [ "Adjustments", "Background", "Glow" ]
 
 [node name="Game" type="Node" index="0"]
 
-[node name="Grid" type="TileMap" parent="." index="0"]
+[node name="Board" type="TileMap" parent="." index="0"]
 
+position = Vector2( 64, 64 )
 mode = 0
 tile_set = null
 cell_size = Vector2( 64, 64 )
@@ -105,16 +106,16 @@ occluder_light_mask = 1
 format = 1
 tile_data = PoolIntArray(  )
 script = ExtResource( 1 )
-_sections_unfolded = [ "Cell", "Visibility" ]
+_sections_unfolded = [ "Transform", "Visibility" ]
 
-[node name="Hand" type="Node2D" parent="Grid" index="0"]
+[node name="_Drawer" type="Node2D" parent="Board" index="0"]
 
 script = ExtResource( 2 )
+_sections_unfolded = [ "Material", "Visibility" ]
 
-[node name="_Drawer" type="Node2D" parent="Grid" index="1"]
+[node name="Hand" type="Node2D" parent="Board" index="1"]
 
 script = ExtResource( 3 )
-_sections_unfolded = [ "Material", "Visibility" ]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="1"]
 
