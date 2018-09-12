@@ -8,6 +8,8 @@ func _ready():
 	pass
 
 func setup_hand(injectors, path):
+	position = Vector2(grid_obj.tile_size.x * (grid_obj.board_size.x + 3), grid_obj.tile_size.y * 3)
+	position += grid_obj.half_tile_size
 	collect_path(path)
 	
 	for inj in injectors:
