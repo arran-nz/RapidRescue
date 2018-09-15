@@ -1,8 +1,13 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scripts/Board.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/Drawer.gd" type="Script" id=2]
 [ext_resource path="res://Scripts/Hand.gd" type="Script" id=3]
+
+[sub_resource type="RectangleShape2D" id=2]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
 
 [sub_resource type="Environment" id=1]
 
@@ -81,7 +86,7 @@ adjustment_enabled = true
 adjustment_brightness = 1.0
 adjustment_contrast = 1.25
 adjustment_saturation = 1.0
-_sections_unfolded = [ "Adjustments", "Background", "Glow" ]
+_sections_unfolded = [ "Adjustments", "Glow" ]
 
 [node name="Game" type="Node" index="0"]
 
@@ -106,17 +111,28 @@ occluder_light_mask = 1
 format = 1
 tile_data = PoolIntArray(  )
 script = ExtResource( 1 )
-_sections_unfolded = [ "Transform", "Visibility" ]
+_sections_unfolded = [ "Material", "Transform", "Visibility" ]
 
 [node name="_Drawer" type="Node2D" parent="Board" index="0"]
 
 script = ExtResource( 2 )
 _sections_unfolded = [ "Material", "Visibility" ]
 
-[node name="Hand" type="Node2D" parent="Board" index="1"]
+[node name="Hand" type="Area2D" parent="Board" index="1"]
 
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+audio_bus_override = false
+audio_bus_name = "Master"
 script = ExtResource( 3 )
 _sections_unfolded = [ "Transform" ]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Board/Hand" index="0"]
+
+shape = SubResource( 2 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="1"]
 
