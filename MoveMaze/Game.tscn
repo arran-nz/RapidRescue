@@ -1,8 +1,14 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Board.gd" type="Script" id=1]
-[ext_resource path="res://Scripts/Drawer.gd" type="Script" id=2]
-[ext_resource path="res://Scripts/Hand.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/Board_Input.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/Drawer.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/Hand.gd" type="Script" id=4]
+
+[sub_resource type="RectangleShape2D" id=3]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
 
 [sub_resource type="RectangleShape2D" id=2]
 
@@ -92,7 +98,7 @@ _sections_unfolded = [ "Adjustments", "Glow" ]
 
 [node name="Board" type="TileMap" parent="." index="0"]
 
-position = Vector2( 64, 64 )
+position = Vector2( 128, 64 )
 mode = 0
 tile_set = null
 cell_size = Vector2( 64, 64 )
@@ -113,12 +119,7 @@ tile_data = PoolIntArray(  )
 script = ExtResource( 1 )
 _sections_unfolded = [ "Material", "Transform", "Visibility" ]
 
-[node name="_Drawer" type="Node2D" parent="Board" index="0"]
-
-script = ExtResource( 2 )
-_sections_unfolded = [ "Material", "Visibility" ]
-
-[node name="Hand" type="Area2D" parent="Board" index="1"]
+[node name="Board_Input" type="Area2D" parent="Board" index="0"]
 
 input_pickable = true
 gravity_vec = Vector2( 0, 1 )
@@ -127,7 +128,28 @@ linear_damp = 0.1
 angular_damp = 1.0
 audio_bus_override = false
 audio_bus_name = "Master"
+script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Board/Board_Input" index="0"]
+
+shape = SubResource( 3 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="_Drawer" type="Node2D" parent="Board" index="1"]
+
 script = ExtResource( 3 )
+_sections_unfolded = [ "Material", "Visibility" ]
+
+[node name="Hand" type="Area2D" parent="Board" index="2"]
+
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+audio_bus_override = false
+audio_bus_name = "Master"
+script = ExtResource( 4 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Board/Hand" index="0"]

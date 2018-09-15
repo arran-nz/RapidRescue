@@ -8,6 +8,7 @@ var path_cells = []
 var injectors = []
 
 signal signal_hand
+signal board_ready
 
 				
 var DIRECTION = {
@@ -23,6 +24,12 @@ onready var obj_path = preload("res://Objects/Path.tscn")
 onready var obj_injector = preload("res://Objects/Path_Injector_Btn.tscn")
 var _board_gen_res = load("res://Scripts/BoardGenerator.gd")
 
+func _input_event(viewport, event, shape_idx):
+	if event.is_pressed():
+		print('help')
+		
+	pass
+
 func _ready():
 
 	var _board_generator = _board_gen_res.new()		
@@ -32,6 +39,17 @@ func _ready():
 	
 	var extra_path = _board_generator.get_path_tile(Vector2(-1,-1), '', obj_path)
 	emit_signal("signal_hand", injectors, extra_path)
+	emit_signal("board_ready")
+	
+
+func get_path(world_pos):
+	# Map position reletive to board
+	var pos  = world_pos - self.position
+	var index = world_to_map(pos)
+	if _in_board(index):
+		for item in path_cells:
+			if item.index == index:
+				return item
 
 func _spawn_injectors():
 	pass
