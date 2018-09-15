@@ -45,21 +45,21 @@ func _draw_bg():
 	var view = get_viewport().size	
 	var grid_resolution = (view / grid_obj.board_size) * GRID_LINES_PER_CELL
 	
-	var base = Vector2(0,0) - grid_obj.position
+	var relative_pos = self.position - grid_obj.position
 	
 	# Draw Background
-	draw_rect(Rect2(base, view), Palletes[CURRENT_PALLETE][0],true)
+	draw_rect(Rect2(relative_pos, view), Palletes[CURRENT_PALLETE][0],true)
 	
 	# Draw Grid Lins
 	for x in range(1,grid_resolution.x):
 		var col_pos = (x * grid_obj.tile_size.x) / GRID_LINES_PER_CELL
 		var col_limit = view.y
-		draw_line(Vector2(base.x + col_pos, base.y), Vector2(col_pos + base.x, col_limit), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
+		draw_line(Vector2(relative_pos.x + col_pos, relative_pos.y), Vector2(col_pos + relative_pos.x, col_limit), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
 		
 	for y in range(1, grid_resolution.y):
 		var row_pos = (y * grid_obj.tile_size.y) / GRID_LINES_PER_CELL
 		var row_limit = view.x
-		draw_line(Vector2(base.x, base.y + row_pos), Vector2(row_limit, base.y + row_pos), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
+		draw_line(Vector2(relative_pos.x, relative_pos.y + row_pos), Vector2(row_limit, relative_pos.y + row_pos), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
 
 func _draw_hand():
 	if hand_obj.current_path != null:
