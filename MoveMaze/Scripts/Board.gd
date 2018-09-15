@@ -22,6 +22,7 @@ var DIRECTION = {
 # Load the class resource when calling new().
 onready var obj_path = preload("res://Objects/Path.tscn")
 onready var obj_injector = preload("res://Objects/Path_Injector_Btn.tscn")
+
 var _board_gen_res = load("res://Scripts/BoardGenerator.gd")
 
 func _input_event(viewport, event, shape_idx):
@@ -34,11 +35,13 @@ func _ready():
 
 	var _board_generator = _board_gen_res.new()		
 	path_cells = _board_generator.gen_path(board_size, tile_size, self)
-	
+		
 	_spawn_injectors()
 	
 	var extra_path = _board_generator.get_path_tile(Vector2(-1,-1), '', obj_path)
 	emit_signal("signal_hand", injectors, extra_path)
+	add_child(extra_path)	
+
 	emit_signal("board_ready")
 
 func get_path_from_world(world_pos):
@@ -111,8 +114,6 @@ func inject_path(index, dir, path_item, collect_method):
 	
 	for inj in injectors:
 		inj.hot = false
-	# Spawn the instance
-	add_child(path_item)
 	
 	# Set World Target
 	var world_target = map_to_world(index) + half_tile_size
