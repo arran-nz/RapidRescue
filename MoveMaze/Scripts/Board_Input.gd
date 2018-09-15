@@ -16,7 +16,7 @@ func setup_collider():
 	
 func _input_event(viewport, event, shape_idx):
 	if event.is_pressed():
-		var path = board_obj.get_path(event.position)
-		print(path)
+		var path = board_obj.get_path_from_world(event.position)
+		print(path.position)
 		
 	pass

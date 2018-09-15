@@ -40,12 +40,14 @@ func _ready():
 	var extra_path = _board_generator.get_path_tile(Vector2(-1,-1), '', obj_path)
 	emit_signal("signal_hand", injectors, extra_path)
 	emit_signal("board_ready")
-	
 
-func get_path(world_pos):
+func get_path_from_world(world_pos):
 	# Map position reletive to board
 	var pos  = world_pos - self.position
 	var index = world_to_map(pos)
+	return get_path(index)
+
+func get_path(index):
 	if _in_board(index):
 		for item in path_cells:
 			if item.index == index:
