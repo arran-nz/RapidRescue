@@ -1,10 +1,10 @@
 extends Node2D
 
 
-var Palletes = {
+const Palletes = {
 
 	'Vapor' :
-		['#050023', '16324f' ,'#9d0a5c','#ea638c','#75d1ff']
+		[Color('#050023'), Color('16324f') ,Color('#9d0a5c'), Color('#ea638c'), Color('#75d1ff')]
 	
 }
 
@@ -61,9 +61,16 @@ func _draw_bg():
 		var row_limit = view.x
 		draw_line(Vector2(relative_pos.x, relative_pos.y + row_pos), Vector2(row_limit, relative_pos.y + row_pos), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
 
+func _draw_board_paths():
+	for item in grid_obj.path_cells:
+		var current_color
+		if(item.moveable): current_color = Palletes[CURRENT_PALLETE][3]
+		else: current_color = Palletes[CURRENT_PALLETE][2]	
+		_draw_path_item(item, current_color)
+
 func _draw_hand():
 	if hand_obj.current_path != null:
-		_draw_path_item(hand_obj.current_path, Palletes[CURRENT_PALLETE][4])
+		_draw_path_item(hand_obj.current_path, Palletes[CURRENT_PALLETE][3])
 
 func _draw_injectors():
 	for injector in grid_obj.injectors:
@@ -75,6 +82,9 @@ func _draw_injectors():
 	
 func _draw_path_item(item, color):
 	
+	if item.properties.has('pallete_index'):
+		color = Palletes[CURRENT_PALLETE][item.properties.get('pallete_index')]
+		
 	if item.connections['S']:
 		draw_line(
 			item.position,
@@ -103,13 +113,3 @@ func _draw_path_item(item, color):
 			color,
 			LINE_WIDTH,
 			_AA)
-		
-
-func _draw_board_paths():
-	for item in grid_obj.path_cells:
-		var current_color
-		if(item.moveable): current_color = Palletes[CURRENT_PALLETE][3]
-		else: current_color = Palletes[CURRENT_PALLETE][2]
-		
-		_draw_path_item(item, current_color)
-		
