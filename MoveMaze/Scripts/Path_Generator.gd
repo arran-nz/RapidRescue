@@ -1,6 +1,5 @@
 extends Node
 
-
 var DEFAULT_MAP = 	[
 				'SE', '', 'ESW', '', 'ESW', '', 'SW',
 				'', '', '', '', '', '', '',
