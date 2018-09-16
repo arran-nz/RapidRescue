@@ -43,11 +43,18 @@ func _ready():
 
 	emit_signal("board_ready")
 
+func _remove_temp_path_properties():
+	for path in path_cells:
+		path.properties.remove('pallete_index')
+
 func board_interaction(event):
+	
+	_remove_temp_path_properties()
+	
 	var path = get_path_from_world(event.position)
 	var reach = route_finder._get_reach(path)
 	for path in reach:
-		path.properties.set('pallete_index', 1)
+		path.properties.set('pallete_index', 4)
 
 func get_path_from_world(world_pos):
 	# Map position reletive to board
@@ -116,6 +123,8 @@ func _spawn_injectors():
 		add_child(temp_west_inj)
 
 func inject_path(index, dir, path_item, collect_method):
+	
+	_remove_temp_path_properties()
 	
 	for inj in injectors:
 		inj.hot = false
