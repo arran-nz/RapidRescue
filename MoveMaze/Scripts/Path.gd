@@ -8,6 +8,7 @@ var item
 var index
 
 var properties = PropertyManager.new()
+var traversal = TraversalInfo.new()
 
 var _target_pos
 var _start_pos
@@ -62,6 +63,18 @@ func collect_item():
 	var temp_item = item
 	item = null
 	return temp_item
+
+class TraversalInfo:
+	"""Used for traversing the board / path finding."""
+	var parent
+	var h_cost
+	var g_cost
+	
+	func _init():
+		self.g_cost = 0
+		self.h_cost = 0
+
+	
 
 class PropertyManager:
 	var _properties = []

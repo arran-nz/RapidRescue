@@ -51,10 +51,17 @@ func board_interaction(event):
 	
 	_remove_temp_path_properties()
 	
-	var path = get_path_from_world(event.position)
-	var reach = route_finder._get_reach(path)
-	for path in reach:
-		path.properties.set('pallete_index', 4)
+	var start_path = get_path_from_world(event.position)
+	var end_path = get_path(Vector2())
+	
+	var route = route_finder.get_route(start_path, end_path)
+	if route != null:
+		for path in route:
+			path.properties.set('pallete_index', 4)
+	else:
+		var reach = route_finder.get_reach(start_path)
+		for path in reach:
+			path.properties.set('pallete_index', 1)
 
 func get_path_from_world(world_pos):
 	# Map position reletive to board
