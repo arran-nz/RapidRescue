@@ -23,21 +23,21 @@ var DIRECTION = {
 onready var obj_path = preload("res://Objects/Path.tscn")
 onready var obj_injector = preload("res://Objects/Path_Injector_Btn.tscn")
 
-var _board_gen_res = load("res://Scripts/BoardGenerator.gd")
+var _path_gen_res = load("res://Scripts/Path_Generator.gd")
 var _route_finder_res = load("res://Scripts/Route_Finder.gd")
 
 var route_finder = _route_finder_res.new()
 
 func _ready():
 
-	var _board_generator = _board_gen_res.new()		
-	path_cells = _board_generator.gen_path(board_size, tile_size, self)
+	var _path_generator = _path_gen_res.new()		
+	path_cells = _path_generator.gen_path(board_size, tile_size, self)
 	
 	route_finder.init(self)
 	
 	_spawn_injectors()
 	
-	var extra_path = _board_generator.get_path_tile(Vector2(-1,-1), '', obj_path)
+	var extra_path = _path_generator.get_path_tile(Vector2(), '', obj_path)
 	emit_signal("signal_hand", injectors, extra_path)
 	add_child(extra_path)
 
