@@ -7,6 +7,8 @@ var item
 # Index Relative to the playing board
 var index
 
+var properties = PropertyManager.new()
+
 var _target_pos
 var _start_pos
 var _t
@@ -28,6 +30,7 @@ func init(index, connections, moveable, item=null):
 	self.item = item
 	
 func _process(delta):
+	
 	if _target_pos != position:
 		_move_toward_target(delta)
 		
@@ -59,4 +62,34 @@ func collect_item():
 	var temp_item = item
 	item = null
 	return temp_item
+
+class PropertyManager:
+	var _properties = []
+	
+	func set(key, value):
+		
+		var success = false
+		for p in _properties:
+			if p.has(key):
+				success = true
+				p = value
+		
+		if !success:
+			_properties.append({key : value})
+			
+	func get(key):
+		for p in _properties:
+			if p.has(key):
+				return p[key]
+				
+	func remove(key):
+		for p in _properties:
+			if p.has(key):
+				_properties.erase(p)
+			
+	func has(key):
+		for p in _properties:
+			if p.has(key):
+				return true
+		return false
 		
