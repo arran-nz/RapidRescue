@@ -28,12 +28,6 @@ var _route_finder_res = load("res://Scripts/Route_Finder.gd")
 
 var route_finder = _route_finder_res.new()
 
-func _input_event(viewport, event, shape_idx):
-	if event.is_pressed():
-		print('help')
-		
-	pass
-
 func _ready():
 
 	var _board_generator = _board_gen_res.new()		
