@@ -5,7 +5,7 @@
 [ext_resource path="res://Scripts/Board_Input.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/Hand.gd" type="Script" id=4]
 
-[sub_resource type="RectangleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
 extents = Vector2( 10, 10 )
@@ -15,7 +15,7 @@ extents = Vector2( 10, 10 )
 custom_solver_bias = 0.0
 extents = Vector2( 10, 10 )
 
-[sub_resource type="Environment" id=1]
+[sub_resource type="Environment" id=3]
 
 background_mode = 4
 background_sky_custom_fov = 0.0
@@ -138,7 +138,7 @@ script = ExtResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Board/Board_Input" index="0"]
 
-shape = SubResource( 3 )
+shape = SubResource( 1 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Hand" type="Area2D" parent="Board" index="2"]
@@ -159,6 +159,6 @@ shape = SubResource( 2 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="1"]
 
-environment = SubResource( 1 )
+environment = SubResource( 3 )
 
 

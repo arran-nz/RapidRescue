@@ -43,6 +43,12 @@ func _ready():
 
 	emit_signal("board_ready")
 
+func board_interaction(event):
+	var path = get_path_from_world(event.position)
+	var reach = route_finder._get_reach(path)
+	for path in reach:
+		path.properties.set('pallete_index', 1)
+
 func get_path_from_world(world_pos):
 	# Map position reletive to board
 	var pos  = world_pos - self.position
