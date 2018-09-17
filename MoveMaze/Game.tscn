@@ -143,6 +143,7 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="Hand" type="Area2D" parent="Board" index="2"]
 
+editor/display_folded = true
 input_pickable = true
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0

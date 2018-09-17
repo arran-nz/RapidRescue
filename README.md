@@ -18,7 +18,7 @@ Needs:
 - [x] Inject paths
 - [x] Rotate paths
 - [x] Style and art direction (Vaporwave)
-- [ ] Player pieces
+- [x] Player pieces
 - [x] Path finding
 - [ ] UI
 - [ ] Menu

@@ -7,6 +7,8 @@ const board_size = Vector2(7,7)
 var path_cells = []
 var injectors = []
 
+var actors = []
+
 signal signal_hand
 signal board_ready
 
@@ -21,6 +23,7 @@ const DIRECTION = {
 # Load the class resource when calling new().
 onready var obj_path = preload("res://Objects/Path.tscn")
 onready var obj_injector = preload("res://Objects/Path_Injector_Btn.tscn")
+onready var obj_actor = preload("res://Objects/Actor.tscn")
 
 var _path_gen_res = load("res://Scripts/Path_Generator.gd")
 var _route_finder_res = load("res://Scripts/Route_Finder.gd")
@@ -28,7 +31,8 @@ var _route_finder_res = load("res://Scripts/Route_Finder.gd")
 var route_finder = _route_finder_res.new(DIRECTION, funcref(self, "get_path"))
 
 func _ready():
-
+	
+	
 	var _path_generator = _path_gen_res.new()		
 	path_cells = _path_generator.gen_path(board_size, tile_size, self)
 	
@@ -38,7 +42,17 @@ func _ready():
 	emit_signal("signal_hand", injectors, extra_path)
 	add_child(extra_path)
 
+	_add_actor(get_path(Vector2()))
+
 	emit_signal("board_ready")
+	
+
+
+func _add_actor(spawn_path):
+	var actor = obj_actor.instance()
+	actor.active_path = spawn_path
+	add_child(actor)
+	actors.append(actor)
 
 func _remove_temp_path_properties():
 	for path in path_cells:
@@ -48,20 +62,22 @@ func board_interaction(event):
 	
 	_remove_temp_path_properties()
 	
-
-	
-	var start_path = get_path_from_world(event.position)
-	var end_path = get_path(Vector2())
+	var actor = actors[0]
+	var start_path = get_path(world_to_map(actor.position))
+	var end_path = get_path_from_world(event.position)
 	
 	var route = route_finder.get_route(start_path, end_path)
 	
 	if route != null:
-		for path in route:
-			path.properties.set('pallete_index', 4)
-	else:
-		var reach = route_finder.get_reach(start_path)
-		for path in reach:
-			path.properties.set('pallete_index', 1)
+		if len(route) > 1:
+			actor.set_route(route)
+			
+			for path in route:
+				path.properties.set('pallete_index', 4)
+		else:
+			var reach = route_finder.get_reach(start_path)
+			for path in reach:
+				path.properties.set('pallete_index', 1)
 
 func get_path_from_world(world_pos):
 	# Map position reletive to board
