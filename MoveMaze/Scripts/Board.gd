@@ -10,8 +10,7 @@ var injectors = []
 signal signal_hand
 signal board_ready
 
-				
-var DIRECTION = {
+const DIRECTION = {
 				'N' : Vector2(0, -1),
 				'E' : Vector2(1, 0),
 				'S' : Vector2(0, 1),
@@ -26,14 +25,12 @@ onready var obj_injector = preload("res://Objects/Path_Injector_Btn.tscn")
 var _path_gen_res = load("res://Scripts/Path_Generator.gd")
 var _route_finder_res = load("res://Scripts/Route_Finder.gd")
 
-var route_finder = _route_finder_res.new()
+var route_finder = _route_finder_res.new(DIRECTION, funcref(self, "get_path"))
 
 func _ready():
 
 	var _path_generator = _path_gen_res.new()		
 	path_cells = _path_generator.gen_path(board_size, tile_size, self)
-	
-	route_finder.init(self)
 	
 	_spawn_injectors()
 	
@@ -51,10 +48,13 @@ func board_interaction(event):
 	
 	_remove_temp_path_properties()
 	
+
+	
 	var start_path = get_path_from_world(event.position)
 	var end_path = get_path(Vector2())
 	
 	var route = route_finder.get_route(start_path, end_path)
+	
 	if route != null:
 		for path in route:
 			path.properties.set('pallete_index', 4)

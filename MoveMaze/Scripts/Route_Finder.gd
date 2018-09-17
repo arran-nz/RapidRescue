@@ -1,29 +1,32 @@
 extends Node
 
-var board_obj
+var DIRECTION
+var get_path
 
-func init(board_obj):
-	self.board_obj = board_obj
+func _init(DIRECTION, get_path):
+	self.DIRECTION = DIRECTION
+	self.get_path = get_path
 
 func get_route(start_path, end_path):
-		
+	"""Return a route from start to end. If possible."""
+	
 	var path_success = false
 	var open_set = []
 	open_set.append(start_path)
-	var closed_set = []
+	var visited_set = []
 	
 	while len(open_set) > 0:
 		
 		var current_path = open_set.pop_front()
-		closed_set.append(current_path)
+		visited_set.append(current_path)
 		
 		if current_path == end_path:
 			print("Route Found")
 			path_success = true
 			break
 			
-		for n in _get_nextdoor_connected_neighbors(current_path):
-			if closed_set.has(n):
+		for n in _get_connected_neighbors(current_path):
+			if visited_set.has(n):
 				continue
 				
 			var new_movement_cost_to_n = current_path.traversal.g_cost + _get_dist(current_path, n)
@@ -39,7 +42,7 @@ func get_route(start_path, end_path):
 		return _retrace_route(start_path, end_path)
 	else:
 		print("Path Not Found")
-			
+
 func _retrace_route(start_path, end_path):
 	var route = []
 	var current_path = end_path
@@ -63,44 +66,47 @@ func _get_dist(path_a, path_b):
 
 func get_reach(path):
 	"""If found, will return list of tiles that are connected - Therefore reachable"""
-
-	var reach = []
-	reach.append(path)
-	var neighbors = _get_nextdoor_connected_neighbors(path)
-
-	# This is trash - make it better
-	for n in neighbors:
-		var extended_family = _get_nextdoor_connected_neighbors(n)
-		for f in extended_family:
-			if !neighbors.has(f):
-				neighbors.append(f)
-			if !reach.has(f):
-				reach.append(f)
-				
-	return reach
+	var open_set = []
+	var visited_set = []
+	open_set.append(path)
 	
-func _get_nextdoor_neighbors(path):
-	"""Return neighbors that the current path `points` to."""
-	var neighbors = []
-	for con in path.connections:
-		if path.connections[con]:
-			var dir = board_obj.DIRECTION[con]
-			var n = board_obj.get_path(path.index + dir)
+	while len(open_set) > 0:
+		var current_path = open_set.pop_front()
+		visited_set.append(current_path)
+		
+		for n in _get_connected_neighbors(current_path):
+			if !visited_set.has(n):
+				open_set.append(n)
+				
+	return visited_set
+
+func _get_connected_neighbors(path):
+	
+	var connected_neighbors = []
+	var relevant_neighbors = []
+	
+	# Loop through the connections where the value is true (connected)
+	for c in path.connections:
+		if path.connections[c]:
+			# Get that direction in vector form
+			var dir = DIRECTION[c]
+			# Get the path it's trying to connect with
+			var n = get_path.call_func(path.index + dir)
+			# If there's a path, add it for later
 			if n != null:
-				neighbors.append(n)
-	return neighbors
+				relevant_neighbors.append(n)
+		
+	# Loop through relevant neighbors
+	for n in relevant_neighbors:
+		# Loop through the connections where the value is true (connected)
+		for c in n.connections:
+			if n.connections[c]:
+				# Get the direction of the path and invert it
+				var dir = DIRECTION[c] * -1
+				# Get the vector diff
+				var rel_dir = n.index - path.index
+				# If they're the same, they're connected
+				if dir == rel_dir:
+					connected_neighbors.append(n)
 	
-func _get_nextdoor_connected_neighbors(path):
-	"""Return neightbors that this path connected with."""
-	var neighbors = _get_nextdoor_neighbors(path)
-				
-				
-	var connected = []
-	
-	for n in neighbors:
-		for n_con in n.connections:
-			if n.connections[n_con]:
-				if _get_nextdoor_neighbors(n).has(path):
-					if !connected.has(n): connected.append(n)
-
-	return connected
+	return connected_neighbors
