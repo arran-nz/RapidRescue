@@ -19,7 +19,7 @@ Needs:
 - [x] Rotate paths
 - [x] Style and art direction (Vaporwave)
 - [ ] Player pieces
-- [ ] Path finding
+- [x] Path finding
 - [ ] UI
 - [ ] Menu
 
