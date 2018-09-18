@@ -82,7 +82,7 @@ func _draw_hand():
 func _draw_injectors():
 	for injector in board_obj.injectors:
 		var current_color
-		if(injector.hot): current_color = Palletes[CURRENT_PALLETE][1]
+		if(injector.disabled): current_color = Palletes[CURRENT_PALLETE][1]
 		else: current_color = Palletes[CURRENT_PALLETE][4]
 		
 		draw_circle(injector.position, CIRCLE_RADIUS, current_color)
