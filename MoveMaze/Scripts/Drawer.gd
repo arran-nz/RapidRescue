@@ -1,21 +1,56 @@
 extends Node2D
 
 
-const Palletes = {
+const STYLES = {
 
 	'Vapor' :
-		[Color('#050023'), Color('16324f') ,Color('#9d0a5c'), Color('#ea638c'), Color('#75d1ff')]
+		[
+		Color('#050023'),
+		Color('16324f'),
+		Color('#9d0a5c'),
+		Color('#ea638c'),
+		Color('#75d1ff'),
+		true
+		],
+		
+	'Alien' :
+		[
+		Color('272d2d'),
+		Color('50514f'),
+		Color('23ce6b'),
+		Color('f6f8ff'),
+		Color('a846a0'),
+		false
+		],
 	
+	'70s' :
+		[
+		Color('262322'),
+		Color('63372c'),
+		Color('c97d60'),
+		Color('ffbcb5'),
+		Color('f2e5d7'),
+		false
+		],
+		
+	'Copic' :
+		[
+		Color('0e1d23'),
+		Color('235789'),
+		Color('c1292e'),
+		Color('fdfffc'),
+		Color('f1d302'),
+		false
+		],
 }
 
-var CURRENT_PALLETE = 'Vapor'
+var applied_style = 'Copic'
 
-var LINE_WIDTH = 4
-var GRID_LINE = 1
-var CIRCLE_RADIUS = 7
-var GRID_LINES_PER_CELL = 2
-
-var _AA = true
+const LINE_WIDTH = 5
+const GRID_LINE = 1
+const CIRCLE_RADIUS = 7
+const GRID_LINES_PER_CELL = 2
+const _AA = true
 
 onready var board_obj = get_parent()
 onready var hand_obj = board_obj.get_node("Hand")
@@ -26,6 +61,8 @@ func _process(delta):
 func _draw():
 	
 	_draw_bg()
+	if STYLES[applied_style].back():		
+		_draw_bg_lines()
 	_draw_board_edge()
 	_draw_board_paths()
 	_draw_injectors()
@@ -35,63 +72,74 @@ func _draw():
 func _draw_actors():
 	
 	for actor in board_obj.actors:
-		var current_color = Palletes[CURRENT_PALLETE][4]
+		var current_color = STYLES[applied_style][4]
 		draw_circle(actor.position, CIRCLE_RADIUS * 1.2, current_color)
 
 func _draw_board_edge():
 	
 	var rect = Rect2(Vector2(), board_obj.board_size * board_obj.tile_size)
-	var color = Palletes[CURRENT_PALLETE][1]
+	var color = STYLES[applied_style][1]
 	var edge_width = GRID_LINE * 2
-	draw_line(rect.position, Vector2(rect.size.x, rect.position.y), color, edge_width, _AA)
-	draw_line(rect.position, Vector2(rect.position.x, rect.size.y), color, edge_width, _AA)
-	draw_line(Vector2(rect.size.x, rect.position.y), rect.size, color, edge_width, _AA)
-	draw_line(Vector2(rect.position.x, rect.size.y), rect.size, color, edge_width, _AA)
+	_draw_border(rect, edge_width, color)
 
-func _draw_bg():
-	var view = get_viewport().size	
+func _draw_bg_lines():
+	var view = get_viewport().size
 	var grid_resolution = (view / board_obj.board_size) * GRID_LINES_PER_CELL
+	var relative_pos = self.position - board_obj.position	
 	
-	var relative_pos = self.position - board_obj.position
-	
-	# Draw Background
-	draw_rect(Rect2(relative_pos, view), Palletes[CURRENT_PALLETE][0],true)
-	
-	# Draw Grid Lins
 	for x in range(1,grid_resolution.x):
 		var col_pos = (x * board_obj.tile_size.x) / GRID_LINES_PER_CELL
 		var col_limit = view.y
-		draw_line(Vector2(relative_pos.x + col_pos, relative_pos.y), Vector2(col_pos + relative_pos.x, col_limit), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
+		draw_line(Vector2(relative_pos.x + col_pos, relative_pos.y), Vector2(col_pos + relative_pos.x, col_limit), STYLES[applied_style][1], GRID_LINE, _AA)
 		
 	for y in range(1, grid_resolution.y):
 		var row_pos = (y * board_obj.tile_size.y) / GRID_LINES_PER_CELL
 		var row_limit = view.x
-		draw_line(Vector2(relative_pos.x, relative_pos.y + row_pos), Vector2(row_limit, relative_pos.y + row_pos), Palletes[CURRENT_PALLETE][1], GRID_LINE, _AA)
+		draw_line(Vector2(relative_pos.x, relative_pos.y + row_pos), Vector2(row_limit, relative_pos.y + row_pos), STYLES[applied_style][1], GRID_LINE, _AA)
 
+func _draw_bg():
+	var view = get_viewport().size	
+	var relative_pos = self.position - board_obj.position	
+	# Draw Background
+	draw_rect(Rect2(relative_pos, view), STYLES[applied_style][0],true)
+	
 func _draw_board_paths():
 	for item in board_obj.path_cells:
-		var current_color
-		if(item.moveable): current_color = Palletes[CURRENT_PALLETE][3]
-		else: current_color = Palletes[CURRENT_PALLETE][2]	
-		_draw_path_item(item, current_color)
+		var path_color
+		var border_color
+		if(item.moveable):
+			path_color = STYLES[applied_style][3]
+			border_color = STYLES[applied_style][1] 
+		else:
+			path_color = STYLES[applied_style][2]
+			border_color = path_color
+			
+		_draw_path_border(item, border_color)
+		_draw_path_lines(item, path_color)
 
 func _draw_hand():
 	if hand_obj.current_path != null:
-		_draw_path_item(hand_obj.current_path, Palletes[CURRENT_PALLETE][3])
+		_draw_path_border(hand_obj.current_path, STYLES[applied_style][1])
+		_draw_path_lines(hand_obj.current_path, STYLES[applied_style][3])
 
 func _draw_injectors():
 	for injector in board_obj.injectors:
 		var current_color
-		if(injector.disabled): current_color = Palletes[CURRENT_PALLETE][1]
-		else: current_color = Palletes[CURRENT_PALLETE][4]
+		if(injector.disabled): current_color = STYLES[applied_style][1]
+		else: current_color = STYLES[applied_style][4]
 		
 		draw_circle(injector.position, CIRCLE_RADIUS, current_color)
 	
-func _draw_path_item(item, color):
+func _draw_path_border(item, color):
+	var size = board_obj.tile_size * 0.65
+	var box = Rect2(item.position - size / 2, size)
+	_draw_border(box, 2, color)
+	
+func _draw_path_lines(item, color):
 	
 	if item.properties.has('pallete_index'):
-		color = Palletes[CURRENT_PALLETE][item.properties.get('pallete_index')]
-		
+		color = STYLES[applied_style][item.properties.get('pallete_index')]
+
 	if item.connections['S']:
 		draw_line(
 			item.position,
@@ -120,3 +168,9 @@ func _draw_path_item(item, color):
 			color,
 			LINE_WIDTH,
 			_AA)
+			
+func _draw_border(rect, width, color):
+	draw_line(rect.position, rect.position + Vector2(rect.size.x, 0), color, width, _AA)
+	draw_line(rect.position, rect.position + Vector2(0, rect.size.y), color, width, _AA)
+	draw_line(rect.position +  Vector2(rect.size.x, 0), rect.position + rect.size, color, width, _AA)
+	draw_line(rect.position + Vector2(0, rect.size.y), rect.position + rect.size, color, width, _AA)
