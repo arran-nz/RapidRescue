@@ -11,7 +11,6 @@ extends Node
 # I = Straight
 # L = Corner
 
-
 const DEFAULT_MAP = [
 				'SE', '', 'ESW', '', 'ESW', '', 'SW',
 				'', '', '', '', '', '', '',
@@ -37,12 +36,7 @@ const PATH_DISTRIBUTION = {
 var _available_paths  = []
 
 func _init():
-	var paths = []
-	for type in PATH_DISTRIBUTION:
-		for i in range(PATH_DISTRIBUTION[type]):
-			paths.append(type)
-	
-	_available_paths  = _shuffleList(paths)
+	_distribute_paths()
 	
 func gen_path(board_size, tile_size, grid):
 	
@@ -95,11 +89,19 @@ func get_path_tile(index, content, obj_path):
 
 func _get_random_path_type():
 	if len(_available_paths ) > 0:
-		var p_type = _available_paths .pop_back()
+		var p_type = _available_paths.pop_back()
 		var selection = rand_range(0, PATH_VARIATIONS[p_type].size())
 		return PATH_VARIATIONS[p_type][selection]
 	else:
 		print("ERR: No more paths available.")
+
+func _distribute_paths():
+	var paths = []
+	for type in PATH_DISTRIBUTION:
+		for i in range(PATH_DISTRIBUTION[type]):
+			paths.append(type)
+	
+	_available_paths  = _shuffleList(paths)
 
 func _shuffleList(list):
     var shuffled_list = [] 
