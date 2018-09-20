@@ -1,3 +1,5 @@
+# Path_Generator - Generate the board paths.
+
 extends Node
 
 #Direction Representation
@@ -52,8 +54,12 @@ func gen_path(board_size, tile_size, grid):
 		if index > 0 and x == 0: y+=1
 		# print('{x}, {y}'.format({'x': x, 'y': y}))
 		
+		var path_tile
 		var content = DEFAULT_MAP[index]
-		var path_tile = get_path_tile(Vector2(x,y), content, grid.obj_path)
+		if content != '':
+			path_tile = _get_defined_path(Vector2(x,y), grid.obj_path, content)
+		else:
+			path_tile = get_moveable_path(Vector2(x,y), grid.obj_path)
 				
 		var px = (x * tile_size.x)
 		var py = (y * tile_size.y)
@@ -63,16 +69,10 @@ func gen_path(board_size, tile_size, grid):
 		path_cells.append(path_tile)
 			
 	return path_cells
-	
-func get_path_tile(index, content, obj_path):
+
+func get_moveable_path(index, obj_path):
 	var path_tile = obj_path.instance()
-	var is_moveable = false
 	
-	#If there is no default tile set, get a random path_type and a rotation
-	if content == '': 
-		content = _get_random_path_type()
-		is_moveable = true
-		
 	var connections = {
 			'N': false,
 			'E': false,
@@ -80,18 +80,37 @@ func get_path_tile(index, content, obj_path):
 			'W': false
 			}
 			
+	var content = _pop_distributed_path_type()
+	
 	for c in content:
 		connections[c] = true
 		
-	path_tile.init(index, connections, is_moveable)
+	path_tile.init(index, connections, true)
+	
+	return path_tile	
+
+func _get_defined_path(index, obj_path, content):
+	var path_tile = obj_path.instance()
+	
+	var connections = {
+		'N': false,
+		'E': false,
+		'S': false,
+		'W': false
+		}
+		
+	for c in content:
+		connections[c] = true
+		
+	path_tile.init(index, connections, false)
 	
 	return path_tile
 
-func _get_random_path_type():
+func _pop_distributed_path_type():
 	if len(_available_paths ) > 0:
 		var p_type = _available_paths.pop_back()
-		var selection = rand_range(0, PATH_VARIATIONS[p_type].size())
-		return PATH_VARIATIONS[p_type][selection]
+		var variation = rand_range(0, PATH_VARIATIONS[p_type].size())
+		return PATH_VARIATIONS[p_type][variation]
 	else:
 		print("ERR: No more paths available.")
 

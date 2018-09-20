@@ -1,40 +1,20 @@
+# Hand - Hold a `PATH` item to be rotated and placed onto the board.
+
 extends Node2D
 
-var current_path = null
-onready var grid_obj = get_parent()
+var current_path
 
-func _input_event(viewport, event, shape_idx):
-	if event.is_pressed():
-		rotate_path()
-		
-	pass
+var _inj_and_collect_ref
 
-func _ready():
-	grid_obj.connect("signal_hand", self, "setup_hand")
-	pass
+func setup(inject_ref, start_path):
+	self._inj_and_collect_ref = inject_ref
+	current_path = start_path
+	current_path.set_target(self.position, true)
 
-func setup_hand(injectors, path):
-	position = Vector2(grid_obj.tile_size.x * (grid_obj.board_size.x + 3), grid_obj.tile_size.y * 3)
-	position += grid_obj.half_tile_size
-	collect_path(path)
-	
-	for inj in injectors:
-		inj.connect("click_action", self, "place_path")
-
-func collect_path(path):
-	if current_path == null:
-		current_path = path
-		current_path.set_target(position, true)
-	else:
-		print("CAN ONLY HOLD ONE PATH!")
-
-func place_path(board_index, direction):
+func inject_path(board_index, direction):
 	if current_path != null:
-		var temp_path = current_path
-		current_path = null
-		grid_obj.inject_path(board_index, direction, temp_path, funcref(self, 'collect_path'))
-	else:
-		print("NOTHING TO PLACE!")
+		current_path = _inj_and_collect_ref.call_func(board_index, direction, current_path)
+		current_path.set_target(self.position)
 
 func rotate_path():
 	var names = current_path.connections.keys()

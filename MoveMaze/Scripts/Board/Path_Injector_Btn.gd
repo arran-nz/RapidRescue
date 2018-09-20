@@ -1,8 +1,10 @@
+# Path_Injector - Store information regarding injection location and direction and handle input.
+
 extends Area2D
 
 var disabled
 
-signal click_action
+signal injector_pressed
 
 """What direction the path is injected towards."""
 var inj_direction
@@ -16,6 +18,6 @@ func init(inj_board_index, inj_direction):
 
 func _input_event(viewport, event, shape_idx):
 	if event.is_pressed() and !disabled:
-		emit_signal("click_action", inj_board_index, inj_direction)
+		emit_signal("injector_pressed", inj_board_index, inj_direction)
 		
 	pass

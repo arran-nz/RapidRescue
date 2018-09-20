@@ -1,3 +1,5 @@
+# Route_Finder - Use A-STAR to find the shortest route between two `PATH` items.
+
 extends Node
 
 var DIRECTION

@@ -1,3 +1,6 @@
+# Board - Store and maintain all `PATHS`, `INJECTORS` and `ACTORS`.
+# Responsile for every interaction on the playing board.
+
 extends TileMap
 
 var tile_size = get_cell_size()
@@ -9,8 +12,7 @@ var injectors = []
 
 var actors = []
 
-signal signal_hand
-signal board_ready
+signal extra_path_ready
 
 const DIRECTION = {
 				'N' : Vector2(0, -1),
@@ -19,14 +21,13 @@ const DIRECTION = {
 				'W' : Vector2(-1, 0),
 	}
 	
-
 # Load the class resource when calling new().
 onready var obj_path = preload("res://Objects/Path.tscn")
 onready var obj_injector = preload("res://Objects/Path_Injector_Btn.tscn")
 onready var obj_actor = preload("res://Objects/Actor.tscn")
 
-var _path_gen_res = load("res://Scripts/Path_Generator.gd")
-var _route_finder_res = load("res://Scripts/Route_Finder.gd")
+var _path_gen_res = load("res://Scripts/Board/Path_Generator.gd")
+var _route_finder_res = load("res://Scripts/Board/Route_Finder.gd")
 
 var route_finder = _route_finder_res.new(DIRECTION, funcref(self, "get_path"))
 
@@ -35,15 +36,22 @@ func _ready():
 	var _path_generator = _path_gen_res.new()
 	path_cells = _path_generator.gen_path(board_size, tile_size, self)
 	
+	#Injectors
 	_spawn_injectors()
 	
-	var extra_path = _path_generator.get_path_tile(Vector2(), '', obj_path)
-	emit_signal("signal_hand", injectors, extra_path)
-	add_child(extra_path)
-
+	#Actors
 	_add_actor(get_path(Vector2()))
 
-	emit_signal("board_ready")
+	# Extra Path
+	var extra_path = _path_generator.get_moveable_path(Vector2(), obj_path)
+	add_child(extra_path)
+	emit_signal('extra_path_ready', funcref(self, 'inject_path'), extra_path)
+	
+	#Setup board input
+	var board_extent = board_size * tile_size
+	var board_input = get_child(0)
+	board_input.resize_collider(board_extent)
+	board_input.connect('board_interaction', self, 'board_interaction')
 
 func board_interaction(event):
 	
@@ -76,7 +84,7 @@ func get_path(index):
 			if item.index == index:
 				return item
 
-func inject_path(inject_index, dir, path, collect_method):
+func inject_path(inject_index, dir, injected_path):
 	_remove_temp_path_properties()
 	
 	#Enable All Injectors
@@ -89,10 +97,10 @@ func inject_path(inject_index, dir, path, collect_method):
 	
 	# Set World Target
 	var world_target = map_to_world(inject_index) + half_tile_size
-	path.set_target(world_target, false)
+	injected_path.set_target(world_target, false)
 	
 	#Update index to injection location
-	path.update_index(inject_index)
+	injected_path.update_index(inject_index)
 	print(inject_index)
 	
 	#Get Existing Line without new path
@@ -105,8 +113,9 @@ func inject_path(inject_index, dir, path, collect_method):
 		exsiting_line = _get_row(inject_index.y)
 		
 	#Add New Path To Path_Cells Array
-	path_cells.append(path)
-		
+	path_cells.append(injected_path)
+	
+	var ejected_path
 	# For every path in line
 	for current_path in exsiting_line:
 		# Get the new path index
@@ -119,12 +128,14 @@ func inject_path(inject_index, dir, path, collect_method):
 			# Check if an actor is riding this current path
 			for a in actors:
 				if a.active_path == current_path:
-					a.position = path.position
-					a.active_path = path
+					a.position = injected_path.position
+					a.active_path = injected_path
 		
 			#Collect the path
-			collect_method.call_func(current_path)
-			path_cells.erase(current_path)
+			ejected_path = current_path
+	
+	path_cells.erase(ejected_path)
+	return ejected_path
 
 func _add_actor(spawn_path):
 	var actor = obj_actor.instance()

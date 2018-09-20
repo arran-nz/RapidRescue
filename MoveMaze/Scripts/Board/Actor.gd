@@ -1,3 +1,5 @@
+# Actor - Move under the indirect control of AI or Human command.
+
 extends Node2D
 
 # Path which this actor moves WITH when not traversing

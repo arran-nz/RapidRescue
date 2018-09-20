@@ -1,5 +1,6 @@
-extends Node2D
+# Path - An object which is used to direct `ACTORS` across the board and store `ITEMS`.
 
+extends Node2D
 
 var connections
 var moveable
