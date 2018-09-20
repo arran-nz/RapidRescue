@@ -14,7 +14,7 @@ Needs:
 
 - [x] Board layout
 - [x] Move lines
-- [ ] RNG path distrubution on board
+- [x] correct path distrubution on board
 - [x] Inject paths
 - [x] Rotate paths
 - [x] Style and art direction (Vaporwave)

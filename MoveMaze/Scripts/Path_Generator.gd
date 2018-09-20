@@ -1,6 +1,18 @@
 extends Node
 
-var DEFAULT_MAP = 	[
+#Direction Representation
+# N = North / Up
+# E = East / Right
+# S = South / Down
+# W = West / Left
+
+#Path Type Representation
+# T = T-Insection
+# I = Straight
+# L = Corner
+
+
+const DEFAULT_MAP = [
 				'SE', '', 'ESW', '', 'ESW', '', 'SW',
 				'', '', '', '', '', '', '',
 				'NES', '', 'NES', '', 'ESW', '', 'NSW',
@@ -10,16 +22,33 @@ var DEFAULT_MAP = 	[
 				'NE', '', 'NEW', '', 'NEW', '', 'NW',
 	]
 
-var PATH_TYPES = { 
+const PATH_VARIATIONS = { 
 				'T' : ['ESW', 'NSW', 'NEW', 'NES'],
 				'I' : ['NS', 'EW'],
 				'L' : ['NE', 'SE', 'SW', 'NW'] 
 	}
+
+const PATH_DISTRIBUTION = {
+				'T' : 6,
+				'I' : 12,
+				'L' : 16,
+	}
+	
+var _available_paths  = []
+
+func _init():
+	var paths = []
+	for type in PATH_DISTRIBUTION:
+		for i in range(PATH_DISTRIBUTION[type]):
+			paths.append(type)
+	
+	_available_paths  = _shuffleList(paths)
 	
 func gen_path(board_size, tile_size, grid):
 	
-	randomize()	
-	var path_cells = []		
+	randomize()
+	var path_cells = []
+
 				
 	var y = 0
 	for index in range(board_size.x * board_size.y):
@@ -47,7 +76,7 @@ func get_path_tile(index, content, obj_path):
 	
 	#If there is no default tile set, get a random path_type and a rotation
 	if content == '': 
-		content = _get_random_path_type('TIL')
+		content = _get_random_path_type()
 		is_moveable = true
 		
 	var connections = {
@@ -64,7 +93,19 @@ func get_path_tile(index, content, obj_path):
 	
 	return path_tile
 
-func _get_random_path_type(type_selection):
-	var p_type = type_selection[rand_range(0, type_selection.length())]
-	var selection = rand_range(0, PATH_TYPES[p_type].size())
-	return PATH_TYPES[p_type][selection]	
+func _get_random_path_type():
+	if len(_available_paths ) > 0:
+		var p_type = _available_paths .pop_back()
+		var selection = rand_range(0, PATH_VARIATIONS[p_type].size())
+		return PATH_VARIATIONS[p_type][selection]
+	else:
+		print("ERR: No more paths available.")
+
+func _shuffleList(list):
+    var shuffled_list = [] 
+    var index_list = range(list.size())
+    for i in range(list.size()):
+        var x = randi()%index_list.size()
+        shuffled_list.append(list[index_list[x]])
+        index_list.remove(x)
+    return shuffled_list
