@@ -97,6 +97,7 @@ func inject_path(inject_index, dir, injected_path):
 	
 	# Set World Target
 	var world_target = map_to_world(inject_index) + half_tile_size
+	# Move to world target
 	injected_path.set_target(world_target, false)
 	
 	#Update index to injection location
@@ -133,6 +134,8 @@ func inject_path(inject_index, dir, injected_path):
 		
 			#Collect the path
 			ejected_path = current_path
+			# Set target to off the board
+			ejected_path.set_target(map_to_world(new_path_index) + half_tile_size)
 	
 	path_cells.erase(ejected_path)
 	return ejected_path
