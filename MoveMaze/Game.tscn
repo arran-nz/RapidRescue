@@ -91,7 +91,7 @@ _sections_unfolded = [ "Adjustments", "Glow" ]
 custom_solver_bias = 0.0
 extents = Vector2( 10, 10 )
 
-[node name="Game" type="Node"]
+[node name="Game" type="Node" index="0"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="0"]
 
