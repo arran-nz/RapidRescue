@@ -13,12 +13,17 @@ func setup(inject_ref, start_path):
 	
 	__Input__.subscribe("rotate_hand", self, "rotate_path")
 
-func inject_path(board_index, direction):
+func move_path_to_injector(injector):
+	current_path.set_target(injector.position, false)
+	yield(current_path, "target_reached")
+	_inject_path(injector.inj_board_index, injector.inj_direction)
+
+func _inject_path(board_index, direction):
 	if current_path != null:
 		current_path = _inj_and_collect_ref.call_func(board_index, direction, current_path)
-		current_path.set_target(self.position)
 
 func rotate_path():
+	
 	var names = current_path.connections.keys()
 	var values = current_path.connections.values()
 	var temp_values = values.duplicate()

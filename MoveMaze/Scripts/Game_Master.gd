@@ -14,4 +14,4 @@ func setup_hand(inject_ref, extra_path):
 	hand_obj.setup(inject_ref, extra_path)
 	
 	for inj in board_obj.injectors:
-		inj.connect('injector_pressed', hand_obj, 'inject_path')
+		inj.connect('injector_pressed', hand_obj, 'move_path_to_injector')

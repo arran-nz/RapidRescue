@@ -18,6 +18,6 @@ func init(inj_board_index, inj_direction):
 
 func _input_event(viewport, event, shape_idx):
 	if event.is_pressed() and !disabled:
-		emit_signal("injector_pressed", inj_board_index, inj_direction)
+		emit_signal("injector_pressed", self)
 		
 	pass
