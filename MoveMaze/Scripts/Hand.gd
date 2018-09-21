@@ -10,6 +10,8 @@ func setup(inject_ref, start_path):
 	self._inj_and_collect_ref = inject_ref
 	current_path = start_path
 	current_path.set_target(self.position, true)
+	
+	__Input__.subscribe("rotate_hand", self, "rotate_path")
 
 func inject_path(board_index, direction):
 	if current_path != null:

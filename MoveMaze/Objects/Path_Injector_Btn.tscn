@@ -2,7 +2,6 @@
 
 [ext_resource path="res://Scripts/Board/Path_Injector_Btn.gd" type="Script" id=1]
 
-
 [sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
