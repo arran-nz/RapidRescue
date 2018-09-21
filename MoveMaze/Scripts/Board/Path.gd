@@ -20,6 +20,8 @@ const _TRAVEL_TIME = 0.6
 # Target Threshold in Pixels
 const _TARGET_THRESHOLD = 2
 
+signal target_reached
+
 func _ready():
 	_target_pos = position
 	_start_pos = position
@@ -46,8 +48,10 @@ func _move_toward_target(delta):
 		position = next_pos
 	else:
 		position = _target_pos
+		emit_signal("target_reached")
 
 func set_target(target, is_instant=false):
+	
 	if is_instant:
 		position = target
 		_target_pos = position
