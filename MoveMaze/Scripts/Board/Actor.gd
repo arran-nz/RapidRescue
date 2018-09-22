@@ -4,6 +4,8 @@ extends Node2D
 
 # Path which this actor moves WITH when not traversing
 var active_path
+# Unique index
+var index
 
 var _next_route_path
 var _route
@@ -21,7 +23,12 @@ const _TARGET_THRESHOLD = 2
 func _ready():
 	_start_pos = position
 	pass
-	
+
+func setup(index, active_path):
+	self.index = index
+	self.active_path = active_path
+	self.position = active_path.position
+
 func _process(delta):
 	
 	if _has_route():
