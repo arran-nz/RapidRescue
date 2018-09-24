@@ -15,8 +15,6 @@ var traversing setget ,_has_route
 
 # Travel time in seconds
 const _TRAVEL_TIME = 0.4
-# Target Threshold in Pixels
-const _TARGET_THRESHOLD = 2
 
 func _ready():
 	_start_pos = position

@@ -17,8 +17,6 @@ var _t
 
 # Travel time in seconds
 const _TRAVEL_TIME = 0.6
-# Target Threshold in Pixels
-const _TARGET_THRESHOLD = 2
 
 signal target_reached
 
