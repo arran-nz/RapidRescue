@@ -26,26 +26,24 @@ func _process(delta):
 	
 	if _has_route():
 		_move_toward_target(delta)
+
+		# If reached target
+		if position == _next_route_path.position:
+			_set_next_target()
+			_reset_moving_values()
 	else:
 		position = active_path.position
 		
 func _move_toward_target(delta):
 	
-	# Calculte travel distance
-	_t += delta / _TRAVEL_TIME
-	var next_pos = _start_pos.linear_interpolate(_next_route_path.position, _t)
-
-	# If 'Close Enough' to target, move there
-	if (_next_route_path.position - position).length() <= _TARGET_THRESHOLD:
-		position = _next_route_path.position
-	# Otherwise keep moving
-	else:
+	_t += delta
+	var vector_difference = _next_route_path.position - _start_pos
+	var next_pos =  _start_pos + vector_difference * (_t / _TRAVEL_TIME)
+	
+	if _t < _TRAVEL_TIME:
 		position = next_pos
-		
-	# If reached target
-	if position == _next_route_path.position:
-		_set_next_target()
-		_reset_moving_values()
+	else:
+		position = _next_route_path.position
 
 func _set_next_target():
 	_next_route_path = _route.pop_front()
