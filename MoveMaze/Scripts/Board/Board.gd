@@ -56,6 +56,7 @@ func _ready():
 
 func spawn_actors(count):
 	
+	# Don't add more actors than max
 	if count > MAX_ACTORS:
 		print("You can only have %s actors." % MAX_ACTORS)
 		return
@@ -64,15 +65,29 @@ func spawn_actors(count):
 	if len(actors) > 0:
 		print("Actors already exsist.")
 		return
-		
+
 	#Create list of all spawn paths (Corners)
-	var corner_paths = [ 
-		get_path(Vector2(0,0)), 
-		get_path(Vector2(board_size.x - 1, 0)),
-		get_path(Vector2(board_size.x - 1, board_size.y - 1)),
-		get_path(Vector2(0, board_size.y -1))
-	]
+	var nw_path = get_path(Vector2())
+	var ne_path = get_path(Vector2(board_size.x - 1, 0))
+	var se_path = get_path(Vector2(board_size.x - 1, board_size.y -1))
+	var sw_path = get_path(Vector2(0, board_size.y - 1))
+
+	var corner_paths = []
 	
+	# If there are 2 desired actors, put them diagonal to each other
+	if count == 2:
+		if randi() % 2 == 1:
+			corner_paths.append(nw_path)
+			corner_paths.append(se_path)
+		else:
+			corner_paths.append(ne_path)
+			corner_paths.append(sw_path)
+	else:
+		corner_paths.append(nw_path)
+		corner_paths.append(ne_path)
+		corner_paths.append(se_path)
+		corner_paths.append(sw_path)
+
 	# Iterate for the count of desired actors	
 	for i in range(count):
 		var actor = obj_actor.instance()
