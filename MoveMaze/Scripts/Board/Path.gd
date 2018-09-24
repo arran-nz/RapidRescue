@@ -39,12 +39,12 @@ func _process(delta):
 		_move_toward_target(delta)
 		
 func _move_toward_target(delta):
-	#var vel = (_target_pos - position).normalized() * _SPEED * delta
 	
-	_t += delta / _TRAVEL_TIME
-	var next_pos = _start_pos.linear_interpolate(_target_pos, _t)
-
-	if (_target_pos - position).length() > _TARGET_THRESHOLD:
+	_t += delta
+	var vector_difference = _target_pos - _start_pos
+	var next_pos =  _start_pos + vector_difference * (_t / _TRAVEL_TIME)
+	
+	if _t < _TRAVEL_TIME:
 		position = next_pos
 	else:
 		position = _target_pos
