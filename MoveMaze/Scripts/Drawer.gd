@@ -60,6 +60,7 @@ const CIRCLE_RADIUS = 7
 const GRID_LINES_PER_CELL = 2
 const _AA = true
 
+onready var gm_obj = get_parent().get_node('__Game_Master__')
 onready var board_obj = get_parent().get_node('Board')
 onready var hand_obj = get_parent().get_node('Hand')
 
@@ -78,6 +79,15 @@ func _draw():
 	_draw_injectors()
 	_draw_hand()
 	_draw_actors()
+	
+	_draw_current_player_indictator()
+
+func _draw_current_player_indictator():
+	if gm_obj.turn_manager != null:
+		var actor_index = gm_obj.turn_manager.current_player.index
+		var color = ACTOR_COLORS[actor_index]
+		var y_pos = get_viewport().size.y
+		draw_line(Vector2(0, y_pos), Vector2(get_viewport().size.x, y_pos), color, LINE_WIDTH, _AA)
 
 func _draw_actors():
 	
