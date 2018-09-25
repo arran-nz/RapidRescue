@@ -10,9 +10,11 @@ const board_size = Vector2(7,7)
 var path_cells = []
 var injectors = []
 
+const MAX_ACTORS = 4
 var actors = []
 
 signal extra_path_ready
+signal board_ready
 
 const DIRECTION = {
 				'N' : Vector2(0, -1),
@@ -38,9 +40,6 @@ func _ready():
 	
 	#Injectors
 	_spawn_injectors()
-	
-	#Actors
-	_add_actor(get_path(Vector2()))
 
 	# Extra Path
 	var extra_path = _path_generator.get_moveable_path(Vector2(), obj_path)
@@ -52,6 +51,49 @@ func _ready():
 	var board_input = get_child(0)
 	board_input.resize_collider(board_extent)
 	board_input.connect('board_interaction', self, 'board_interaction')
+
+	emit_signal('board_ready')
+
+func spawn_actors(count):
+	
+	# Don't add more actors than max
+	if count > MAX_ACTORS:
+		print("You can only have %s actors." % MAX_ACTORS)
+		return
+
+	# Ensure this function only runs if there isnt any exsisting actors
+	if len(actors) > 0:
+		print("Actors already exsist.")
+		return
+
+	#Create list of all spawn paths (Corners)
+	var nw_path = get_path(Vector2())
+	var ne_path = get_path(Vector2(board_size.x - 1, 0))
+	var se_path = get_path(Vector2(board_size.x - 1, board_size.y -1))
+	var sw_path = get_path(Vector2(0, board_size.y - 1))
+
+	var corner_paths = []
+	
+	# If there are 2 desired actors, put them diagonal to each other
+	if count == 2:
+		if randi() % 2 == 1:
+			corner_paths.append(nw_path)
+			corner_paths.append(se_path)
+		else:
+			corner_paths.append(ne_path)
+			corner_paths.append(sw_path)
+	else:
+		corner_paths.append(nw_path)
+		corner_paths.append(ne_path)
+		corner_paths.append(se_path)
+		corner_paths.append(sw_path)
+
+	# Iterate for the count of desired actors	
+	for i in range(count):
+		var actor = obj_actor.instance()
+		actor.setup(i, corner_paths[i])
+		add_child(actor)
+		actors.append(actor)
 
 func board_interaction(event):
 	
@@ -138,13 +180,7 @@ func inject_path(inject_index, dir, injected_path):
 			ejected_path.set_target(map_to_world(new_path_index) + half_tile_size)
 	
 	path_cells.erase(ejected_path)
-	return ejected_path
-
-func _add_actor(spawn_path):
-	var actor = obj_actor.instance()
-	actor.active_path = spawn_path
-	add_child(actor)
-	actors.append(actor)
+	return ejected_path	
 
 func _remove_temp_path_properties():
 	for path in path_cells:

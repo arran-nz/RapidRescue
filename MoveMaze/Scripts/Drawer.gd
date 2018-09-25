@@ -45,7 +45,14 @@ const STYLES = {
 		],
 }
 
-var applied_style = 'Vapor'
+const ACTOR_COLORS = [
+	Color(0.957031, 0.152111, 0.152111),
+	Color(0.151656, 0.847656, 0.072977),
+	Color(0.152111, 0.655186, 0.957031),
+	Color(0.960938, 0.90324, 0.289554),
+]
+
+var applied_style = '70s'
 
 const LINE_WIDTH = 5
 const GRID_LINE = 1
@@ -75,7 +82,7 @@ func _draw():
 func _draw_actors():
 	
 	for actor in board_obj.actors:
-		var current_color = STYLES[applied_style][4]
+		var current_color =  ACTOR_COLORS[actor.index]
 		draw_circle(actor.global_position, CIRCLE_RADIUS * 1.2, current_color)
 
 func _draw_board_edge():
