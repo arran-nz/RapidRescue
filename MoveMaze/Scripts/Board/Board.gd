@@ -46,12 +46,6 @@ func _ready():
 	add_child(extra_path)
 	emit_signal('extra_path_ready', funcref(self, 'inject_path'), extra_path)
 	
-	#Setup board input
-	var board_extent = board_size * tile_size
-	var board_input = get_child(0)
-	board_input.resize_collider(board_extent)
-	board_input.connect('board_interaction', self, 'board_interaction')
-
 	emit_signal('board_ready')
 
 func spawn_actors(count):
@@ -95,14 +89,18 @@ func spawn_actors(count):
 		add_child(actor)
 		actors.append(actor)
 
-func board_interaction(event):
+func request_actor_movement(target_position, actor_index):
+	
+	if actor_index >= len(actors) or actor_index < 0:
+		print("Incorrect Actor Index")
+		return
 	
 	_remove_temp_path_properties()
 	
-	var actor = actors[0]
+	var actor = actors[actor_index]
 	if !actor.traversing:
 		var start_path = get_path(world_to_map(actor.position))
-		var end_path = get_path_from_world(event.position)
+		var end_path = get_path_from_world(target_position)
 		
 		var route = route_finder.get_route(start_path, end_path)
 	
@@ -113,6 +111,9 @@ func board_interaction(event):
 				start_path.properties.set('pallete_index', 4)
 				for path in route:
 					path.properties.set('pallete_index', 4)
+				return true
+		
+		return false
 
 func get_path_from_world(world_pos):
 	# Map position reletive to board
