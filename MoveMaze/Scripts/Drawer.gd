@@ -68,35 +68,34 @@ func _process(delta):
 	update()
 
 func _draw():
-	
+
 	_draw_bg()
-	
+
 	if STYLES[applied_style].back():
 		_draw_bg_lines()
-		
+
 	_draw_board_edge()
 	_draw_board_paths()
 	_draw_injectors()
 	_draw_hand()
 	_draw_actors()
-	
+
 	_draw_current_player_indictator()
 
 func _draw_current_player_indictator():
-	if gm_obj.turn_manager != null:
-		var actor_index = gm_obj.turn_manager.current_player.index
+	if gm_obj.tm != null:
+		var actor_index = gm_obj.tm.current_player.index
 		var color = ACTOR_COLORS[actor_index]
 		var y_pos = get_viewport().size.y
-		draw_line(Vector2(0, y_pos), Vector2(get_viewport().size.x, y_pos), color, LINE_WIDTH, _AA)
+		draw_line(Vector2(0, y_pos), Vector2(get_viewport().size.x, y_pos), color, LINE_WIDTH * 2, _AA)
 
 func _draw_actors():
-	
 	for actor in board_obj.actors:
-		var current_color =  ACTOR_COLORS[actor.index]
+		var current_color = ACTOR_COLORS[actor.index]
 		draw_circle(actor.global_position, CIRCLE_RADIUS * 1.2, current_color)
 
 func _draw_board_edge():
-	
+
 	var rect = Rect2(board_obj.global_position, board_obj.board_size * board_obj.tile_size)
 	var color = STYLES[applied_style][1]
 	var edge_width = GRID_LINE * 2
