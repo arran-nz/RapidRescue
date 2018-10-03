@@ -15,6 +15,7 @@ var actors = []
 
 signal extra_path_ready
 signal board_ready
+signal board_paths_updated
 
 const DIRECTION = {
 				'N' : Vector2(0, -1),
@@ -44,7 +45,7 @@ func _ready():
 	# Extra Path
 	var extra_path = _path_generator.get_moveable_path(Vector2(), obj_path)
 	add_child(extra_path)
-	emit_signal('extra_path_ready', funcref(self, 'inject_path'), extra_path)
+	emit_signal('extra_path_ready', extra_path)
 	
 	emit_signal('board_ready')
 
@@ -98,22 +99,29 @@ func request_actor_movement(target_position, actor_index):
 	_remove_temp_path_properties()
 	
 	var actor = actors[actor_index]
-	if !actor.traversing:
-		var start_path = get_path(world_to_map(actor.position))
-		var end_path = get_path_from_world(target_position)
-		
-		var route = route_finder.get_route(start_path, end_path)
+	var start_path = get_path(world_to_map(actor.position))
+	var end_path = get_path_from_world(target_position)
 	
-		if route != null:
-			if len(route) > 1:
-				actor.set_route(route)
-			
-				start_path.properties.set('pallete_index', 4)
-				for path in route:
-					path.properties.set('pallete_index', 4)
-				return true
+	var route = route_finder.get_route(start_path, end_path)
+
+	if route != null:
+		if len(route) > 1:
+			actor.set_route(route)
 		
-		return false
+			start_path.properties.set('pallete_index', 4)
+			for path in route:
+				path.properties.set('pallete_index', 4)
+			return true
+			
+		elif len(route) == 1:
+			return true
+	
+	return false
+
+func request_actor_reach(actor_index):
+	var actor = actors[actor_index]
+	var actor_path = get_path(world_to_map(actor.position))
+	return route_finder.get_reach(actor.active_path)
 
 func get_path_from_world(world_pos):
 	# Map position reletive to board
@@ -181,6 +189,8 @@ func inject_path(inject_index, dir, injected_path):
 			ejected_path.set_target(map_to_world(new_path_index) + half_tile_size)
 	
 	path_cells.erase(ejected_path)
+	
+	emit_signal('board_paths_updated')
 	return ejected_path	
 
 func _remove_temp_path_properties():

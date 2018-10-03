@@ -4,45 +4,45 @@ extends Node2D
 
 const STYLES = {
 
-	'Vapor' :
+	'Vapor':
 		[
-		Color('#050023'),
-		Color('16324f'),
-		Color('#9d0a5c'),
-		Color('#ea638c'),
-		Color('#75d1ff'),
-		true
+			Color('#050023'),
+			Color('16324f'),
+			Color('#9d0a5c'),
+			Color('#ea638c'),
+			Color('#75d1ff'),
+			true
 		],
-		
-	'Alien' :
-		[
-		Color('272d2d'),
-		Color('50514f'),
-		Color('23ce6b'),
-		Color('f6f8ff'),
-		Color('a846a0'),
-		false
+
+	'Alien':
+	[
+			Color('272d2d'),
+			Color('50514f'),
+			Color('23ce6b'),
+			Color('f6f8ff'),
+			Color('a846a0'),
+			false
 		],
-	
-	'70s' :
-		[
-		Color('262322'),
-		Color('63372c'),
-		Color('c97d60'),
-		Color('ffbcb5'),
-		Color('f2e5d7'),
-		false
-		],
-		
-	'Copic' :
-		[
-		Color('0e1d23'),
-		Color('235789'),
-		Color('c1292e'),
-		Color('fdfffc'),
-		Color('f1d302'),
-		false
-		],
+
+	'70s':
+	[
+			Color('262322'),
+			Color('63372c'),
+			Color('c97d60'),
+			Color('ffbcb5'),
+			Color('f2e5d7'),
+			false
+	],
+
+	'Copic':
+	[
+			Color('0e1d23'),
+			Color('235789'),
+			Color('c1292e'),
+			Color('fdfffc'),
+			Color('f1d302'),
+			false
+	],
 }
 
 const ACTOR_COLORS = [
@@ -106,34 +106,34 @@ func _draw_bg_lines():
 	var view = get_viewport().size
 	var grid_resolution = (view / board_obj.board_size) * GRID_LINES_PER_CELL
 	var relative_pos = self.position
-	
-	for x in range(1,grid_resolution.x):
+
+	for x in range(1, grid_resolution.x):
 		var col_pos = (x * board_obj.tile_size.x) / GRID_LINES_PER_CELL
 		var col_limit = view.y
 		draw_line(Vector2(relative_pos.x + col_pos, relative_pos.y), Vector2(col_pos + relative_pos.x, col_limit), STYLES[applied_style][1], GRID_LINE, _AA)
-		
+
 	for y in range(1, grid_resolution.y):
 		var row_pos = (y * board_obj.tile_size.y) / GRID_LINES_PER_CELL
 		var row_limit = view.x
 		draw_line(Vector2(relative_pos.x, relative_pos.y + row_pos), Vector2(row_limit, relative_pos.y + row_pos), STYLES[applied_style][1], GRID_LINE, _AA)
 
 func _draw_bg():
-	var view = get_viewport().size	
+	var view = get_viewport().size
 	var relative_pos = self.position
 	# Draw Background
-	draw_rect(Rect2(relative_pos, view), STYLES[applied_style][0],true)
-	
+	draw_rect(Rect2(relative_pos, view), STYLES[applied_style][0], true)
+
 func _draw_board_paths():
 	for item in board_obj.path_cells:
 		var path_color
 		var border_color
 		if(item.moveable):
 			path_color = STYLES[applied_style][3]
-			border_color = STYLES[applied_style][1] 
+			border_color = STYLES[applied_style][1]
 		else:
 			path_color = STYLES[applied_style][2]
 			border_color = path_color
-			
+
 		_draw_path_border(item, border_color)
 		_draw_path_lines(item, path_color)
 
@@ -145,18 +145,20 @@ func _draw_hand():
 func _draw_injectors():
 	for injector in board_obj.injectors:
 		var current_color
-		if(injector.disabled): current_color = STYLES[applied_style][1]
-		else: current_color = STYLES[applied_style][4]
-		
+		if(injector.disabled):
+			current_color = STYLES[applied_style][1]
+		else:
+			current_color = STYLES[applied_style][4]
+
 		draw_circle(injector.global_position, CIRCLE_RADIUS, current_color)
-	
+
 func _draw_path_border(item, color):
 	var size = board_obj.tile_size * 0.65
 	var box = Rect2(item.global_position - size / 2, size)
 	_draw_border(box, 2, color)
-	
+
 func _draw_path_lines(item, color):
-	
+
 	if item.properties.has('pallete_index'):
 		color = STYLES[applied_style][item.properties.get('pallete_index')]
 
@@ -188,9 +190,9 @@ func _draw_path_lines(item, color):
 			color,
 			LINE_WIDTH,
 			_AA)
-			
+
 func _draw_border(rect, width, color):
 	draw_line(rect.position, rect.position + Vector2(rect.size.x, 0), color, width, _AA)
 	draw_line(rect.position, rect.position + Vector2(0, rect.size.y), color, width, _AA)
-	draw_line(rect.position +  Vector2(rect.size.x, 0), rect.position + rect.size, color, width, _AA)
+	draw_line(rect.position + Vector2(rect.size.x, 0), rect.position + rect.size, color, width, _AA)
 	draw_line(rect.position + Vector2(0, rect.size.y), rect.position + rect.size, color, width, _AA)
