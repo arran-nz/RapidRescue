@@ -13,7 +13,7 @@ var traversal = TraversalInfo.new()
 
 var _target_pos
 var _start_pos
-var _t
+var _t = 0
 
 # Travel time in seconds
 const _TRAVEL_TIME = 0.6
@@ -33,20 +33,28 @@ func init(index, connections, moveable, item=null):
 	
 func _process(delta):
 	
-	if _target_pos != position:
+	if _t <= _TRAVEL_TIME:
 		_move_toward_target(delta)
 		
 func _move_toward_target(delta):
 	
 	_t += delta
-	var vector_difference = _target_pos - _start_pos
-	var next_pos =  _start_pos + vector_difference * (_t / _TRAVEL_TIME)
-	
-	if _t < _TRAVEL_TIME:
-		position = next_pos
-	else:
+
+	if _t >= _TRAVEL_TIME:
 		position = _target_pos
 		emit_signal("target_reached")
+		return
+		
+	var time = _t / _TRAVEL_TIME
+	var progress = Easing.smooth_stop5(time)
+	if properties.has('debug'):
+		print(progress)
+		print(time)
+		print("----")
+	var vector_difference = _target_pos - _start_pos
+	var next_pos = _start_pos + (progress * vector_difference)
+	
+	position = next_pos
 
 func set_target(target, is_instant=false):
 	
