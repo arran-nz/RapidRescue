@@ -47,10 +47,6 @@ func _move_toward_target(delta):
 		
 	var time = _t / _TRAVEL_TIME
 	var progress = Easing.smooth_stop5(time)
-	if properties.has('debug'):
-		print(progress)
-		print(time)
-		print("----")
 	var vector_difference = _target_pos - _start_pos
 	var next_pos = _start_pos + (progress * vector_difference)
 	
