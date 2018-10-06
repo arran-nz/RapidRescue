@@ -18,6 +18,7 @@ var traversing setget ,_has_route
 # Travel time in seconds
 const _TRAVEL_TIME = 0.4
 
+
 func _ready():
 	_start_pos = position
 	pass
@@ -30,25 +31,29 @@ func setup(index, active_path):
 func _process(delta):
 	
 	if _has_route():
-		_move_toward_target(delta)
+		
+		if _t < _TRAVEL_TIME:
+			_move_toward_target(delta)
 
-		# If reached target
-		if position == _next_route_path.position:
-			_set_next_target()
-			_reset_moving_values()
 	else:
 		position = active_path.position
 		
 func _move_toward_target(delta):
 	
 	_t += delta
-	var vector_difference = _next_route_path.position - _start_pos
-	var next_pos =  _start_pos + vector_difference * (_t / _TRAVEL_TIME)
 	
-	if _t < _TRAVEL_TIME:
-		position = next_pos
-	else:
+	if _t >= _TRAVEL_TIME:
 		position = _next_route_path.position
+		_set_next_target()
+		_reset_moving_values()
+		return
+	
+	var time = _t / _TRAVEL_TIME
+	var progress = time
+	var vector_difference = _next_route_path.position - _start_pos
+	var next_pos = _start_pos + (progress * vector_difference)
+	
+	position = next_pos
 
 func _set_next_target():
 	_next_route_path = _route.pop_front()
@@ -62,6 +67,8 @@ func _has_route():
 
 func set_route(route):
 	self._route = route
+
+	#Bind to end path of route
 	active_path = _route[-1]
 	_set_next_target()
 	_reset_moving_values()

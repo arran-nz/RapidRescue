@@ -103,14 +103,18 @@ func request_actor_movement(target_position, actor_index):
 	var end_path = get_path_from_world(target_position)
 	
 	var route = route_finder.get_route(start_path, end_path)
-
+	
 	if route != null:
 		if len(route) > 1:
-			actor.set_route(route)
 		
 			start_path.properties.set('pallete_index', 4)
 			for path in route:
 				path.properties.set('pallete_index', 4)
+
+			#Discard first path on route as Actor does not need it
+			route.pop_front()
+			actor.set_route(route)
+			
 			return true
 			
 		elif len(route) == 1:
