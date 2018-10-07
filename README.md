@@ -14,12 +14,22 @@ Needs:
 
 - [x] Board layout
 - [x] Move lines
-- [x] correct path distrubution on board
+- [x] Correct path distrubution on board
 - [x] Inject paths
 - [x] Rotate paths
 - [x] Style and art direction (Vaporwave)
 - [x] Player pieces
+- [x] Player turn manangement
 - [x] Path finding
+- [x] Item collection
+- [ ] Collectable spawn distributions
+- [ ] Player collection queue
+
+- [ ] Art
+  - [ ] Actors
+  - [ ] Collectables
+  - [ ] Background
+
 - [ ] UI
 - [ ] Menu
 
