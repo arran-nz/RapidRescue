@@ -30,14 +30,14 @@ func board_ready():
 	board_input.resize_collider(board_extent)
 	board_input.connect('board_interaction', self, 'board_interaction')
 	
-	board_obj.spawn_actors(human_players)
-	board_obj.connect('board_paths_updated', self, 'can_current_player_move')
-	
 	# Setup players and turn mananger
 	var players = []
 	for i in range(human_players):
 		var player = Player.new(i, "Player %s" % (i + 1))
 		players.append(player)
+		
+	board_obj.spawn_actors(players)
+	board_obj.connect('board_paths_updated', self, 'can_current_player_move')		
 		
 	tm = TurnManager.new(players)
 
@@ -109,10 +109,17 @@ class Player:
 	var has_injected
 	var has_moved
 	
+	var collected_items = []
+	
 	func _init(index, display_name):
 		self.index = index
 		self.display_name = display_name
 		
+	func receive_collectable(item):
+		print(display_name + ": Collected an item")
+		collected_items.append(item)
+		
 	func reset_turn():
 		has_injected = false
 		has_moved = false
+		
