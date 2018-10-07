@@ -49,7 +49,9 @@ func _ready():
 	
 	emit_signal('board_ready')
 
-func spawn_actors(count):
+func spawn_actors(players):
+	
+	var count = len(players)
 	
 	# Don't add more actors than max
 	if count > MAX_ACTORS:
@@ -87,6 +89,7 @@ func spawn_actors(count):
 	for i in range(count):
 		var actor = obj_actor.instance()
 		actor.setup(i, corner_paths[i])
+		actor.set_owner(players[i])
 		add_child(actor)
 		actors.append(actor)
 
@@ -99,7 +102,7 @@ func request_actor_movement(target_position, actor_index):
 	_remove_temp_path_properties()
 	
 	var actor = actors[actor_index]
-	var start_path = get_path(world_to_map(actor.position))
+	var start_path = actor.active_path
 	var end_path = get_path_from_world(target_position)
 	
 	var route = route_finder.get_route(start_path, end_path)

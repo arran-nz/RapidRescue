@@ -52,6 +52,8 @@ const ACTOR_COLORS = [
 	Color(0.960938, 0.90324, 0.289554),
 ]
 
+const COLLECTABLE_COLOR = Color(0.925226, 0.042969, 1)
+
 var applied_style = '70s'
 
 const LINE_WIDTH = 5
@@ -135,11 +137,16 @@ func _draw_board_paths():
 
 		_draw_path_border(item, border_color)
 		_draw_path_lines(item, path_color)
+		
+		if item.collectable != null:
+			_draw_path_collectable(item)
 
 func _draw_hand():
 	if hand_obj.current_path != null:
 		_draw_path_border(hand_obj.current_path, STYLES[applied_style][1])
 		_draw_path_lines(hand_obj.current_path, STYLES[applied_style][3])
+		if hand_obj.current_path.collectable != null:
+			_draw_path_collectable(hand_obj.current_path)
 
 func _draw_injectors():
 	for injector in board_obj.injectors:
@@ -150,6 +157,9 @@ func _draw_injectors():
 			current_color = STYLES[applied_style][4]
 
 		draw_circle(injector.global_position, CIRCLE_RADIUS, current_color)
+
+func _draw_path_collectable(item):
+	draw_circle(item.global_position, CIRCLE_RADIUS, COLLECTABLE_COLOR)
 
 func _draw_path_border(item, color):
 	var size = board_obj.tile_size * 0.65

@@ -4,7 +4,7 @@ extends Node2D
 
 var connections
 var moveable
-var item
+var collectable
 # Index Relative to the playing board
 var index
 
@@ -25,11 +25,11 @@ func _ready():
 	_start_pos = position
 	pass
 	
-func init(index, connections, moveable, item=null):
+func init(index, connections, moveable, collectable=null):
 	self.index = index
 	self.connections = connections
 	self.moveable = moveable
-	self.item = item
+	self.collectable = collectable
 	
 func _process(delta):
 	
@@ -65,11 +65,13 @@ func set_target(target, is_instant=false):
 func update_index(index):
 	self.index = index
 
-func collect_item():
-	
-	var temp_item = item
-	item = null
+func pickup_collectable():	
+	var temp_item = collectable
+	collectable = null
 	return temp_item
+
+func has_collectable():
+	return collectable != null
 
 class TraversalInfo:
 	"""Used for traversing the board / path finding."""
@@ -81,7 +83,6 @@ class TraversalInfo:
 		self.g_cost = 0
 		self.h_cost = 0
 
-	
 
 class PropertyManager:
 	var _properties = []
