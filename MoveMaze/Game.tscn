@@ -66,25 +66,25 @@ dof_blur_near_transition = 1.0
 dof_blur_near_amount = 0.1
 dof_blur_near_quality = 1
 glow_enabled = true
-glow_levels/1 = false
-glow_levels/2 = false
+glow_levels/1 = true
+glow_levels/2 = true
 glow_levels/3 = true
-glow_levels/4 = false
-glow_levels/5 = true
-glow_levels/6 = false
+glow_levels/4 = true
+glow_levels/5 = false
+glow_levels/6 = true
 glow_levels/7 = false
 glow_intensity = 1.0
-glow_strength = 1.3
+glow_strength = 1.2
 glow_bloom = 0.0
-glow_blend_mode = 2
+glow_blend_mode = 0
 glow_hdr_threshold = 1.0
 glow_hdr_scale = 1.0
 glow_bicubic_upscale = true
 adjustment_enabled = true
 adjustment_brightness = 1.0
-adjustment_contrast = 1.25
+adjustment_contrast = 1.1
 adjustment_saturation = 1.0
-_sections_unfolded = [ "Adjustments", "Glow" ]
+_sections_unfolded = [ "Adjustments", "Glow", "Glow/levels" ]
 
 [sub_resource type="RectangleShape2D" id=2]
 

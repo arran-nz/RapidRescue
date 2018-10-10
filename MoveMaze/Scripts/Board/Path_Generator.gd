@@ -36,7 +36,7 @@ const PATH_DISTRIBUTION = {
 	}
 
 #Where to spawn the collectables
-const COLLECTABLE_INDEXS = [Vector2(5,5), Vector2(3,6)]
+const COLLECTABLE_INDEXS = [Vector2(5,5)]
 	
 var _available_paths  = []
 

@@ -5,7 +5,7 @@ extends Node
 onready var board_obj = get_parent().get_node('Board')
 onready var hand_obj = get_parent().get_node('Hand')
 
-var human_players = 4
+var human_players = 2
 var ai_players = 0
 
 # Turn Mananger
