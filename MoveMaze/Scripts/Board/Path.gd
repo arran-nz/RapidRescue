@@ -25,7 +25,7 @@ func _ready():
 	_start_pos = position
 	pass
 	
-func init(index, connections, moveable):
+func init(index, connections, moveable, collectable=null):
 	self.index = index
 	self.connections = connections
 	self.moveable = moveable
@@ -64,12 +64,6 @@ func set_target(target, is_instant=false):
 
 func update_index(index):
 	self.index = index
-
-func spawn_collectable(item):
-	if not has_collectable():
-		self.collectable = item
-	else:
-		print("Can't have two collectables!")
 
 func pickup_collectable():	
 	var temp_item = collectable
