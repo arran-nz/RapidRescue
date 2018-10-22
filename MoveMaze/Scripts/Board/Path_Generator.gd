@@ -34,9 +34,6 @@ const PATH_DISTRIBUTION = {
 				'I' : 12,
 				'L' : 16,
 	}
-
-#Where to spawn the collectables
-const COLLECTABLE_INDEXS = [Vector2(5,5)]
 	
 var _available_paths  = []
 
@@ -88,7 +85,7 @@ func get_moveable_path(index, obj_path):
 	for c in content:
 		connections[c] = true
 		
-	path_tile.init(index, connections, true, _request_item(index))
+	path_tile.init(index, connections, true)
 	
 	return path_tile	
 
@@ -105,13 +102,9 @@ func _get_defined_path(index, obj_path, content):
 	for c in content:
 		connections[c] = true
 		
-	path_tile.init(index, connections, false, _request_item(index))
+	path_tile.init(index, connections, false)
 	
 	return path_tile
-
-func _request_item(index):
-	if COLLECTABLE_INDEXS.has(index):
-		return 'C'
 
 func _pop_distributed_path_type():
 	if len(_available_paths ) > 0:
