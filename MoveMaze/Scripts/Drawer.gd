@@ -28,7 +28,7 @@ const ACTOR_COLORS = [
 ]
 
 
-const COLLECTABLE_COLOR = Color(0.370789, 0.556067, 0.949219)
+const COLLECTABLE_COLOR = Color(1, 0.652344, 0.961976)
 
 var applied_style = 'Outrun'
 
@@ -145,7 +145,7 @@ func _draw_injectors():
 		draw_circle(injector.global_position, CIRCLE_RADIUS, current_color)
 
 func _draw_path_collectable(item):
-	draw_circle(item.global_position, CIRCLE_RADIUS, COLLECTABLE_COLOR)
+	draw_circle(item.global_position, CIRCLE_RADIUS * 1.2, COLLECTABLE_COLOR)
 
 func _draw_path_border(item, color):
 	var outter_size = board_obj.tile_size * 0.8

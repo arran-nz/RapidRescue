@@ -15,6 +15,8 @@ var _t = 0
 
 var traversing setget ,_has_route
 
+signal collected_item
+
 # Travel time in seconds
 const _TRAVEL_TIME = 0.4
 
@@ -54,6 +56,11 @@ func _move_toward_target(delta):
 		position = _next_route_path.position
 		_set_next_target()
 		_reset_moving_values()
+		
+		if not _has_route():
+			#If on the last part of route
+			_check_and_collect_path_item()
+			
 		return
 	
 	var time = _t / _TRAVEL_TIME
@@ -62,6 +69,11 @@ func _move_toward_target(delta):
 	var next_pos = _start_pos + (progress * vector_difference)
 	
 	position = next_pos
+
+func _check_and_collect_path_item():
+	if active_path.c_storage.is_occupied:
+		var item = active_path.c_storage.collect()
+		emit_signal("collected_item", item)
 
 func _set_next_target():
 	_next_route_path = _route.pop_front()
