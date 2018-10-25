@@ -7,9 +7,6 @@ var active_path
 # Unique index
 var index
 
-# Player who 'owns' this actor, therefore receives any collection
-var p_owner
-
 var _next_route_path
 var _route
 
@@ -17,6 +14,8 @@ var _start_pos
 var _t = 0
 
 var traversing setget ,_has_route
+
+signal collected_item
 
 # Travel time in seconds
 const _TRAVEL_TIME = 0.4
@@ -30,10 +29,6 @@ func setup(index, active_path):
 	self.index = index
 	self.active_path = active_path
 	self.position = active_path.position
-	
-func set_owner(player):
-	"""Set the owner who retrieves the collected items."""
-	self.p_owner = player
 
 func set_route(route):
 	self._route = route
@@ -61,6 +56,11 @@ func _move_toward_target(delta):
 		position = _next_route_path.position
 		_set_next_target()
 		_reset_moving_values()
+		
+		if not _has_route():
+			#If on the last part of route
+			_check_and_collect_path_item()
+			
 		return
 	
 	var time = _t / _TRAVEL_TIME
@@ -70,15 +70,13 @@ func _move_toward_target(delta):
 	
 	position = next_pos
 
+func _check_and_collect_path_item():
+	if active_path.c_storage.is_occupied:
+		var item = active_path.c_storage.collect()
+		emit_signal("collected_item", item)
+
 func _set_next_target():
 	_next_route_path = _route.pop_front()
-	if _next_route_path == null:
-		_check_collectable_on_path()
-		
-func _check_collectable_on_path():
-	if active_path.has_collectable():
-		var collectable = active_path.pickup_collectable()
-		p_owner.receive_collectable(collectable)
 	
 func _reset_moving_values():
 	_t = 0

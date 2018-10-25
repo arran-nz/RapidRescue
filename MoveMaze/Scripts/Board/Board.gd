@@ -49,6 +49,10 @@ func _ready():
 	
 	emit_signal('board_ready')
 
+func spawn_collectable():
+	var x = randi() % len(path_cells)
+	path_cells[x].c_storage.store(1)
+
 func spawn_actors(players):
 	
 	var count = len(players)
@@ -89,7 +93,6 @@ func spawn_actors(players):
 	for i in range(count):
 		var actor = obj_actor.instance()
 		actor.setup(i, corner_paths[i])
-		actor.set_owner(players[i])
 		add_child(actor)
 		actors.append(actor)
 

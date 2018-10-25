@@ -37,9 +37,20 @@ func board_ready():
 		players.append(player)
 		
 	board_obj.spawn_actors(players)
-	board_obj.connect('board_paths_updated', self, 'can_current_player_move')		
+	board_obj.connect('board_paths_updated', self, 'can_current_player_move')
+	
+	#Connect actors to send collected items to each respective player
+	for i in range(len(board_obj.actors)):
+		var actor = board_obj.actors[i]
+		actor.connect("collected_item", players[i], "receive_collectable")
+		actor.connect("collected_item", self, "manage_collection")
 		
 	tm = TurnManager.new(players)
+	
+	board_obj.spawn_collectable()
+
+func manage_collection(collected_item):
+	board_obj.spawn_collectable()
 
 func board_interaction(event):
 	"""Called when the board has been mouse pressed."""
