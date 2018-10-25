@@ -7,9 +7,6 @@ var active_path
 # Unique index
 var index
 
-# Player who 'owns' this actor, therefore receives any collection
-var p_owner
-
 var _next_route_path
 var _route
 
@@ -30,10 +27,6 @@ func setup(index, active_path):
 	self.index = index
 	self.active_path = active_path
 	self.position = active_path.position
-	
-func set_owner(player):
-	"""Set the owner who retrieves the collected items."""
-	self.p_owner = player
 
 func set_route(route):
 	self._route = route
@@ -72,13 +65,6 @@ func _move_toward_target(delta):
 
 func _set_next_target():
 	_next_route_path = _route.pop_front()
-	if _next_route_path == null:
-		_check_collectable_on_path()
-		
-func _check_collectable_on_path():
-	if active_path.has_collectable():
-		var collectable = active_path.pickup_collectable()
-		p_owner.receive_collectable(collectable)
 	
 func _reset_moving_values():
 	_t = 0

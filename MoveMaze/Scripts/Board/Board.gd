@@ -89,7 +89,6 @@ func spawn_actors(players):
 	for i in range(count):
 		var actor = obj_actor.instance()
 		actor.setup(i, corner_paths[i])
-		actor.set_owner(players[i])
 		add_child(actor)
 		actors.append(actor)
 

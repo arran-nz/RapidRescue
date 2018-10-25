@@ -124,7 +124,7 @@ func _draw_board_paths():
 		_draw_path_border(item, border_color)
 		_draw_path_lines(item, path_color)
 		
-		if item.collectable != null:
+		if item.c_storage.is_occupied:
 			_draw_path_collectable(item)
 
 func _draw_hand():

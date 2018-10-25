@@ -10,6 +10,7 @@ var index
 
 var properties = PropertyManager.new()
 var traversal = TraversalInfo.new()
+var c_storage = CollectableStorage.new()
 
 var _target_pos
 var _start_pos
@@ -65,13 +66,22 @@ func set_target(target, is_instant=false):
 func update_index(index):
 	self.index = index
 
-func pickup_collectable():	
-	var temp_item = collectable
-	collectable = null
-	return temp_item
-
-func has_collectable():
-	return collectable != null
+class CollectableStorage:
+	"""Store Information regarding a potential collectable."""
+	var item
+	
+	var is_occupied setget ,occupied
+	
+	func occupied():
+		return item != null
+	
+	func collect():
+		var t = item
+		item = null
+		return t
+	
+	func store(item):
+		self.item = item
 
 class TraversalInfo:
 	"""Used for traversing the board / path finding."""
