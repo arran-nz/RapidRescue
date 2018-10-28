@@ -40,12 +40,12 @@ func set_route(route):
 
 func _process(delta):
 	
-	if _has_route():
+	if _has_route() and _t < _TRAVEL_TIME:
 		
-		if _t < _TRAVEL_TIME:
-			_move_toward_target(delta)
+		_move_toward_target(delta)
 
 	else:
+		_check_and_collect_path_item()
 		position = active_path.position
 		
 func _move_toward_target(delta):
@@ -56,10 +56,6 @@ func _move_toward_target(delta):
 		position = _next_route_path.position
 		_set_next_target()
 		_reset_moving_values()
-		
-		if not _has_route():
-			#If on the last part of route
-			_check_and_collect_path_item()
 			
 		return
 	
