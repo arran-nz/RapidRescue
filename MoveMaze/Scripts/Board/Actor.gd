@@ -18,7 +18,8 @@ var traversing setget ,_has_route
 signal collected_item
 
 # Travel time in seconds
-const _TRAVEL_TIME = 0.4
+const _TRAVEL_TIME = 1.1
+var _time_to_node
 
 
 func _ready():
@@ -32,7 +33,8 @@ func setup(index, active_path):
 
 func set_route(route):
 	self._route = route
-
+	# Force a float, as if it's an INT the result will be INT too.
+	_time_to_node = float(_TRAVEL_TIME) / len(_route)
 	#Bind to end path of route
 	active_path = _route[-1]
 	_set_next_target()
@@ -40,7 +42,7 @@ func set_route(route):
 
 func _process(delta):
 	
-	if _has_route() and _t < _TRAVEL_TIME:
+	if _has_route():
 		
 		_move_toward_target(delta)
 
@@ -52,17 +54,17 @@ func _move_toward_target(delta):
 	
 	_t += delta
 	
-	if _t >= _TRAVEL_TIME:
+	if _t >= _time_to_node:
 		position = _next_route_path.position
 		_set_next_target()
 		_reset_moving_values()
-			
 		return
 	
-	var time = _t / _TRAVEL_TIME
-	var progress = time
+	var time = _t / _time_to_node
+	var per_node_progress = time
+	
 	var vector_difference = _next_route_path.position - _start_pos
-	var next_pos = _start_pos + (progress * vector_difference)
+	var next_pos = _start_pos + (per_node_progress * vector_difference)
 	
 	position = next_pos
 
