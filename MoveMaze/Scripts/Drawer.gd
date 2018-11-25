@@ -156,6 +156,9 @@ func _draw_path_lines(item, color):
 
 	if item.properties.has('pallete_index'):
 		color = STYLES[applied_style]['Active']
+		
+	if item.properties.has('test'):
+		color = Color(0.134802, 0.894531, 0.090851)
 
 	if item.connections['S']:
 		draw_line(

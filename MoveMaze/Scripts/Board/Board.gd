@@ -222,6 +222,7 @@ func inject_path(inject_index, dir, injected_path):
 func _remove_temp_path_properties():
 	for path in path_cells:
 		path.properties.remove('pallete_index')
+		path.properties.remove('test')
 
 func _spawn_injectors():
 	
