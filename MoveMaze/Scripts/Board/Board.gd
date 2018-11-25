@@ -50,8 +50,24 @@ func _ready():
 	emit_signal('board_ready')
 
 func spawn_collectable():
-	var x = randi() % len(path_cells)
-	path_cells[x].c_storage.store(1)
+	
+	var open_cells = []
+	var closed_cells = []
+	# Rule out cells are within reach of ALL actors
+
+	for actor in actors:
+		var reach = route_finder.get_reach(actor.active_path)
+		for cell in reach:
+			closed_cells.append(cell)
+	
+	# Add the remaining cells to the open list
+	for cell in path_cells:
+		if !closed_cells.has(cell):
+			open_cells.append(cell)
+	
+	# Choose randomly from open cells
+	var x = randi() % len(open_cells)
+	open_cells[x].c_storage.store(1)
 
 func spawn_actors(players):
 	
