@@ -24,11 +24,7 @@ func board_ready():
 	for inj in board_obj.injectors:
 		inj.connect('injector_pressed', self, 'request_path_injection')
 	
-	#Setup board input
-	var board_extent = board_obj.board_size * board_obj.tile_size
-	var board_input = board_obj.get_child(0)
-	board_input.resize_collider(board_extent)
-	board_input.connect('board_interaction', self, 'board_interaction')
+	__Input__.subscribe("world_select", self, "world_select")
 	
 	# Setup players and turn mananger
 	var players = []
@@ -52,14 +48,15 @@ func board_ready():
 func manage_collection(collected_item):
 	board_obj.spawn_collectable()
 
-func board_interaction(event):
+func world_select(position):
 	"""Called when the board has been mouse pressed."""
 	if tm.current_player.has_injected:
-		var success = board_obj.request_actor_movement(event.position, tm.current_player.index)
-		
-		if success:
-			tm.current_player.has_moved = true
-			tm.cycle()
+		if board_obj.get_path_from_world(position) != null:
+			
+			var success = board_obj.request_actor_movement(position, tm.current_player.index)
+			if success:
+				tm.current_player.has_moved = true
+				tm.cycle()
 	else:
 		print("%s must place path first!" % tm.current_player.display_name)
 

@@ -3,6 +3,7 @@
 extends Node
 
 signal rotate_hand
+signal world_select
 
 signal move_selector
 signal select
@@ -13,5 +14,9 @@ func subscribe(signal_name, obj, method):
 func unsubscribe(signal_name, obj, method):
 		self.disconnect(signal_name, obj, method)
 
-func _process(delta):	
-	if Input.is_action_just_pressed('rotate_hand'): emit_signal('rotate_hand')
+func _input(event):
+    # Mouse in viewport coordinates
+	if event is InputEventMouseButton and Input.is_mouse_button_pressed(1):
+		emit_signal('world_select', event.position)
+		
+	if event.is_action_pressed('rotate_hand') : emit_signal('rotate_hand')

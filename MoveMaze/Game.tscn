@@ -5,7 +5,6 @@
 [ext_resource path="res://Scripts/Drawer.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/Hand.gd" type="Script" id=4]
 [ext_resource path="res://Scripts/Board/Board.gd" type="Script" id=5]
-[ext_resource path="res://Scripts/Board/Board_Input.gd" type="Script" id=6]
 
 [sub_resource type="Environment" id=1]
 
@@ -146,7 +145,7 @@ linear_damp = 0.1
 angular_damp = 1.0
 audio_bus_override = false
 audio_bus_name = "Master"
-script = ExtResource( 6 )
+script = SubResource( 3 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Board/Board_Interaction" index="0"]
