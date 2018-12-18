@@ -35,7 +35,7 @@ var applied_style = 'Outrun'
 const LINE_WIDTH = 4
 const GRID_LINE = 1
 const CIRCLE_RADIUS = 7
-const GRID_LINES_PER_CELL = 2
+const GRID_LINES_PER_CELL = 1
 const _AA = true
 
 onready var gm_obj = get_parent().get_node('__Game_Master__')
@@ -74,7 +74,7 @@ func _draw_actors():
 
 func _draw_board_edge():
 
-	var rect = Rect2(board_obj.global_position, board_obj.board_size * board_obj.tile_size)
+	var rect = Rect2(board_obj.global_position - board_obj.tile_size / 2, board_obj.board_size * board_obj.tile_size)
 	var color = STYLES[applied_style]['BoardLines']
 	var edge_width = GRID_LINE 
 	_draw_border(rect, edge_width, color)

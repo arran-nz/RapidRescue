@@ -40,7 +40,7 @@ var _available_paths  = []
 func _init():
 	_distribute_paths()
 	
-func gen_path(board_size, tile_size, grid):
+func gen_path(board_size, grid):
 	
 	randomize()
 	var path_cells = []
@@ -60,10 +60,8 @@ func gen_path(board_size, tile_size, grid):
 			path_tile = _get_defined_path(Vector2(x,y), grid.obj_path, content)
 		else:
 			path_tile = get_moveable_path(Vector2(x,y), grid.obj_path)
-				
-		var px = (x * tile_size.x)
-		var py = (y * tile_size.y)
-		path_tile.position = Vector2(px, py) + (tile_size / 2)
+
+		path_tile.position = grid.map_to_world(Vector2(x, y))
 		grid.add_child(path_tile)
 		
 		path_cells.append(path_tile)

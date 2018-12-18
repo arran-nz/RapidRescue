@@ -4,7 +4,6 @@
 extends TileMap
 
 var tile_size = get_cell_size()
-var half_tile_size = tile_size / 2
 
 const board_size = Vector2(7,7)
 var path_cells = []
@@ -37,7 +36,7 @@ var route_finder = _route_finder_res.new(DIRECTION, funcref(self, "get_path"))
 func _ready():	
 	
 	var _path_generator = _path_gen_res.new()
-	path_cells = _path_generator.gen_path(board_size, tile_size, self)
+	path_cells = _path_generator.gen_path(board_size, self)
 	
 	#Injectors
 	_spawn_injectors()
@@ -173,7 +172,7 @@ func inject_path(inject_index, dir, injected_path):
 	_get_injector(disabled_inj_index).disabled = true
 	
 	# Set World Target
-	var world_target = map_to_world(inject_index) + half_tile_size
+	var world_target = map_to_world(inject_index)
 	# Move to world target
 	injected_path.set_target(world_target, false)
 	
@@ -212,7 +211,7 @@ func inject_path(inject_index, dir, injected_path):
 			#Collect the path
 			ejected_path = current_path
 			# Set target to off the board
-			ejected_path.set_target(map_to_world(new_path_index) + half_tile_size)
+			ejected_path.set_target(map_to_world(new_path_index))
 	
 	path_cells.erase(ejected_path)
 	
@@ -247,11 +246,11 @@ func _spawn_injectors():
 		var new_south_inj = obj_injector.instance()
 		
 		var n_index = Vector2(NW.x + x_i, NW.y + DIRECTION.N.y)
-		new_north_inj.position = map_to_world(n_index) + half_tile_size
+		new_north_inj.position = map_to_world(n_index)
 		new_north_inj.init(Vector2(x_i, n_index.y) + DIRECTION.S, DIRECTION.S)
 
 		var s_index = Vector2(NW.x + x_i, NW.y + (board_size.y - 1) + DIRECTION.S.y)
-		new_south_inj.position = map_to_world(s_index) + half_tile_size
+		new_south_inj.position = map_to_world(s_index)
 		new_south_inj.init(Vector2(x_i, s_index.y) + DIRECTION.N, DIRECTION.N)
 		
 		injectors.append(new_north_inj)
@@ -265,11 +264,11 @@ func _spawn_injectors():
 		var new_west_inj = obj_injector.instance()
 		
 		var e_index = Vector2(NW.x + (board_size.x - 1) + DIRECTION.E.x, NW.y + y_i)
-		new_east_inj.position = map_to_world(e_index) + half_tile_size
+		new_east_inj.position = map_to_world(e_index)
 		new_east_inj.init(Vector2(e_index.x, y_i) + DIRECTION.W , DIRECTION.W)
 
 		var w_index = Vector2(NW.x + DIRECTION.W.x, NW.y + y_i)
-		new_west_inj.position = map_to_world(w_index) + half_tile_size
+		new_west_inj.position = map_to_world(w_index)
 		new_west_inj.init(Vector2(w_index.x, y_i) + DIRECTION.E, DIRECTION.E)
 		
 		injectors.append(new_east_inj)
@@ -278,7 +277,7 @@ func _spawn_injectors():
 		add_child(new_west_inj)
 
 func _move_path(path, new_index):
-	var pos = map_to_world(new_index) + half_tile_size
+	var pos = map_to_world(new_index)
 	path.update_index(new_index)
 	path.set_target(pos)
 

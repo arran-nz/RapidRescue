@@ -85,12 +85,34 @@ adjustment_contrast = 1.1
 adjustment_saturation = 1.0
 _sections_unfolded = [ "Adjustments", "Glow", "Glow/levels" ]
 
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="GDScript" id=2]
+
+script/source = "# Board_Input - Manage mouse interaction on the board.
+
+extends Area2D
+
+signal board_interaction
+
+func resize_collider(extent):
+	print(extent)
+	var collider = get_child(0)
+	collider.shape.extents = extent / 2
+	collider.position = extent / 2	
+
+
+func _input_event(viewport, event, shape_idx):
+	if event.is_pressed():
+		emit_signal(\"board_interaction\", event)
+	pass"
+
+[sub_resource type="RectangleShape2D" id=3]
 
 custom_solver_bias = 0.0
 extents = Vector2( 10, 10 )
 
 [node name="Game" type="Node" index="0"]
+
+_sections_unfolded = [ "Pause" ]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="0"]
 
@@ -114,14 +136,14 @@ script = ExtResource( 4 )
 
 [node name="Board" type="TileMap" parent="." index="5"]
 
-position = Vector2( 128, 64 )
+position = Vector2( 128, 128 )
 mode = 0
 tile_set = null
 cell_size = Vector2( 64, 64 )
 cell_quadrant_size = 16
 cell_custom_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 cell_half_offset = 2
-cell_tile_origin = 0
+cell_tile_origin = 1
 cell_y_sort = false
 cell_clip_uv = false
 collision_use_kinematic = false
@@ -133,7 +155,7 @@ occluder_light_mask = 1
 format = 1
 tile_data = PoolIntArray(  )
 script = ExtResource( 5 )
-_sections_unfolded = [ "Material", "Transform", "Visibility" ]
+_sections_unfolded = [ "Cell", "Material", "Transform", "Visibility" ]
 
 [node name="Board_Interaction" type="Area2D" parent="Board" index="0"]
 
@@ -145,12 +167,12 @@ linear_damp = 0.1
 angular_damp = 1.0
 audio_bus_override = false
 audio_bus_name = "Master"
-script = SubResource( 3 )
+script = SubResource( 2 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Board/Board_Interaction" index="0"]
 
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 _sections_unfolded = [ "Transform" ]
 
 
