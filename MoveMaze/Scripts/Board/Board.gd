@@ -306,4 +306,9 @@ func _in_board(index):
 	if index.x < board_size.x and index.x >= 0:
 		if index.y < board_size.y and index.y >= 0:
 			return true
-	return false	
+	return false
+	
+
+# OVERRIDE TO ACCOUNT FOR CENTERING IN CELL
+func map_to_world(map_position, ignore_half_ofs=false):
+	return .map_to_world(map_position, ignore_half_ofs) + tile_size / 2

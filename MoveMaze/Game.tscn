@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Objects/__Input__.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=2]
@@ -85,31 +85,6 @@ adjustment_contrast = 1.1
 adjustment_saturation = 1.0
 _sections_unfolded = [ "Adjustments", "Glow", "Glow/levels" ]
 
-[sub_resource type="GDScript" id=2]
-
-script/source = "# Board_Input - Manage mouse interaction on the board.
-
-extends Area2D
-
-signal board_interaction
-
-func resize_collider(extent):
-	print(extent)
-	var collider = get_child(0)
-	collider.shape.extents = extent / 2
-	collider.position = extent / 2	
-
-
-func _input_event(viewport, event, shape_idx):
-	if event.is_pressed():
-		emit_signal(\"board_interaction\", event)
-	pass"
-
-[sub_resource type="RectangleShape2D" id=3]
-
-custom_solver_bias = 0.0
-extents = Vector2( 10, 10 )
-
 [node name="Game" type="Node" index="0"]
 
 _sections_unfolded = [ "Pause" ]
@@ -136,7 +111,7 @@ script = ExtResource( 4 )
 
 [node name="Board" type="TileMap" parent="." index="5"]
 
-position = Vector2( 128, 128 )
+position = Vector2( 128, 64 )
 mode = 0
 tile_set = null
 cell_size = Vector2( 64, 64 )
@@ -156,23 +131,5 @@ format = 1
 tile_data = PoolIntArray(  )
 script = ExtResource( 5 )
 _sections_unfolded = [ "Cell", "Material", "Transform", "Visibility" ]
-
-[node name="Board_Interaction" type="Area2D" parent="Board" index="0"]
-
-editor/display_folded = true
-input_pickable = true
-gravity_vec = Vector2( 0, 1 )
-gravity = 98.0
-linear_damp = 0.1
-angular_damp = 1.0
-audio_bus_override = false
-audio_bus_name = "Master"
-script = SubResource( 2 )
-_sections_unfolded = [ "Transform" ]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Board/Board_Interaction" index="0"]
-
-shape = SubResource( 3 )
-_sections_unfolded = [ "Transform" ]
 
 

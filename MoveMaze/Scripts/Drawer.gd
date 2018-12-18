@@ -74,7 +74,7 @@ func _draw_actors():
 
 func _draw_board_edge():
 
-	var rect = Rect2(board_obj.global_position - board_obj.tile_size / 2, board_obj.board_size * board_obj.tile_size)
+	var rect = Rect2(board_obj.global_position, board_obj.board_size * board_obj.tile_size)
 	var color = STYLES[applied_style]['BoardLines']
 	var edge_width = GRID_LINE 
 	_draw_border(rect, edge_width, color)
