@@ -23,20 +23,4 @@ func _inject_path(board_index, direction):
 		current_path = _inj_and_collect_ref.call_func(board_index, direction, current_path)
 
 func rotate_path():
-	
-	var names = current_path.connections.keys()
-	var values = current_path.connections.values()
-	var temp_values = values.duplicate()
-	
-	#Shift Bool
-	var count = len(names)
-	for i in count:
-		if i-1 >= 0:
-			values[i] = temp_values[i - 1]
-		else:
-			values[i] = temp_values[count - 1]
-			
-	# Apply Rotation
-	for i in len(current_path.connections):
-		current_path.connections[names[i]] = values[i]
-		
+	current_path.rotate()

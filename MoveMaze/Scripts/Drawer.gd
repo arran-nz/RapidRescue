@@ -18,6 +18,21 @@ const STYLES = {
 			'Active': Color(0.458824, 0.819608, 1),
 			'ToggleGrid': true
 		},
+		
+		'Alt':
+		{
+			'Background': Color(0.547119, 0.912815, 0.972656),
+			'BackgroundLines': Color(0, 0, 0, 0),
+			'BoardLines': Color(0, 0, 0, 0),
+			
+			'Static': Color(0.615686, 0.039216, 0.360784, 0),
+			'Moveable': Color(0.738281, 0.418167, 0.70327, 0),
+			
+			'PathLines': Color(0, 0, 0, 0),
+			
+			'Active': Color(0.411765, 0.411765, 0.411765),
+			'ToggleGrid': false
+		},
 }
 
 const ACTOR_COLORS = [
@@ -27,10 +42,9 @@ const ACTOR_COLORS = [
 	Color(0.960938, 0.90324, 0.289554),
 ]
 
-
 const COLLECTABLE_COLOR = Color(1, 0.652344, 0.961976)
 
-var applied_style = 'Outrun'
+var applied_style = 'Alt'
 
 const LINE_WIDTH = 4
 const GRID_LINE = 1
@@ -153,7 +167,7 @@ func _draw_path_border(item, color):
 	_draw_border(outter_box, LINE_WIDTH / 2, color)
 
 func _draw_path_lines(item, color):
-
+	
 	if item.properties.has('pallete_index'):
 		color = STYLES[applied_style]['Active']
 		

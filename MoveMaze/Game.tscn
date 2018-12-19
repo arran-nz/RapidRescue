@@ -64,7 +64,7 @@ dof_blur_near_distance = 0.01
 dof_blur_near_transition = 1.0
 dof_blur_near_amount = 0.1
 dof_blur_near_quality = 1
-glow_enabled = true
+glow_enabled = false
 glow_levels/1 = true
 glow_levels/2 = true
 glow_levels/3 = true
@@ -111,16 +111,16 @@ script = ExtResource( 4 )
 
 [node name="Board" type="TileMap" parent="." index="5"]
 
-position = Vector2( 128, 64 )
-mode = 0
+position = Vector2( 448, 64 )
+mode = 1
 tile_set = null
-cell_size = Vector2( 64, 64 )
+cell_size = Vector2( 128, 64 )
 cell_quadrant_size = 16
 cell_custom_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 cell_half_offset = 2
 cell_tile_origin = 1
-cell_y_sort = false
-cell_clip_uv = false
+cell_y_sort = true
+cell_clip_uv = true
 collision_use_kinematic = false
 collision_friction = 1.0
 collision_bounce = 0.0
