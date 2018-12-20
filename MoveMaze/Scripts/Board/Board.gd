@@ -33,6 +33,22 @@ var _route_finder_res = load("res://Scripts/Board/Route_Finder.gd")
 
 var route_finder = _route_finder_res.new(DIRECTION, funcref(self, "get_path"))
 
+const player_sprite_map = [ 
+{
+	'N' : preload('res://Sprites/cars/Blue/N.png'),
+	'E' : preload('res://Sprites/cars/Blue/E.png'),
+	'S' : preload('res://Sprites/cars/Blue/S.png'),
+	'W' : preload('res://Sprites/cars/Blue/W.png'),
+},
+{
+	'N' : preload('res://Sprites/cars/Green/N.png'),
+	'E' : preload('res://Sprites/cars/Green/E.png'),
+	'S' : preload('res://Sprites/cars/Green/S.png'),
+	'W' : preload('res://Sprites/cars/Green/W.png'),
+}
+
+]
+
 func _ready():	
 	
 	var _path_generator = _path_gen_res.new()
@@ -107,11 +123,11 @@ func spawn_actors(players):
 	# Iterate for the count of desired actors	
 	for i in range(count):
 		var actor = obj_actor.instance()
-		actor.setup(i, corner_paths[i])
+		actor.setup(i, corner_paths[i], player_sprite_map[i])
 		add_child(actor)
 		actors.append(actor)
 
-func request_actor_movement(target_position, actor_index):
+func request_actor_movement(target_path, actor_index):
 	
 	if actor_index >= len(actors) or actor_index < 0:
 		print("Incorrect Actor Index")
@@ -121,7 +137,7 @@ func request_actor_movement(target_position, actor_index):
 	
 	var actor = actors[actor_index]
 	var start_path = actor.active_path
-	var end_path = get_path_from_world(target_position)
+	var end_path = target_path
 	
 	var route = route_finder.get_route(start_path, end_path)
 	
@@ -145,12 +161,17 @@ func request_actor_movement(target_position, actor_index):
 
 func request_actor_reach(actor_index):
 	var actor = actors[actor_index]
-	var actor_path = get_path(world_to_map(actor.position))
 	return route_finder.get_reach(actor.active_path)
 
 func get_path_from_world(world_pos):
-	# Map position reletive to board
-	var pos  = world_pos - self.position
+	# Map position relative to board
+	var pos  = (world_pos - self.position)
+	
+	# Fixed Input for Isometric?
+	if mode == MODE_ISOMETRIC:
+		pos.x -= tile_size.x / 2
+		pos.y += tile_size.y / 2
+	
 	var index = world_to_map(pos)
 	return get_path(index)
 

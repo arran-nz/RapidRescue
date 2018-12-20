@@ -53,7 +53,7 @@ func init(index, connections, moveable, collectable=null):
 	self.moveable = moveable
 	self.collectable = collectable
 	update_sprite()
-	
+
 func _process(delta):
 	
 	if _t <= _TRAVEL_TIME:
