@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Objects/__Input__.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=2]
-[ext_resource path="res://Scripts/Drawer.gd" type="Script" id=3]
-[ext_resource path="res://Scripts/Hand.gd" type="Script" id=4]
-[ext_resource path="res://Scripts/Board/Board.gd" type="Script" id=5]
+[ext_resource path="res://Scripts/Hand.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/Board/Board.gd" type="Script" id=4]
 
 [node name="Game" type="Node" index="0"]
 
@@ -16,17 +15,12 @@ _sections_unfolded = [ "Pause" ]
 
 script = ExtResource( 2 )
 
-[node name="__Drawer__" type="Node2D" parent="." index="2"]
-
-script = ExtResource( 3 )
-_sections_unfolded = [ "Material", "Transform", "Visibility" ]
-
-[node name="Hand" type="Node2D" parent="." index="3"]
+[node name="Hand" type="Node2D" parent="." index="2"]
 
 position = Vector2( 679.734, 224.061 )
-script = ExtResource( 4 )
+script = ExtResource( 3 )
 
-[node name="Board" type="TileMap" parent="." index="4"]
+[node name="Board" type="TileMap" parent="." index="3"]
 
 position = Vector2( 448, 64 )
 mode = 1
@@ -46,7 +40,7 @@ collision_mask = 1
 occluder_light_mask = 1
 format = 1
 tile_data = PoolIntArray(  )
-script = ExtResource( 5 )
+script = ExtResource( 4 )
 _sections_unfolded = [ "Cell", "Material", "Transform", "Visibility" ]
 
 
