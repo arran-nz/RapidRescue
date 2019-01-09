@@ -2,11 +2,15 @@
 
 [ext_resource path="res://Scripts/Board/Path.gd" type="Script" id=1]
 
-
-[node name="Path" type="Node2D" index="0"]
+[node name="Path" type="Node2D"]
 
 position = Vector2( 128, 128 )
 script = ExtResource( 1 )
 _sections_unfolded = [ "Transform" ]
+
+[node name="Sprite" type="Sprite" parent="." index="0"]
+
+z_as_relative = false
+_sections_unfolded = [ "Z Index" ]
 
 

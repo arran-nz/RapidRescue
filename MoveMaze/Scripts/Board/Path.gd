@@ -16,6 +16,27 @@ var _target_pos
 var _start_pos
 var _t = 0
 
+const sprite_map = {
+	
+	'' : preload('res://Sprites/road/blank.png'),
+	
+	# Straight
+	'NS' : preload('res://Sprites/road/Straight/straight_ns.png'),
+	'EW' : preload('res://Sprites/road/Straight/straight_ew.png'),
+	
+	# Corner
+	'ES' : preload('res://Sprites/road/Corner/corner_es.png'),
+	'NE' : preload('res://Sprites/road/Corner/corner_ne.png'),
+	'NW' : preload('res://Sprites/road/Corner/corner_nw.png'),
+	'SW' : preload('res://Sprites/road/Corner/corner_sw.png'),
+	
+	# Tee Intersection
+	'ESW' : preload('res://Sprites/road/Tee/tee_esw.png'),
+	'NES' : preload('res://Sprites/road/Tee/tee_nes.png'),
+	'NEW' : preload('res://Sprites/road/Tee/tee_new.png'),
+	'NSW' : preload('res://Sprites/road/Tee/tee_nsw.png'),	
+}
+
 # Travel time in seconds
 const _TRAVEL_TIME = 0.6
 
@@ -31,7 +52,8 @@ func init(index, connections, moveable, collectable=null):
 	self.connections = connections
 	self.moveable = moveable
 	self.collectable = collectable
-	
+	update_sprite()
+
 func _process(delta):
 	
 	if _t <= _TRAVEL_TIME:
@@ -65,6 +87,30 @@ func set_target(target, is_instant=false):
 
 func update_index(index):
 	self.index = index
+	
+func update_sprite():
+	var content = ''
+	for c in connections: if connections[c]: content += (c)
+	$Sprite.texture = sprite_map[content]
+
+func rotate():
+	var names = connections.keys()
+	var values = connections.values()
+	var temp_values = values.duplicate()
+	
+	#Shift Bool
+	var count = connections.size()
+	for i in count:
+		if i-1 >= 0:
+			values[i] = temp_values[i - 1]
+		else:
+			values[i] = temp_values[count - 1]
+			
+	# Apply Rotation
+	for i in len(connections):
+		connections[names[i]] = values[i]
+	
+	update_sprite()
 
 class CollectableStorage:
 	"""Store Information regarding a potential collectable."""

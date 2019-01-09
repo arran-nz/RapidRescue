@@ -51,9 +51,9 @@ func manage_collection(collected_item):
 func world_select(position):
 	"""Called when the board has been mouse pressed."""
 	if tm.current_player.has_injected:
-		if board_obj.get_path_from_world(position) != null:
-			
-			var success = board_obj.request_actor_movement(position, tm.current_player.index)
+		var path = board_obj.get_path_from_world(position)
+		if path != null:
+			var success = board_obj.request_actor_movement(path, tm.current_player.index)
 			if success:
 				tm.current_player.has_moved = true
 				tm.cycle()
