@@ -1,0 +1,17 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/road-straight-low.obj-f0d9d06723814fdbb26438320eb156b7.mesh"
+
+[deps]
+
+files=[ "res://.import/road-straight-low.obj-f0d9d06723814fdbb26438320eb156b7.mesh" ]
+
+source_file="res://Models/obj/road-straight-low.obj"
+dest_files=[ "res://.import/road-straight-low.obj-f0d9d06723814fdbb26438320eb156b7.mesh", "res://.import/road-straight-low.obj-f0d9d06723814fdbb26438320eb156b7.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
