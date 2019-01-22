@@ -1,6 +1,6 @@
 # Path - An object which is used to direct `ACTORS` across the board and store `ITEMS`.
 
-extends Node2D
+extends Spatial
 
 var connections
 var moveable
@@ -12,92 +12,122 @@ var properties = PropertyManager.new()
 var traversal = TraversalInfo.new()
 var c_storage = CollectableStorage.new()
 
-var _target_pos
-var _start_pos
-var _t = 0
+signal path_pressed
 
-const sprite_map = {
-	
-	'' : preload('res://Sprites/road/blank.png'),
-	
+const model_map = {
 	# Straight
-	'NS' : preload('res://Sprites/road/Straight/straight_ns.png'),
-	'EW' : preload('res://Sprites/road/Straight/straight_ew.png'),
-	
+	'S': preload('res://Objects/3D/Path_Meshs/Straight.tscn'),
 	# Corner
-	'ES' : preload('res://Sprites/road/Corner/corner_es.png'),
-	'NE' : preload('res://Sprites/road/Corner/corner_ne.png'),
-	'NW' : preload('res://Sprites/road/Corner/corner_nw.png'),
-	'SW' : preload('res://Sprites/road/Corner/corner_sw.png'),
-	
-	# Tee Intersection
-	'ESW' : preload('res://Sprites/road/Tee/tee_esw.png'),
-	'NES' : preload('res://Sprites/road/Tee/tee_nes.png'),
-	'NEW' : preload('res://Sprites/road/Tee/tee_new.png'),
-	'NSW' : preload('res://Sprites/road/Tee/tee_nsw.png'),	
+	'C': preload('res://Objects/3D/Path_Meshs/Corner.tscn'),
+	# T-Intersection
+	'T': preload('res://Objects/3D/Path_Meshs/Intersection.tscn')	
 }
 
-# Travel time in seconds
-const _TRAVEL_TIME = 0.6
+const init_rotation_map = {
+	# Straight
+	'NS' : 90,
+	'EW' : 0,
+	# Corner
+	'ES' : 90,
+	'NE' : 180,
+	'NW' : 270,
+	'SW' : 0,
+	# T Intersection
+	'ESW' : 0,
+	'NES' : 90,
+	'NEW' : 180,
+	'NSW' : 270,
+}
+
+var easing = preload('res://Scripts/Easing.gd')
+var move_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
+var rot_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
 
 signal target_reached
 
-func _ready():
-	_target_pos = position
-	_start_pos = position
-	pass
-	
 func init(index, connections, moveable, collectable=null):
 	self.index = index
 	self.connections = connections
 	self.moveable = moveable
 	self.collectable = collectable
-	update_sprite()
+	_set_model()
+	
+func _set_model():
+	# Update model based on connections
+	var content = ''
+	for c in connections: if connections[c]: content += (c)
+	match content:
+		# Straight
+		'NS', 'EW':
+			add_child(model_map['S'].instance())
+		# Corner
+		'ES', 'NE', 'NW', 'SW':
+			add_child(model_map['C'].instance())
+		# T-Intersection
+		'ESW', 'NES', 'NEW', 'NSW':
+			add_child(model_map['T'].instance())
 
-func _process(delta):
-	
-	if _t <= _TRAVEL_TIME:
-		_move_toward_target(delta)
-		
-func _move_toward_target(delta):
-	
-	_t += delta
-
-	if _t >= _TRAVEL_TIME:
-		position = _target_pos
-		emit_signal("target_reached")
-		return
-		
-	var time = _t / _TRAVEL_TIME
-	var progress = Easing.smooth_stop5(time)
-	var vector_difference = _target_pos - _start_pos
-	var next_pos = _start_pos + (progress * vector_difference)
-	
-	position = next_pos
-
-func set_target(target, is_instant=false):
-	
-	if is_instant:
-		position = target
-		_target_pos = position
-	else:
-		_start_pos = position
-		_target_pos = target
-		_t = 0
+	rotation_degrees.y = init_rotation_map[content]
 
 func update_index(index):
 	self.index = index
+
+func _process(delta):
 	
-func update_sprite():
-	var content = ''
-	for c in connections: if connections[c]: content += (c)
-	$Sprite.texture = sprite_map[content]
+	if move_easer.is_valid():
+		_move_toward_target(delta)
+		
+	if rot_easer.is_valid():
+		_rotate_toward_angle(delta)
+
+# Region: Movement
+
+func _move_toward_target(delta):
+
+	move_easer.process(delta)
+
+	if  move_easer.progress >= 1:
+		translation = move_easer.target
+		move_easer.reset()
+		move_easer.enabled = false
+		emit_signal("target_reached")
+		return
+
+	var difference = move_easer.target - move_easer.start
+	var next_pos = move_easer.start + (move_easer.progress * difference)
+
+	translation = next_pos
+
+func set_target(target, is_instant=false):
+
+	if is_instant:
+		translation = target
+	else:
+		move_easer.start = translation
+		move_easer.target = target
+		move_easer.enabled = true
+
+# Region: Rotation
+
+func _rotate_toward_angle(delta):
+	
+	rot_easer.process(delta)
+	
+	if rot_easer.progress >= 1:
+		rotation_degrees.y = rot_easer.target
+		rot_easer.reset()
+		rot_easer.enabled = false
+		return
+
+	var difference = rot_easer.target - rot_easer.start
+	var next_rot = rot_easer.start + (rot_easer.progress * difference)
+	rotation_degrees.y = next_rot
 
 func rotate():
 	var names = connections.keys()
 	var values = connections.values()
 	var temp_values = values.duplicate()
-	
+
 	#Shift Bool
 	var count = connections.size()
 	for i in count:
@@ -105,27 +135,43 @@ func rotate():
 			values[i] = temp_values[i - 1]
 		else:
 			values[i] = temp_values[count - 1]
-			
-	# Apply Rotation
+
+	# Apply Rotation to connections
 	for i in len(connections):
 		connections[names[i]] = values[i]
+		
+	# Set start rotation and target
 	
-	update_sprite()
+	# If this a new rotation from progress zero, rotate 90 from current roations.
+	if rot_easer.progress == 0:
+		rot_easer.start = rotation_degrees.y
+		rot_easer.target = rotation_degrees.y - 90
+		rot_easer.enabled = true
+	# If the progress is not 0, rotate 90 degrees from the current target and reset the easer.
+	else:
+		rot_easer.start = rotation_degrees.y
+		rot_easer.target = rot_easer.target - 90
+		rot_easer.reset()
+		
+func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx):
+	# Check if index is not null, as null would indicate it's in the HAND
+	if event.is_pressed() and index:
+		emit_signal("path_pressed", self)
 
 class CollectableStorage:
 	"""Store Information regarding a potential collectable."""
 	var item
-	
+
 	var is_occupied setget ,occupied
-	
+
 	func occupied():
 		return item != null
-	
+
 	func collect():
 		var t = item
 		item = null
 		return t
-	
+
 	func store(item):
 		self.item = item
 
@@ -134,7 +180,7 @@ class TraversalInfo:
 	var parent
 	var h_cost
 	var g_cost
-	
+
 	func _init():
 		self.g_cost = 0
 		self.h_cost = 0
@@ -142,31 +188,30 @@ class TraversalInfo:
 
 class PropertyManager:
 	var _properties = []
-	
+
 	func set(key, value):
-		
+
 		var success = false
 		for p in _properties:
 			if p.has(key):
 				success = true
 				p = value
-		
+
 		if !success:
 			_properties.append({key : value})
-			
+
 	func get(key):
 		for p in _properties:
 			if p.has(key):
 				return p[key]
-				
+
 	func remove(key):
 		for p in _properties:
 			if p.has(key):
 				_properties.erase(p)
-			
+
 	func has(key):
 		for p in _properties:
 			if p.has(key):
 				return true
 		return false
-		

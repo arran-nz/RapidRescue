@@ -79,7 +79,8 @@ func get_reach(path):
 		for n in _get_connected_neighbors(current_path):
 			if !visited_set.has(n):
 				open_set.append(n)
-				
+			
+			
 	return visited_set
 
 func _get_connected_neighbors(path):

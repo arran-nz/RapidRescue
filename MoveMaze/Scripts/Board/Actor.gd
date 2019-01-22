@@ -1,6 +1,6 @@
 # Actor - Move under the indirect control of AI or Human command.
 
-extends Node2D
+extends Spatial
 
 # Path which this actor moves WITH when not traversing
 var active_path
@@ -21,18 +21,20 @@ signal collected_item
 const _TRAVEL_TIME = 1.1
 var _time_to_node
 
-var sprite_map
+const actor_colors = {
+	0: Color(0.315568, 0.835938, 0.12735),
+	1: Color(0.140991, 0.455284, 0.859375)
+}
 
 func _ready():
-	_start_pos = position
+	_start_pos = translation
 	pass
 
-func setup(index, active_path, sprite_map):
+func setup(index, active_path):
 	self.index = index
 	self.active_path = active_path
-	self.position = active_path.position
-	self.sprite_map = sprite_map
-	$Sprite.texture = sprite_map['E']
+	translation = active_path.translation
+	$MeshInstance.get_surface_material(0).albedo_color = actor_colors[index]
 
 func set_route(route):
 	self._route = route
@@ -42,7 +44,6 @@ func set_route(route):
 	active_path = _route[-1]
 	_set_next_target()
 	_reset_moving_values()
-	_update_sprite()
 
 func _process(delta):
 	
@@ -52,26 +53,25 @@ func _process(delta):
 
 	else:
 		_check_and_collect_path_item()
-		position = active_path.position
+		translation = active_path.translation
 		
 func _move_toward_target(delta):
 	
 	_t += delta
 	
 	if _t >= _time_to_node:
-		position = _next_route_path.position
+		translation = _next_route_path.translation
 		_set_next_target()
 		_reset_moving_values()
-		_update_sprite()
 		return
 	
 	var time = _t / _time_to_node
 	var per_node_progress = time
 	
-	var vector_difference = _next_route_path.position - _start_pos
+	var vector_difference = _next_route_path.translation - _start_pos
 	var next_pos = _start_pos + (per_node_progress * vector_difference)
 	
-	position = next_pos
+	translation = next_pos
 
 func _check_and_collect_path_item():
 	if active_path.c_storage.is_occupied:
@@ -83,23 +83,7 @@ func _set_next_target():
 	
 func _reset_moving_values():
 	_t = 0
-	_start_pos = self.position
-
-func _update_sprite():
-	if _next_route_path:
-		var dir = ''
-		var v_dir = (_next_route_path.position - _start_pos).normalized()
-		var snapped = v_dir.snapped(Vector2(0.5, 0.5))
-		match snapped:
-			Vector2(1, -0.5):
-				dir = 'N'
-			Vector2(1, 0.5):
-				dir = 'E'
-			Vector2(-1, 0.5):
-				dir = 'S'
-			Vector2(-1, -0.5):
-				dir = 'W'
-		$Sprite.texture = self.sprite_map[dir]
+	_start_pos = translation
 
 func _has_route():
 	return _next_route_path != null

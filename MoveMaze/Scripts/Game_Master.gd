@@ -2,8 +2,11 @@
 
 extends Node
 
-onready var board_obj = get_parent().get_node('Board')
-onready var hand_obj = get_parent().get_node('Hand')
+onready var obj_hand = preload("res://Objects/3D/Hand.tscn")
+onready var obj_board = preload("res://Objects/3D/GridMap.tscn")
+
+var board
+var hand
 
 var human_players = 2
 var ai_players = 0
@@ -13,18 +16,27 @@ var tm
 
 func _ready():
 	
-	board_obj.connect('extra_path_ready', self, 'setup_hand')
-	board_obj.connect('board_ready', self, 'board_ready')
-
-func board_ready():
-	"""Called when the board has signaled."""
-	print("Board Ready")
+	setup_board()
 	
-	#Setup Injector input
-	for inj in board_obj.injectors:
+
+func setup_board():
+	"""Called when the board has signaled."""
+	hand = obj_hand.instance()
+	board = obj_board.instance()
+	add_child(board)
+	add_child(hand)
+	
+	board.setup()
+	hand.setup(funcref(board, 'inject_path'), board.get_extra_path())
+	
+	# Setup Injector input
+	for inj in board.injectors:
 		inj.connect('injector_pressed', self, 'request_path_injection')
 	
-	__Input__.subscribe("world_select", self, "world_select")
+	# Setup Path Input
+	for path in board.path_cells:
+		path.connect('path_pressed', self, 'path_select')
+	hand.current_path.connect('path_pressed', self, 'path_select')
 	
 	# Setup players and turn mananger
 	var players = []
@@ -32,52 +44,47 @@ func board_ready():
 		var player = Player.new(i, "Player %s" % (i + 1))
 		players.append(player)
 		
-	board_obj.spawn_actors(players)
-	board_obj.connect('board_paths_updated', self, 'can_current_player_move')
+	board.spawn_actors(players)
+	board.connect('board_paths_updated', self, 'can_current_player_move')
 	
 	#Connect actors to send collected items to each respective player
-	for i in range(len(board_obj.actors)):
-		var actor = board_obj.actors[i]
+	for i in range(len(board.actors)):
+		var actor = board.actors[i]
 		actor.connect("collected_item", players[i], "receive_collectable")
 		actor.connect("collected_item", self, "manage_collection")
 		
 	tm = TurnManager.new(players)
 	
-	board_obj.spawn_collectable()
+	#board.spawn_collectable()
 
 func manage_collection(collected_item):
-	board_obj.spawn_collectable()
+	board.spawn_collectable()
 
-func world_select(position):
-	"""Called when the board has been mouse pressed."""
+func path_select(path):
+	"""Called when a path has been pressed."""
 	if tm.current_player.has_injected:
-		var path = board_obj.get_path_from_world(position)
-		if path != null:
-			var success = board_obj.request_actor_movement(path, tm.current_player.index)
-			if success:
-				tm.current_player.has_moved = true
-				tm.cycle()
+		var success = board.request_actor_movement(path, tm.current_player.index)
+		print(success)
+		if success:
+			tm.current_player.has_moved = true
+			tm.cycle()
 	else:
 		print("%s must place path first!" % tm.current_player.display_name)
 
 func request_path_injection(injector):
 	"""Called when an injector has been pressed."""
 	if not tm.current_player.has_injected:
-		hand_obj.move_path_to_injector(injector)
+		hand.move_path_to_injector(injector)
 		tm.current_player.has_injected = true
 	else:
 		print("Already placed path, %s please move." % tm.current_player.display_name)
 
 func can_current_player_move():
 	"""Check current_player reach -  if none, force a turn cycle"""
-	var reach = board_obj.request_actor_reach(tm.current_player.index)
+	var reach = board.request_actor_reach(tm.current_player.index)
 	if len(reach) <= 1:
 		print("%s can't move, forcing cycle" % tm.current_player.display_name)
 		tm.cycle(true)
-
-func setup_hand(extra_path):
-	"""Setup the hand with the starting path and setup injectors."""
-	hand_obj.setup(funcref(board_obj, 'inject_path'), extra_path)
 
 class TurnManager:
 	var current_player

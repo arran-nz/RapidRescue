@@ -13,6 +13,8 @@ extends Node
 # I = Straight
 # L = Corner
 
+const MAP_SIZE = Vector2(7,7)
+
 const DEFAULT_MAP = [
 				'SE', '', 'ESW', '', 'ESW', '', 'SW',
 				'', '', '', '', '', '', '',
@@ -37,38 +39,34 @@ const PATH_DISTRIBUTION = {
 	
 var _available_paths  = []
 
+var obj_path = preload("res://Objects/3D/Path_Block.tscn")
+
 func _init():
 	_distribute_paths()
 	
-func gen_path(board_size, grid):
+func gen_path():
 	
 	randomize()
 	var path_cells = []
 
-				
 	var y = 0
-	for index in range(board_size.x * board_size.y):
+	for index in range(MAP_SIZE.x * MAP_SIZE.y):
 		
-		var x = int(index) % int(board_size.x ) 
+		var x = int(index) % int(MAP_SIZE.x ) 
 		
 		if index > 0 and x == 0: y+=1
-		# print('{x}, {y}'.format({'x': x, 'y': y}))
 		
 		var path_tile
 		var content = DEFAULT_MAP[index]
 		if content != '':
-			path_tile = _get_defined_path(Vector2(x,y), grid.obj_path, content)
+			path_tile = _get_defined_path(Vector2(x,y), content)
 		else:
-			path_tile = get_moveable_path(Vector2(x,y), grid.obj_path)
+			path_tile = get_moveable_path(Vector2(x,y))
 
-		path_tile.position = grid.map_to_world(Vector2(x, y))
-		grid.add_child(path_tile)
-		
 		path_cells.append(path_tile)
-			
 	return path_cells
 
-func get_moveable_path(index, obj_path):
+func get_moveable_path(index=null):
 	var path_tile = obj_path.instance()
 	
 	var connections = {
@@ -87,7 +85,7 @@ func get_moveable_path(index, obj_path):
 	
 	return path_tile	
 
-func _get_defined_path(index, obj_path, content):
+func _get_defined_path(index, content):
 	var path_tile = obj_path.instance()
 	
 	var connections = {
