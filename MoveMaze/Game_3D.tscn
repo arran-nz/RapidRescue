@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="PrismMesh" id=1]
+
+custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
+left_to_right = 0.5
+size = Vector3( 2, 2, 2 )
+subdivide_width = 0
+subdivide_height = 0
+subdivide_depth = 0
+
+[node name="Root" type="Spatial" index="0"]
+
+[node name="Camera" type="Camera" parent="." index="0"]
+
+transform = Transform( 0.999881, 0.0134674, -0.00754647, -0.00590154, 0.785163, 0.619261, 0.014265, -0.619143, 0.785149, 0, 1.58322, 2.373 )
+keep_aspect = 1
+cull_mask = 1048575
+environment = null
+h_offset = 0.0
+v_offset = 0.0
+doppler_tracking = 0
+projection = 1
+current = true
+fov = 66.0556
+size = 2.0
+near = 0.05
+far = 100.0
+_sections_unfolded = [ "Visibility" ]
+
+[node name="MeshInstance" type="MeshInstance" parent="." index="1"]
+
+transform = Transform( 0.562973, 0, 0.381837, 0, 0.454463, 0, -0.428714, 0, 0.501415, 0, 0, 0 )
+layers = 1
+material_override = null
+cast_shadow = 1
+extra_cull_margin = 0.0
+use_in_baked_light = false
+lod_min_distance = 0.0
+lod_min_hysteresis = 0.0
+lod_max_distance = 0.0
+lod_max_hysteresis = 0.0
+mesh = SubResource( 1 )
+skeleton = NodePath("..")
+material/0 = null
+_sections_unfolded = [ "Transform", "material" ]
+
+
