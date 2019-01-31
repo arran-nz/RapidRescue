@@ -121,26 +121,18 @@ func request_actor_movement(target_path, actor_index):
 	
 	var actor = actors[actor_index]
 	var start_path = actor.active_path
-	var end_path = target_path
 	
-	var route = route_finder.get_route(start_path, end_path)
+	if start_path == target_path:
+		print('Turn Skipped')
+		return true
+	
+	var route = route_finder.get_route(start_path, target_path)
 	
 	if route != null:
-		if len(route) > 1:
-		
-			start_path.properties.set('pallete_index', 4)
-			for path in route:
-				path.properties.set('pallete_index', 4)
-
-			#Discard first path on route as Actor does not need it
-			route.pop_front()
+		if len(route) >= 1:
 			actor.set_route(route)
-			
 			return true
-			
-		elif len(route) == 1:
-			return true
-	
+
 	return false
 
 func request_actor_reach(actor_index):
@@ -206,7 +198,7 @@ func inject_path(inject_index, dir, injected_path):
 			# Check if an actor is riding this current path
 			for a in actors:
 				if a.active_path == current_path:
-					a.position = injected_path.position
+					a.translation = injected_path.translation
 					a.active_path = injected_path
 		
 			#Collect the path

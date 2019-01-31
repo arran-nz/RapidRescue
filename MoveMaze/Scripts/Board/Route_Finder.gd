@@ -48,15 +48,38 @@ func get_route(start_path, end_path):
 func _retrace_route(start_path, end_path):
 	var route = []
 	var current_path = end_path
-	
+
+		
 	while current_path != start_path:
 		route.append(current_path)
 		current_path = current_path.traversal.parent
 	
 	route.append(start_path)
+	route = _simplify_route(route)
 	route.invert()
 	
 	return route
+	
+func _simplify_route(route):
+	var simple_route = []
+	var old_dir = Vector2(0,0)
+	
+	for i in range(1, route.size()):
+		var x_dif = route[i-1].index.x - route[i].index.x
+		var y_dif = route[i-1].index.y - route[i].index.y
+		var new_dir = Vector2(x_dif, y_dif)
+		if old_dir != new_dir:
+			simple_route.append(route[i-1])
+		old_dir = new_dir
+	
+#	for path in simple_route:
+#		Draw3D.DrawLine(
+#			path.translation + Vector3(0,0.2,0),
+#			path.translation + Vector3(0,0.6,0),
+#			Color(0.023163, 0.060863, 0.988281),
+#			6)
+	
+	return simple_route
 	
 func _get_dist(path_a, path_b):
 	
