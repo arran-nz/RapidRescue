@@ -3,9 +3,20 @@
 [ext_resource path="res://Models/obj/road-tjunction-low.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://Materials/road_mat.tres" type="Material" id=2]
 
-[node name="Mesh" type="MeshInstance"]
+[node name="Root" type="Spatial"]
 
-transform = Transform( 0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, 0, 0, 0 )
+_sections_unfolded = [ "Transform", "material" ]
+
+[node name="Mesh_Group" type="Spatial" parent="." index="0"]
+
+_sections_unfolded = [ "Transform" ]
+
+[node name="Road" type="Spatial" parent="Mesh_Group" index="0"]
+
+_sections_unfolded = [ "Transform" ]
+
+[node name="Mesh" type="MeshInstance" parent="Mesh_Group/Road" index="0"]
+
 layers = 1
 material_override = null
 cast_shadow = 1
@@ -18,6 +29,6 @@ lod_max_hysteresis = 0.0
 mesh = ExtResource( 1 )
 skeleton = NodePath("..")
 material/0 = ExtResource( 2 )
-_sections_unfolded = [ "Transform", "material" ]
+_sections_unfolded = [ "Geometry", "Transform", "material" ]
 
 

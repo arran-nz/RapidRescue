@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/Board/Path_Injector.gd" type="Script" id=1]
 
-[sub_resource type="PlaneMesh" id=3]
+[sub_resource type="PlaneMesh" id=1]
 
 custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
 size = Vector2( 2, 2 )
@@ -16,6 +16,7 @@ extents = Vector3( 1, 1, 1 )
 [node name="Path_Block" type="Spatial"]
 
 script = ExtResource( 1 )
+_sections_unfolded = [ "Transform" ]
 
 [node name="Mesh" type="MeshInstance" parent="." index="0"]
 
@@ -29,7 +30,7 @@ lod_min_distance = 0.0
 lod_min_hysteresis = 0.0
 lod_max_distance = 0.0
 lod_max_hysteresis = 0.0
-mesh = SubResource( 3 )
+mesh = SubResource( 1 )
 skeleton = NodePath("..")
 material/0 = null
 _sections_unfolded = [ "Geometry", "Transform", "material" ]

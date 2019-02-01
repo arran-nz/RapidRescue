@@ -6,7 +6,7 @@
 
 theme = null
 cell_size = Vector3( 1, 1, 1 )
-cell_octant_size = 8
+cell_octant_size = 1
 cell_center_x = true
 cell_center_y = true
 cell_center_z = true
