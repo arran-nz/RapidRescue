@@ -8,7 +8,7 @@ onready var obj_board = preload("res://Objects/3D/GridMap.tscn")
 var board
 var hand
 
-var human_players = 2
+var human_players = 1
 var ai_players = 0
 
 # Turn Mananger

@@ -20,7 +20,7 @@ const model_map = {
 	# Corner
 	'C': preload('res://Objects/3D/Path_Meshs/Corner.tscn'),
 	# T-Intersection
-	'T': preload('res://Objects/3D/Path_Meshs/Intersection.tscn')	
+	'T': preload('res://Objects/3D/Path_Meshs/Intersection.tscn')
 }
 
 const init_rotation_map = {
@@ -38,6 +38,8 @@ const init_rotation_map = {
 	'NEW' : 180,
 	'NSW' : 270,
 }
+
+const MODEL_SCALE = Vector3(0.25,0.25,0.25)
 
 var easing = preload('res://Scripts/Easing.gd')
 var move_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
@@ -68,6 +70,7 @@ func _set_model():
 			add_child(model_map['T'].instance())
 
 	rotation_degrees.y = init_rotation_map[content]
+	get_child(1).scale = MODEL_SCALE
 
 func update_index(index):
 	self.index = index
