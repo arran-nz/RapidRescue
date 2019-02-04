@@ -1,29 +1,19 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=1]
-[ext_resource path="res://Scripts/Board/Collectable.gd" type="Script" id=2]
-[ext_resource path="res://Materials/edge_water.tres" type="Material" id=3]
-[ext_resource path="res://Materials/red.tres" type="Material" id=4]
-[ext_resource path="res://Models/vehicles/watercraftPack_029.obj" type="ArrayMesh" id=5]
-[ext_resource path="res://Materials/green.tres" type="Material" id=6]
+[ext_resource path="res://Materials/edge_water.tres" type="Material" id=2]
+[ext_resource path="res://Materials/red.tres" type="Material" id=3]
+[ext_resource path="res://Models/vehicles/watercraftPack_029.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://Materials/green.tres" type="Material" id=5]
 
-[sub_resource type="SphereMesh" id=3]
-
-custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
-radius = 1.0
-height = 2.0
-radial_segments = 64
-rings = 32
-is_hemisphere = false
-
-[sub_resource type="PlaneMesh" id=1]
+[sub_resource type="PlaneMesh" id=2]
 
 custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
 size = Vector2( 2, 2 )
 subdivide_width = 40
 subdivide_depth = 20
 
-[sub_resource type="CapsuleMesh" id=2]
+[sub_resource type="CapsuleMesh" id=3]
 
 custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
 radius = 1.0
@@ -31,11 +21,11 @@ mid_height = 1.0
 radial_segments = 64
 rings = 8
 
-[node name="Root" type="Spatial" index="0"]
+[node name="Root" type="Spatial"]
 
 [node name="Camera" type="Camera" parent="." index="0"]
 
-transform = Transform( 0.707107, -0.415627, 0.572061, 0, 0.809017, 0.587785, -0.707107, -0.415627, 0.572061, 11, 9, 11 )
+transform = Transform( 0.707107, -0.385118, 0.593029, 0, 0.838671, 0.544639, -0.707107, -0.385118, 0.593029, 15, 9.83481, 15 )
 keep_aspect = 1
 cull_mask = 1048575
 environment = null
@@ -43,9 +33,9 @@ h_offset = 0.0
 v_offset = 0.0
 doppler_tracking = 0
 projection = 1
-current = false
+current = true
 fov = 66.0556
-size = 8.0
+size = 14.0
 near = 0.05
 far = 100.0
 _sections_unfolded = [ "Transform", "Visibility" ]
@@ -82,28 +72,7 @@ _sections_unfolded = [ "Shadow" ]
 
 script = ExtResource( 1 )
 
-[node name="Root" type="Spatial" parent="." index="3"]
-
-script = ExtResource( 2 )
-
-[node name="Mesh" type="MeshInstance" parent="Root" index="0"]
-
-transform = Transform( 0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 1.48987, 4.238 )
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = SubResource( 3 )
-skeleton = NodePath("..")
-material/0 = null
-_sections_unfolded = [ "Transform" ]
-
-[node name="Spatial" type="Spatial" parent="." index="4"]
+[node name="Spatial" type="Spatial" parent="." index="3"]
 
 editor/display_folded = true
 visible = false
@@ -121,9 +90,9 @@ lod_min_distance = 0.0
 lod_min_hysteresis = 0.0
 lod_max_distance = 0.0
 lod_max_hysteresis = 0.0
-mesh = SubResource( 1 )
+mesh = SubResource( 2 )
 skeleton = NodePath("..")
-material/0 = ExtResource( 3 )
+material/0 = ExtResource( 2 )
 _sections_unfolded = [ "Transform", "material" ]
 
 [node name="MeshInstance2" type="MeshInstance" parent="Spatial" index="1"]
@@ -138,9 +107,9 @@ lod_min_distance = 0.0
 lod_min_hysteresis = 0.0
 lod_max_distance = 0.0
 lod_max_hysteresis = 0.0
-mesh = SubResource( 2 )
+mesh = SubResource( 3 )
 skeleton = NodePath("..")
-material/0 = ExtResource( 4 )
+material/0 = ExtResource( 3 )
 _sections_unfolded = [ "material" ]
 
 [node name="MeshInstance3" type="MeshInstance" parent="Spatial" index="2"]
@@ -155,9 +124,9 @@ lod_min_distance = 0.0
 lod_min_hysteresis = 0.0
 lod_max_distance = 0.0
 lod_max_hysteresis = 0.0
-mesh = ExtResource( 5 )
+mesh = ExtResource( 4 )
 skeleton = NodePath("..")
-material/0 = ExtResource( 6 )
+material/0 = ExtResource( 5 )
 _sections_unfolded = [ "Geometry", "Transform", "material" ]
 
 

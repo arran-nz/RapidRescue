@@ -55,7 +55,7 @@ func setup_board():
 		
 	tm = TurnManager.new(players)
 	
-	#board.spawn_collectable()
+	board.spawn_collectable()
 
 func manage_collection(collected_item):
 	board.spawn_collectable()

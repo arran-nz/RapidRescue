@@ -5,7 +5,7 @@
 [node name="GridMap" type="GridMap"]
 
 theme = null
-cell_size = Vector3( 1, 1, 1 )
+cell_size = Vector3( 2, 2, 2 )
 cell_octant_size = 1
 cell_center_x = true
 cell_center_y = true

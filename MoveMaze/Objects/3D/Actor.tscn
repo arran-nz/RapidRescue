@@ -11,7 +11,7 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="MeshInstance" type="MeshInstance" parent="." index="0"]
 
-transform = Transform( 0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.07, 0 )
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.2, 0 )
 layers = 1
 material_override = null
 cast_shadow = 1
@@ -25,5 +25,25 @@ mesh = ExtResource( 2 )
 skeleton = NodePath("..")
 material/0 = ExtResource( 3 )
 _sections_unfolded = [ "Geometry", "Transform", "material" ]
+
+[node name="Seat" type="Spatial" parent="." index="1"]
+
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.199186, 0.451943, -0.402753 )
+
+[node name="Seat2" type="Spatial" parent="." index="2"]
+
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.185641, 0.451943, -0.402753 )
+
+[node name="Seat3" type="Spatial" parent="." index="3"]
+
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.187259, 0.451943, -0.0547152 )
+
+[node name="Seat4" type="Spatial" parent="." index="4"]
+
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.174977, 0.451943, -0.0547152 )
+
+[node name="Seat5" type="Spatial" parent="." index="5"]
+
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00617129, 0.451943, 0.269001 )
 
 

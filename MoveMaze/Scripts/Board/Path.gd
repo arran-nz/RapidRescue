@@ -10,7 +10,8 @@ var index
 
 var properties = PropertyManager.new()
 var traversal = TraversalInfo.new()
-var c_storage = CollectableStorage.new()
+var has_collectable setget ,_has_collectable
+
 
 signal path_pressed
 
@@ -76,7 +77,6 @@ func update_index(index):
 	self.index = index
 
 func _process(delta):
-	
 	if move_easer.is_valid():
 		_move_toward_target(delta)
 		
@@ -161,22 +161,21 @@ func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx
 	if event.is_pressed() and index:
 		emit_signal("path_pressed", self)
 
-class CollectableStorage:
-	"""Store Information regarding a potential collectable."""
-	var item
+# Region: Collectable
 
-	var is_occupied setget ,occupied
+func _has_collectable():
+	return collectable != null
 
-	func occupied():
-		return item != null
+func pickup_collectable():
+	var t = collectable
+	remove_child(collectable)
+	collectable = null
+	return t
 
-	func collect():
-		var t = item
-		item = null
-		return t
-
-	func store(item):
-		self.item = item
+func store_collectable(item):
+	add_child(item)
+	#Draw3D.DrawRay(translation, Vector3(0,1,0), Color(0.902344, 0.130417, 0.130417), 1)
+	collectable = item
 
 class TraversalInfo:
 	"""Used for traversing the board / path finding."""

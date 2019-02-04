@@ -23,6 +23,7 @@ const DIRECTION = {
 # Load the class resource when calling new().
 var obj_injector = preload("res://Objects/3D/Path_Injector.tscn")
 var obj_actor = preload("res://Objects/3D/Actor.tscn")
+var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
 
 var _path_gen_res = load("res://Scripts/Board/Path_Generator.gd")
 var _route_finder_res = load("res://Scripts/Board/Route_Finder.gd")
@@ -65,9 +66,13 @@ func spawn_collectable():
 		if !closed_cells.has(cell):
 			open_cells.append(cell)
 	
+	
 	# Choose randomly from open cells
 	var x = randi() % len(open_cells)
-	open_cells[x].c_storage.store(1)
+	var path = open_cells[x]
+	var collectable = obj_collectable.instance()
+	path = get_path(actors[0].active_path.index + Vector2(0,1))
+	path.store_collectable(collectable)
 
 func spawn_actors(players):
 	var count = len(players)

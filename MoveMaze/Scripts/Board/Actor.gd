@@ -12,6 +12,9 @@ var active_path
 # Unique index
 var index
 
+var _seat_positions
+const COLLECTABLE_SCALE = Vector3(0.5,0.5,0.5)
+
 var _route
 var _start_pos
 var _target_angle
@@ -26,6 +29,7 @@ func setup(index, active_path):
 	self.active_path = active_path
 	translation = active_path.translation
 	$MeshInstance.set_surface_material(0, ACTOR_TEXTURE[index])
+	_assign_seats()
 
 func set_route(route):
 	self._route = route
@@ -39,7 +43,7 @@ func _process(delta):
 		_move_toward_target(delta)
 
 	else:
-		_check_and_collect_path_item()
+		_check_for_collectable()
 		translation = active_path.translation
 
 func _move_toward_target(delta):
@@ -60,11 +64,6 @@ func _move_toward_target(delta):
 	rotation.y = lerp(rotation.y, _target_angle, progress)
 
 	translation = next_pos
-
-func _check_and_collect_path_item():
-	if active_path.c_storage.is_occupied:
-		var item = active_path.c_storage.collect()
-		emit_signal("collected_item", item)
 	
 func _reset_moving_values():
 	_t = 0
@@ -75,3 +74,31 @@ func _reset_moving_values():
 
 func _has_route():
 	return _route != null && len(_route) > 0
+
+# Region: Collectable
+
+func _check_for_collectable():
+	if active_path.has_collectable: 
+		if _has_seat():
+			_rescue_collectable()
+		else:
+			print('No more room!')
+
+func _has_seat():
+	return _seat_positions != null && _seat_positions.size() > 0
+
+func _rescue_collectable():
+	var item = active_path.pickup_collectable()
+	item.scale = COLLECTABLE_SCALE
+	item.translation = _seat_positions.pop_front()
+	
+	add_child(item)
+	emit_signal("collected_item", item)
+	
+func _assign_seats():
+	_seat_positions = []
+	for c in get_children():
+		if c.name.find('Seat') != -1:
+			_seat_positions.append(c.translation)
+	
+	
