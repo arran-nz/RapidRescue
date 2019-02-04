@@ -1,0 +1,17 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/road-tjunction-low.obj-709dcc8ad0d9f2f57489cc82095ad770.mesh"
+
+[deps]
+
+files=[ "res://.import/road-tjunction-low.obj-709dcc8ad0d9f2f57489cc82095ad770.mesh" ]
+
+source_file="res://Models/obj/road-tjunction-low.obj"
+dest_files=[ "res://.import/road-tjunction-low.obj-709dcc8ad0d9f2f57489cc82095ad770.mesh", "res://.import/road-tjunction-low.obj-709dcc8ad0d9f2f57489cc82095ad770.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )

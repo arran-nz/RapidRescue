@@ -1,105 +1,104 @@
 # Actor - Move under the indirect control of AI or Human command.
 
-extends Node2D
+extends Spatial
 
+const _TRAVEL_TIME = 1.0
+const ACTOR_TEXTURE = {
+	0 : preload('res://Materials/green.tres'),
+	1 : preload('res://Materials/red.tres')
+}
 # Path which this actor moves WITH when not traversing
 var active_path
 # Unique index
 var index
 
-var _next_route_path
-var _route
+var _seat_positions
+const COLLECTABLE_SCALE = Vector3(0.5,0.5,0.5)
 
+var _route
 var _start_pos
-var _t = 0
+var _target_angle
+var _t
 
 var traversing setget ,_has_route
 
 signal collected_item
 
-# Travel time in seconds
-const _TRAVEL_TIME = 1.1
-var _time_to_node
-
-var sprite_map
-
-func _ready():
-	_start_pos = position
-	pass
-
-func setup(index, active_path, sprite_map):
+func setup(index, active_path):
 	self.index = index
 	self.active_path = active_path
-	self.position = active_path.position
-	self.sprite_map = sprite_map
-	$Sprite.texture = sprite_map['E']
+	translation = active_path.translation
+	$MeshInstance.set_surface_material(0, ACTOR_TEXTURE[index])
+	_assign_seats()
 
 func set_route(route):
 	self._route = route
-	# Force a float, as if it's an INT the result will be INT too.
-	_time_to_node = 0.6#float(_TRAVEL_TIME) / len(_route)
 	#Bind to end path of route
 	active_path = _route[-1]
-	_set_next_target()
 	_reset_moving_values()
-	_update_sprite()
 
 func _process(delta):
 	
 	if _has_route():
-		
 		_move_toward_target(delta)
 
 	else:
-		_check_and_collect_path_item()
-		position = active_path.position
-		
+		_check_for_collectable()
+		translation = active_path.translation
+
 func _move_toward_target(delta):
 	
 	_t += delta
 	
-	if _t >= _time_to_node:
-		position = _next_route_path.position
-		_set_next_target()
+	if _t >= _TRAVEL_TIME:
+		translation = _route.front().translation
+		_route.pop_front()
 		_reset_moving_values()
-		_update_sprite()
 		return
 	
-	var time = _t / _time_to_node
-	var per_node_progress = time
+	var progress = _t / _TRAVEL_TIME
 	
-	var vector_difference = _next_route_path.position - _start_pos
-	var next_pos = _start_pos + (per_node_progress * vector_difference)
+	var vector_difference = _route.front().translation - _start_pos
+	var next_pos = _start_pos + (progress * vector_difference)
 	
-	position = next_pos
+	rotation.y = lerp(rotation.y, _target_angle, progress)
 
-func _check_and_collect_path_item():
-	if active_path.c_storage.is_occupied:
-		var item = active_path.c_storage.collect()
-		emit_signal("collected_item", item)
-
-func _set_next_target():
-	_next_route_path = _route.pop_front()	
+	translation = next_pos
 	
 func _reset_moving_values():
 	_t = 0
-	_start_pos = self.position
-
-func _update_sprite():
-	if _next_route_path:
-		var dir = ''
-		var v_dir = (_next_route_path.position - _start_pos).normalized()
-		var snapped = v_dir.snapped(Vector2(0.5, 0.5))
-		match snapped:
-			Vector2(1, -0.5):
-				dir = 'N'
-			Vector2(1, 0.5):
-				dir = 'E'
-			Vector2(-1, 0.5):
-				dir = 'S'
-			Vector2(-1, -0.5):
-				dir = 'W'
-		$Sprite.texture = self.sprite_map[dir]
+	_start_pos = translation
+	if _has_route():
+		var vector_difference = (_route.front().translation - _start_pos).normalized()
+		_target_angle = atan2(vector_difference.x, vector_difference.z)
 
 func _has_route():
-	return _next_route_path != null
+	return _route != null && len(_route) > 0
+
+# Region: Collectable
+
+func _check_for_collectable():
+	if active_path.has_collectable: 
+		if _has_seat():
+			_rescue_collectable()
+		else:
+			print('No more room!')
+
+func _has_seat():
+	return _seat_positions != null && _seat_positions.size() > 0
+
+func _rescue_collectable():
+	var item = active_path.pickup_collectable()
+	item.scale = COLLECTABLE_SCALE
+	item.translation = _seat_positions.pop_front()
+	
+	add_child(item)
+	emit_signal("collected_item", item)
+	
+func _assign_seats():
+	_seat_positions = []
+	for c in get_children():
+		if c.name.find('Seat') != -1:
+			_seat_positions.append(c.translation)
+	
+	

@@ -1,6 +1,42 @@
 # Easing - a collection of static functions to help 1D non-linear interpolations.
 
-extends Node
+extends Reference
+
+class Helper:
+	
+	var duration
+	var target
+	var start
+	var ease_func
+	
+	var t
+	
+	var enabled
+	
+	var progress setget , _get_progress
+	
+	
+	func _init(duration, ease_func):
+		self.duration = duration
+		self.ease_func = ease_func
+		self.t = 0
+		self.enabled = true
+	
+	func is_valid():
+		return self.progress < 1 and start != null and target != null and enabled
+	
+	func process(delta):
+		self.t += delta
+	
+	func reset():
+		self.t = 0
+		
+	func _get_progress():
+		return self.ease_func.call_func(self.t / self.duration)
+	
+
+static func off(t):
+	return t
 
 # Utils
 

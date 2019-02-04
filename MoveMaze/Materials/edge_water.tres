@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" format=2]
+
+[resource]
+
+render_priority = 0
+_sections_unfolded = [ "shader_param" ]
+
