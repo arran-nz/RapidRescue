@@ -1,19 +1,20 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=1]
 [ext_resource path="res://Materials/edge_water.tres" type="Material" id=2]
 [ext_resource path="res://Materials/red.tres" type="Material" id=3]
 [ext_resource path="res://Models/vehicles/watercraftPack_029.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://Materials/green.tres" type="Material" id=5]
+[ext_resource path="res://Scripts/Player_Indicator.gd" type="Script" id=6]
 
-[sub_resource type="PlaneMesh" id=2]
+[sub_resource type="PlaneMesh" id=1]
 
 custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
 size = Vector2( 2, 2 )
 subdivide_width = 40
 subdivide_depth = 20
 
-[sub_resource type="CapsuleMesh" id=3]
+[sub_resource type="CapsuleMesh" id=2]
 
 custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
 radius = 1.0
@@ -21,7 +22,7 @@ mid_height = 1.0
 radial_segments = 64
 rings = 8
 
-[node name="Root" type="Spatial"]
+[node name="Root" type="Spatial" index="0"]
 
 [node name="Camera" type="Camera" parent="." index="0"]
 
@@ -90,7 +91,7 @@ lod_min_distance = 0.0
 lod_min_hysteresis = 0.0
 lod_max_distance = 0.0
 lod_max_hysteresis = 0.0
-mesh = SubResource( 2 )
+mesh = SubResource( 1 )
 skeleton = NodePath("..")
 material/0 = ExtResource( 2 )
 _sections_unfolded = [ "Transform", "material" ]
@@ -107,7 +108,7 @@ lod_min_distance = 0.0
 lod_min_hysteresis = 0.0
 lod_max_distance = 0.0
 lod_max_hysteresis = 0.0
-mesh = SubResource( 3 )
+mesh = SubResource( 2 )
 skeleton = NodePath("..")
 material/0 = ExtResource( 3 )
 _sections_unfolded = [ "material" ]
@@ -128,5 +129,11 @@ mesh = ExtResource( 4 )
 skeleton = NodePath("..")
 material/0 = ExtResource( 5 )
 _sections_unfolded = [ "Geometry", "Transform", "material" ]
+
+[node name="Player_Indicator" type="Spatial" parent="." index="4"]
+
+transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 8.62462, 2.96716, -1.78156 )
+script = ExtResource( 6 )
+_sections_unfolded = [ "Transform" ]
 
 

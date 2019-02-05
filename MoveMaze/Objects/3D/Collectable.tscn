@@ -22,20 +22,20 @@ mid_height = 1.0
 radial_segments = 64
 rings = 8
 
-[sub_resource type="Curve" id=4]
+[sub_resource type="Curve" id=3]
 
 min_value = 0.0
 max_value = 1.0
 bake_resolution = 100
 _data = [ Vector2( 0, 0.263672 ), 0.0, 1.05908, 0, 0, Vector2( 0.728792, 0.59668 ), -2.70792, -2.70792, 0, 0, Vector2( 1, 0 ), -2.44204, 0.0, 0, 0 ]
 
-[sub_resource type="CurveTexture" id=5]
+[sub_resource type="CurveTexture" id=4]
 
 flags = 4
 width = 2048
-curve = SubResource( 4 )
+curve = SubResource( 3 )
 
-[sub_resource type="ParticlesMaterial" id=3]
+[sub_resource type="ParticlesMaterial" id=5]
 
 render_priority = 0
 trail_divisor = 1
@@ -62,7 +62,7 @@ angle = 0.0
 angle_random = 0.0
 scale = 0.4
 scale_random = 0.05
-scale_curve = SubResource( 5 )
+scale_curve = SubResource( 4 )
 color = Color( 0.250488, 0.84375, 0.6908, 1 )
 hue_variation = 0.0
 hue_variation_random = 0.0
@@ -73,14 +73,13 @@ anim_offset_random = 0.0
 anim_loop = false
 _sections_unfolded = [ "Angle", "Angular Velocity", "Color", "Emission Shape", "Flags", "Initial Velocity", "Scale", "Spread", "Tangential Accel" ]
 
-[node name="Root" type="Spatial" index="0"]
+[node name="Root" type="Spatial"]
 
 script = ExtResource( 1 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Mesh_Group" type="Spatial" parent="." index="0"]
 
-editor/display_folded = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.592147, 0 )
 _sections_unfolded = [ "Transform" ]
 
@@ -142,7 +141,7 @@ fract_delta = true
 visibility_aabb = AABB( -4, -4, -4, 8, 8, 8 )
 local_coords = true
 draw_order = 0
-process_material = SubResource( 3 )
+process_material = SubResource( 5 )
 draw_passes = 1
 draw_pass_1 = ExtResource( 4 )
 _sections_unfolded = [ "Draw Passes", "Process Material", "Time" ]

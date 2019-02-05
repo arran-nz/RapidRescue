@@ -5,10 +5,12 @@ extends Node
 onready var obj_hand = preload("res://Objects/3D/Hand.tscn")
 onready var obj_board = preload("res://Objects/3D/GridMap.tscn")
 
+onready var player_indc = get_parent().get_node("Player_Indicator")
+
 var board
 var hand
 
-var human_players = 1
+var human_players = 2
 var ai_players = 0
 
 # Turn Mananger
@@ -38,36 +40,35 @@ func setup_board():
 		path.connect('path_pressed', self, 'path_select')
 	hand.current_path.connect('path_pressed', self, 'path_select')
 	
-	# Setup players and turn mananger
-	var players = []
-	for i in range(human_players):
-		var player = Player.new(i, "Player %s" % (i + 1))
-		players.append(player)
-		
-	board.spawn_actors(players)
+	board.spawn_actors(human_players)
 	board.connect('board_paths_updated', self, 'can_current_player_move')
 	
-	#Connect actors to send collected items to each respective player
-	for i in range(len(board.actors)):
+	# Setup players and turn mananger
+	# Connect actors to send collected items to each respective player
+	var players = []
+	for i in range(board.actors.size()):
 		var actor = board.actors[i]
+		var d_name = "Player %s" % (i + 1)
+		var player = Player.new(i, d_name, actor)
+		players.append(player)
+		
 		actor.connect("collected_item", players[i], "receive_collectable")
 		actor.connect("collected_item", self, "manage_collection")
 		
 	tm = TurnManager.new(players)
 	
-	board.spawn_collectable()
-
-func manage_collection(collected_item):
+	# Update Player Indicator
+	player_indc.update_indicator(tm.current_player.actor)
 	board.spawn_collectable()
 
 func path_select(path):
 	"""Called when a path has been pressed."""
 	if tm.current_player.has_injected:
-		var success = board.request_actor_movement(path, tm.current_player.index)
+		var success = board.request_actor_movement(path, tm.current_player.actor)
 		print(success)
 		if success:
 			tm.current_player.has_moved = true
-			tm.cycle()
+			cycle_turn()
 	else:
 		print("%s must place path first!" % tm.current_player.display_name)
 
@@ -81,10 +82,20 @@ func request_path_injection(injector):
 
 func can_current_player_move():
 	"""Check current_player reach -  if none, force a turn cycle"""
-	var reach = board.request_actor_reach(tm.current_player.index)
+	var reach = board.request_actor_reach(tm.current_player.actor)
 	if len(reach) <= 1:
 		print("%s can't move, forcing cycle" % tm.current_player.display_name)
-		tm.cycle(true)
+		cycle_turn()
+
+func cycle_turn():
+	tm.cycle()
+	# Update Player Indicator
+	player_indc.update_indicator(tm.current_player.actor)
+	
+func manage_collection(collected_item):
+	# Update Player Indicator
+	player_indc.update_indicator(tm.current_player.actor)
+	board.spawn_collectable()
 
 class TurnManager:
 	var current_player
@@ -98,15 +109,8 @@ class TurnManager:
 		# Choose random starting player
 		current_player = players[randi() % _player_count]
 	
-	func cycle(force=false):
+	func cycle():
 		
-		# If not a forced cycle
-		# AND If the player has injected a piece and moved their actor.
-		if !force \
-		and !(current_player.has_injected and current_player.has_moved):
-			print("ERR: Can not cycle turn, %s must inject and move OR force the cycle" % current_player.display_name)
-			return
-			
 		if current_player.index + 1 < _player_count:
 			current_player = _players[current_player.index + 1]
 		else:
@@ -118,21 +122,26 @@ class TurnManager:
 		print("%s, you're up!" % current_player.display_name)
 
 class Player:
-	var index
+	var index setget ,_get_index
 	var display_name
+	var actor
 	
 	var has_injected
 	var has_moved
 	
-	var collected_items = []
+	var collected_items = 0
 	
-	func _init(index, display_name):
+	func _init(index, display_name, actor):
 		self.index = index
 		self.display_name = display_name
-		
+		self.actor = actor
+	
+	func _get_index():
+		return index
+	
 	func receive_collectable(item):
 		print(display_name + ": Collected an item")
-		collected_items.append(item)
+		collected_items += 1
 		
 	func reset_turn():
 		has_injected = false

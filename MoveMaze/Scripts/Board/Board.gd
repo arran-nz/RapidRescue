@@ -71,12 +71,9 @@ func spawn_collectable():
 	var x = randi() % len(open_cells)
 	var path = open_cells[x]
 	var collectable = obj_collectable.instance()
-	path = get_path(actors[0].active_path.index + Vector2(0,1))
 	path.store_collectable(collectable)
 
-func spawn_actors(players):
-	var count = len(players)
-	
+func spawn_actors(count):
 	# Don't add more actors than max
 	if count > MAX_ACTORS:
 		print("You can only have %s actors." % MAX_ACTORS)
@@ -116,15 +113,8 @@ func spawn_actors(players):
 		add_child(actor)
 		actors.append(actor)
 
-func request_actor_movement(target_path, actor_index):
-	
-	if actor_index >= len(actors) or actor_index < 0:
-		print("Incorrect Actor Index")
-		return
-	
+func request_actor_movement(target_path, actor):
 	_remove_temp_path_properties()
-	
-	var actor = actors[actor_index]
 	var start_path = actor.active_path
 	
 	if start_path == target_path:
@@ -140,8 +130,7 @@ func request_actor_movement(target_path, actor_index):
 
 	return false
 
-func request_actor_reach(actor_index):
-	var actor = actors[actor_index]
+func request_actor_reach(actor):
 	return route_finder.get_reach(actor.active_path)
 
 func get_path_from_world(world_pos):
