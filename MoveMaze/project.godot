@@ -26,5 +26,7 @@ rotate_hand=[ Object(InputEventKey,"resource_local_to_scene":false,"resource_nam
 
 [rendering]
 
-environment/default_clear_color=Color( 0.470901, 0.848324, 0.949219, 1 )
+quality/filters/anisotropic_filter_level=8
+environment/default_clear_color=Color( 0.540527, 0.872257, 0.960938, 1 )
+quality/filters/msaa=3
 environment/default_environment="res://default_env.tres"

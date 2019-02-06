@@ -1,0 +1,17 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/lifeboat.obj-6ee570c17d85347258553ce1425c8054.mesh"
+
+[deps]
+
+files=[ "res://.import/lifeboat.obj-6ee570c17d85347258553ce1425c8054.mesh" ]
+
+source_file="res://Models/vehicles/lifeboat.obj"
+dest_files=[ "res://.import/lifeboat.obj-6ee570c17d85347258553ce1425c8054.mesh", "res://.import/lifeboat.obj-6ee570c17d85347258553ce1425c8054.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )

@@ -1,28 +1,9 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=1]
-[ext_resource path="res://Materials/edge_water.tres" type="Material" id=2]
-[ext_resource path="res://Materials/red.tres" type="Material" id=3]
-[ext_resource path="res://Models/vehicles/watercraftPack_029.obj" type="ArrayMesh" id=4]
-[ext_resource path="res://Materials/green.tres" type="Material" id=5]
-[ext_resource path="res://Scripts/Player_Indicator.gd" type="Script" id=6]
+[ext_resource path="res://Scripts/Player_Indicator.gd" type="Script" id=2]
 
-[sub_resource type="PlaneMesh" id=1]
-
-custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
-size = Vector2( 2, 2 )
-subdivide_width = 40
-subdivide_depth = 20
-
-[sub_resource type="CapsuleMesh" id=2]
-
-custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
-radius = 1.0
-mid_height = 1.0
-radial_segments = 64
-rings = 8
-
-[node name="Root" type="Spatial" index="0"]
+[node name="Root" type="Spatial"]
 
 [node name="Camera" type="Camera" parent="." index="0"]
 
@@ -43,7 +24,7 @@ _sections_unfolded = [ "Transform", "Visibility" ]
 
 [node name="DirectionalLight" type="DirectionalLight" parent="." index="1"]
 
-transform = Transform( -0.221986, 0.966062, 0.132086, 0.710318, 0.0674245, 0.700644, 0.66796, 0.249356, -0.701179, 0, 3.61035, 0 )
+transform = Transform( -0.637064, 0.538602, -0.551415, 0.281254, 0.828473, 0.484282, 0.717667, 0.153431, -0.679274, 0, 3.61035, 0 )
 layers = 1
 light_color = Color( 1, 1, 1, 1 )
 light_energy = 1.0
@@ -73,67 +54,10 @@ _sections_unfolded = [ "Shadow" ]
 
 script = ExtResource( 1 )
 
-[node name="Spatial" type="Spatial" parent="." index="3"]
-
-editor/display_folded = true
-visible = false
-
-[node name="MeshInstance" type="MeshInstance" parent="Spatial" index="0"]
-
-editor/display_folded = true
-transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, 3.22863, 2.22361, 4.6453 )
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = SubResource( 1 )
-skeleton = NodePath("..")
-material/0 = ExtResource( 2 )
-_sections_unfolded = [ "Transform", "material" ]
-
-[node name="MeshInstance2" type="MeshInstance" parent="Spatial" index="1"]
-
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.42293, 1.84204, 3.42774 )
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = SubResource( 2 )
-skeleton = NodePath("..")
-material/0 = ExtResource( 3 )
-_sections_unfolded = [ "material" ]
-
-[node name="MeshInstance3" type="MeshInstance" parent="Spatial" index="2"]
-
-transform = Transform( 0.381317, 0, -0.120821, 0, 0.4, 0, 0.120821, 0, 0.381317, 3.06824, 2.07894, 4.7084 )
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = ExtResource( 4 )
-skeleton = NodePath("..")
-material/0 = ExtResource( 5 )
-_sections_unfolded = [ "Geometry", "Transform", "material" ]
-
-[node name="Player_Indicator" type="Spatial" parent="." index="4"]
+[node name="Player_Indicator" type="Spatial" parent="." index="3"]
 
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 8.62462, 2.96716, -1.78156 )
-script = ExtResource( 6 )
+script = ExtResource( 2 )
 _sections_unfolded = [ "Transform" ]
 
 

@@ -5,6 +5,7 @@
 
 [node name="Root" type="Spatial"]
 
+editor/display_folded = true
 _sections_unfolded = [ "Transform", "material" ]
 
 [node name="Mesh_Group" type="Spatial" parent="." index="0"]
