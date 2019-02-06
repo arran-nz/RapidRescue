@@ -41,6 +41,7 @@ const init_rotation_map = {
 }
 
 const MODEL_SCALE = Vector3(0.25,0.25,0.25)
+var model_ref
 
 var easing = preload('res://Scripts/Easing.gd')
 var move_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
@@ -48,12 +49,17 @@ var rot_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
 
 signal target_reached
 
-func init(index, connections, moveable, collectable=null):
+func setup(index, connections, moveable, collectable=null):
 	self.index = index
 	self.connections = connections
 	self.moveable = moveable
 	self.collectable = collectable
+
+func _ready():
 	_set_model()
+	if !moveable:
+		#var mesh = model_ref.find_node('Mesh', true)
+		model_ref.scale.y = MODEL_SCALE.y * 1.3
 	
 func _set_model():
 	# Update model based on connections
@@ -71,7 +77,8 @@ func _set_model():
 			add_child(model_map['T'].instance())
 
 	rotation_degrees.y = init_rotation_map[content]
-	get_child(1).scale = MODEL_SCALE
+	model_ref = get_child(1)
+	model_ref.scale = MODEL_SCALE
 
 func update_index(index):
 	self.index = index

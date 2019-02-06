@@ -4,9 +4,12 @@ extends Spatial
 
 const _TRAVEL_TIME = 1.0
 const ACTOR_TEXTURE = {
-	0 : preload('res://Materials/green.tres'),
-	1 : preload('res://Materials/red.tres')
+	0 : preload('res://Materials/boat/player1.tres'),
+	1 : preload('res://Materials/boat/player2.tres')
 }
+
+const PRIMARY_TEX_ALTAS = [0, 2]
+
 # Path which this actor moves WITH when not traversing
 var active_path
 # Unique index
@@ -27,9 +30,30 @@ signal collected_item
 func setup(index, active_path):
 	self.index = index
 	self.active_path = active_path
-	translation = active_path.translation
-	$MeshInstance.set_surface_material(0, ACTOR_TEXTURE[index])
+
+func _ready():
+	_assign_model_tex()
 	_assign_seats()
+	_orient_start_rotation()
+
+func _assign_model_tex():
+	for i in PRIMARY_TEX_ALTAS:
+		$MeshInstance.set_surface_material(i, ACTOR_TEXTURE[index])
+
+func _orient_start_rotation():
+	# Find the first connection and rotate facing that direction.
+	for c in active_path.connections:
+		if active_path.connections[c]:
+			match c:
+				'N':
+					rotation_degrees.y = 180;
+				'E':
+					rotation_degrees.y = 90;
+				'S':
+					rotation_degrees.y = 0;
+				'W':
+					rotation_degrees.y = 270;
+			break
 
 func set_route(route):
 	self._route = route

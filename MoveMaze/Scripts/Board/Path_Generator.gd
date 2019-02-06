@@ -81,7 +81,7 @@ func get_moveable_path(index=null):
 	for c in content:
 		connections[c] = true
 		
-	path_tile.init(index, connections, true)
+	path_tile.setup(index, connections, true)
 	
 	return path_tile	
 
@@ -98,7 +98,7 @@ func _get_defined_path(index, content):
 	for c in content:
 		connections[c] = true
 		
-	path_tile.init(index, connections, false)
+	path_tile.setup(index, connections, false)
 	
 	return path_tile
 
