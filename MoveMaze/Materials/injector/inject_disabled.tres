@@ -4,7 +4,7 @@
 
 render_priority = 0
 flags_transparent = false
-flags_unshaded = false
+flags_unshaded = true
 flags_vertex_lighting = false
 flags_no_depth_test = false
 flags_use_point_size = false
@@ -23,8 +23,8 @@ params_point_size = 1.0
 params_billboard_mode = 0
 params_grow = false
 params_use_alpha_scissor = false
-albedo_color = Color( 0.902344, 0.902344, 0.902344, 1 )
-metallic = 0.01
+albedo_color = Color( 1, 1, 1, 0.0979216 )
+metallic = 0.0
 metallic_specular = 0.5
 metallic_texture_channel = 0
 roughness = 0.0
@@ -32,7 +32,9 @@ roughness_texture_channel = 0
 emission_enabled = false
 normal_enabled = false
 rim_enabled = false
-clearcoat_enabled = false
+clearcoat_enabled = true
+clearcoat = 1.0
+clearcoat_gloss = 0.5
 anisotropy_enabled = false
 ao_enabled = false
 depth_enabled = false
@@ -50,5 +52,5 @@ uv2_triplanar = false
 uv2_triplanar_sharpness = 1.0
 proximity_fade_enable = false
 distance_fade_enable = false
-_sections_unfolded = [ "Albedo", "Metallic", "Parameters" ]
+_sections_unfolded = [ "Albedo", "Clearcoat", "Flags" ]
 

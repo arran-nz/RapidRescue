@@ -1,16 +1,18 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=1]
-[ext_resource path="res://Scripts/Player_Indicator.gd" type="Script" id=2]
+[ext_resource path="res://default_env.tres" type="Environment" id=1]
+[ext_resource path="res://Scripts/Camera.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/Player_Indicator.gd" type="Script" id=4]
 
-[node name="Root" type="Spatial"]
+[node name="Root" type="Spatial" index="0"]
 
 [node name="Camera" type="Camera" parent="." index="0"]
 
 transform = Transform( 0.707107, -0.385118, 0.593029, 0, 0.838671, 0.544639, -0.707107, -0.385118, 0.593029, 15, 9.83481, 15 )
 keep_aspect = 1
 cull_mask = 1048575
-environment = null
+environment = ExtResource( 1 )
 h_offset = 0.0
 v_offset = 0.0
 doppler_tracking = 0
@@ -20,15 +22,22 @@ fov = 66.0556
 size = 14.0
 near = 0.05
 far = 100.0
+script = ExtResource( 2 )
 _sections_unfolded = [ "Transform", "Visibility" ]
+decay_rate = 0.4
+max_yaw = 0.05
+max_pitch = 0.05
+max_roll = 0.1
+max_offset = 0.2
+perlin = true
 
 [node name="DirectionalLight" type="DirectionalLight" parent="." index="1"]
 
-transform = Transform( -0.637064, 0.538602, -0.551415, 0.281254, 0.828473, 0.484282, 0.717667, 0.153431, -0.679274, 0, 3.61035, 0 )
+transform = Transform( 0.535736, -0.314666, 0.783563, -0.22718, 0.840037, 0.492672, -0.813249, -0.441952, 0.378553, 0, 3.61035, 0 )
 layers = 1
 light_color = Color( 1, 1, 1, 1 )
 light_energy = 1.0
-light_indirect_energy = 1.0
+light_indirect_energy = 0.5
 light_negative = false
 light_specular = 0.5
 light_bake_mode = 0
@@ -42,22 +51,22 @@ editor_only = false
 directional_shadow_mode = 0
 directional_shadow_split_1 = 0.1
 directional_shadow_split_2 = 0.2
-directional_shadow_split_3 = 0.5
-directional_shadow_blend_splits = false
+directional_shadow_split_3 = 0.0
+directional_shadow_blend_splits = true
 directional_shadow_normal_bias = 0.8
 directional_shadow_bias_split_scale = 0.25
-directional_shadow_depth_range = 1
-directional_shadow_max_distance = 300.0
-_sections_unfolded = [ "Shadow" ]
+directional_shadow_depth_range = 0
+directional_shadow_max_distance = 2.0
+_sections_unfolded = [ "Light", "Shadow", "Transform" ]
 
 [node name="Game_Master" type="Node" parent="." index="2"]
 
-script = ExtResource( 1 )
+script = ExtResource( 3 )
 
 [node name="Player_Indicator" type="Spatial" parent="." index="3"]
 
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 8.62462, 2.96716, -1.78156 )
-script = ExtResource( 2 )
+script = ExtResource( 4 )
 _sections_unfolded = [ "Transform" ]
 
 

@@ -1,0 +1,17 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/gem-3-cut.obj-060b26653c55062514991f8d044cb582.mesh"
+
+[deps]
+
+files=[ "res://.import/gem-3-cut.obj-060b26653c55062514991f8d044cb582.mesh" ]
+
+source_file="res://Models/interface/gem-3-cut.obj"
+dest_files=[ "res://.import/gem-3-cut.obj-060b26653c55062514991f8d044cb582.mesh", "res://.import/gem-3-cut.obj-060b26653c55062514991f8d044cb582.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )

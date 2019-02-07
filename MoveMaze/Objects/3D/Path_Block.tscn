@@ -6,7 +6,7 @@
 
 extents = Vector3( 1, 1, 1 )
 
-[node name="Path_Block" type="Spatial" index="0"]
+[node name="Path_Block" type="Spatial"]
 
 script = ExtResource( 1 )
 _sections_unfolded = [ "Transform" ]
