@@ -17,6 +17,7 @@ func move_path_to_injector(injector):
 	current_path.set_target(injector.translation)
 	yield(current_path, "target_reached")
 	_inject_path(injector.inj_board_index, injector.inj_direction)
+	get_viewport().get_camera().add_trauma(0.2)
 
 func _inject_path(board_index, direction):
 	if current_path != null:

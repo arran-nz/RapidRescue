@@ -152,7 +152,8 @@ func inject_path(inject_index, dir, injected_path):
 	
 	#Enable All Injectors
 	for inj in injectors:
-		inj.disabled = false
+		if inj.disabled:
+			inj.disabled = false
 	
 	#Disable a Injector
 	var disabled_inj_index = inject_index + (dir * board_size) - dir

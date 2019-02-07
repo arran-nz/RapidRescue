@@ -41,6 +41,7 @@ const init_rotation_map = {
 }
 
 const MODEL_SCALE = Vector3(0.25,0.25,0.25)
+const NON_MOVEABLE_Y_SCALAR = 1.4
 var model_ref
 
 var easing = preload('res://Scripts/Easing.gd')
@@ -59,7 +60,7 @@ func _ready():
 	_set_model()
 	if !moveable:
 		#var mesh = model_ref.find_node('Mesh', true)
-		model_ref.scale.y = MODEL_SCALE.y * 1.3
+		model_ref.scale.y = MODEL_SCALE.y * NON_MOVEABLE_Y_SCALAR
 	
 func _set_model():
 	# Update model based on connections

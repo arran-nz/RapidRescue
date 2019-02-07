@@ -1,9 +1,12 @@
 extends Spatial
 
-const SPAWN_HEIGHT = 20
+const SPAWN_HEIGHT = 18
 var size
+
+var impact_trauma = 0.3
+
 var easing = preload('res://Scripts/Easing.gd')
-var move_easer = easing.Helper.new(3.2, funcref(easing,'smooth_start4'))
+var move_easer = easing.Helper.new(3.3, funcref(easing,'smooth_start4'))
 
 func _ready():
 	translation = Vector3(0, SPAWN_HEIGHT ,0)
@@ -23,6 +26,7 @@ func _move_toward_target(delta):
 		move_easer.reset()
 		move_easer.enabled = false
 		$Particles.emitting = true
+		get_viewport().get_camera().add_trauma(impact_trauma)
 		return
 
 	var difference = move_easer.target - move_easer.start
