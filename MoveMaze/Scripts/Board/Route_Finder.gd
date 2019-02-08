@@ -23,7 +23,6 @@ func get_route(start_path, end_path):
 		visited_set.append(current_path)
 		
 		if current_path == end_path:
-			print("Route Found")
 			path_success = true
 			break
 			

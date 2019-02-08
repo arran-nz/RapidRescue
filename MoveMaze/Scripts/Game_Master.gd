@@ -65,7 +65,6 @@ func path_select(path):
 	"""Called when a path has been pressed."""
 	if tm.current_player.has_injected:
 		var success = board.request_actor_movement(path, tm.current_player.actor)
-		print(success)
 		if success:
 			tm.current_player.has_moved = true
 			cycle_turn()

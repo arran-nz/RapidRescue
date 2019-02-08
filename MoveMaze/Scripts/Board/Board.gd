@@ -34,9 +34,12 @@ var _path_generator
 var board_size
 
 func setup():
+	var json = '{"map":[{"0":"ES","1":0},{"0":"NES","1":1},{"0":"ESW","1":0},{"0":"NE","1":1},{"0":"ESW","1":0},{"0":"EW","1":1},{"0":"SW","1":0},{"0":"NSW","1":1},{"0":"NES","1":1},{"0":"EW","1":1},{"0":"NS","1":1},{"0":"EW","1":1},{"0":"NS","1":1},{"0":"ES","1":1},{"0":"NES","1":0},{"0":"EW","1":1},{"0":"NES","1":0},{"0":"ES","1":1},{"0":"ESW","1":0},{"0":"EW","1":1},{"0":"NSW","1":0},{"0":"NS","1":1},{"0":"NE","1":1},{"0":"SW","1":1},{"0":"NW","1":1},{"0":"ES","1":1},{"0":"NE","1":1},{"0":"NW","1":1},{"0":"NES","1":0},{"0":"NS","1":1},{"0":"NEW","1":0},{"0":"ESW","1":1},{"0":"NSW","1":0},{"0":"ESW","1":1},{"0":"NSW","1":0},{"0":"NE","1":1},{"0":"SW","1":1},{"0":"EW","1":1},{"0":"ES","1":1},{"0":"NSW","1":1},{"0":"SW","1":1},{"0":"NE","1":1},{"0":"NE","1":0},{"0":"NE","1":1},{"0":"NEW","1":0},{"0":"NE","1":1},{"0":"NEW","1":0},{"0":"EW","1":1},{"0":"NW","1":0}]}'
+	var map = parse_json(json)['map']
+
 	_path_generator = _path_gen_res.new()
 	board_size = _path_generator.MAP_SIZE
-	path_cells = _path_generator.gen_path()
+	path_cells = _path_generator.path_cells
 	
 	#Spawn Cells
 	for cell in path_cells:
@@ -45,8 +48,15 @@ func setup():
 	
 	_spawn_injectors()
 	
+func get_map_repr():
+	"""Return a list of path representations."""
+	var map = []
+	for p in path_cells:
+		map.append(p.get_path_repr())
+	return map
+
 func get_extra_path():
-	var extra_path = _path_generator.get_moveable_path()
+	var extra_path = _path_generator.extra_path
 	add_child(extra_path)
 	return extra_path
 

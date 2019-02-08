@@ -48,6 +48,8 @@ var easing = preload('res://Scripts/Easing.gd')
 var move_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
 var rot_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
 
+const PD = preload('res://Scripts/Board/Definitions.gd').PathData
+
 signal target_reached
 
 func setup(index, connections, moveable, collectable=null):
@@ -61,12 +63,22 @@ func _ready():
 	if !moveable:
 		#var mesh = model_ref.find_node('Mesh', true)
 		model_ref.scale.y = MODEL_SCALE.y * NON_MOVEABLE_Y_SCALAR
-	
+
+func get_path_repr():
+	"""Return path connections string representation."""
+	var repr = ''
+	for c in connections:
+		if connections[c]:
+			repr += c
+	return {
+		PD.CONNECTIONS : repr,
+		PD.MOVEABLE : int(moveable)
+	}
+
 func _set_model():
 	# Update model based on connections
-	var content = ''
-	for c in connections: if connections[c]: content += (c)
-	match content:
+	var connection_string = get_path_repr()[PD.CONNECTIONS]
+	match connection_string:
 		# Straight
 		'NS', 'EW':
 			add_child(model_map['S'].instance())
@@ -77,7 +89,7 @@ func _set_model():
 		'ESW', 'NES', 'NEW', 'NSW':
 			add_child(model_map['T'].instance())
 
-	rotation_degrees.y = init_rotation_map[content]
+	rotation_degrees.y = init_rotation_map[connection_string]
 	model_ref = get_child(1)
 	model_ref.scale = MODEL_SCALE
 
@@ -182,7 +194,6 @@ func pickup_collectable():
 
 func store_collectable(item):
 	add_child(item)
-	#Draw3D.DrawRay(translation, Vector3(0,1,0), Color(0.902344, 0.130417, 0.130417), 1)
 	collectable = item
 
 class TraversalInfo:
