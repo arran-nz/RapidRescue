@@ -3,11 +3,12 @@
 extends Spatial
 
 const _TRAVEL_TIME = 1.0
+const _ROTATION_PROGRESS = 0.4
+
 const ACTOR_TEXTURE = {
 	0 : preload('res://Materials/boat/player1.tres'),
 	1 : preload('res://Materials/boat/player2.tres')
 }
-
 const PRIMARY_TEX_ALTAS = [0, 2]
 
 # Path which this actor moves WITH when not traversing
@@ -20,6 +21,7 @@ const COLLECTABLE_SCALE = Vector3(0.5,0.5,0.5)
 
 var _route
 var _start_pos
+var _start_angle
 var _target_angle
 var _t
 
@@ -35,6 +37,7 @@ func _ready():
 	_assign_model_tex()
 	_assign_seats()
 	_orient_start_rotation()
+	_t = 0
 
 func _assign_model_tex():
 	for i in PRIMARY_TEX_ALTAS:
@@ -63,16 +66,24 @@ func set_route(route):
 
 func _process(delta):
 	
+	_t += delta
+	
 	if _has_route():
-		_move_toward_target(delta)
-
+		_rotate_toward_target()
+		_move_toward_target()
 	else:
 		_check_for_collectable()
 		translation = active_path.translation
 
-func _move_toward_target(delta):
+func _rotate_toward_target():
 	
-	_t += delta
+	var progress = _t / _TRAVEL_TIME
+	if progress <= _ROTATION_PROGRESS:
+		rotation.y = lerp(_start_angle, _target_angle, progress / _ROTATION_PROGRESS)
+	else:
+		rotation.y = _target_angle
+
+func _move_toward_target():
 	
 	if _t >= _TRAVEL_TIME:
 		translation = _route.front().translation
@@ -84,8 +95,6 @@ func _move_toward_target(delta):
 	
 	var vector_difference = _route.front().translation - _start_pos
 	var next_pos = _start_pos + (progress * vector_difference)
-	
-	rotation.y = lerp(rotation.y, _target_angle, progress)
 
 	translation = next_pos
 	
@@ -95,6 +104,10 @@ func _reset_moving_values():
 	if _has_route():
 		var vector_difference = (_route.front().translation - _start_pos).normalized()
 		_target_angle = atan2(vector_difference.x, vector_difference.z)
+		var deg = _target_angle * 180 / PI
+		print(deg)
+		_start_angle = rotation.y
+			
 
 func _has_route():
 	return _route != null && len(_route) > 0
