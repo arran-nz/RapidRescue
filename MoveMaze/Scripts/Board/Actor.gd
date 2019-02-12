@@ -7,16 +7,17 @@ const _ROTATION_PROGRESS = 0.4
 
 const ACTOR_TEXTURE = {
 	0 : preload('res://Materials/boat/player1.tres'),
-	1 : preload('res://Materials/boat/player2.tres')
+	1 : preload('res://Materials/boat/player2.tres'),
+	2 : preload('res://Materials/boat/player3.tres')
 }
 const PRIMARY_TEX_ALTAS = [0, 2]
 
 # Path which this actor moves WITH when not traversing
 var active_path
-# Unique index
-var index
+# Unique ID
+var id
 
-var _seat_positions
+var _remaining_seats
 const COLLECTABLE_SCALE = Vector3(0.5,0.5,0.5)
 
 var _route
@@ -25,23 +26,49 @@ var _start_angle
 var _target_angle
 var _t
 
+
 var traversing setget ,_has_route
 
-signal collected_item
+var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
+var _total_seats
+var _start_passengers
+var passenger_count setget ,_get_passenger_count
 
-func setup(index, active_path):
-	self.index = index
+signal collected_item
+signal final_target_reached
+
+func setup(id, active_path, start_passengers=0):
+	self.id = int(id)
 	self.active_path = active_path
+	self._start_passengers = start_passengers
+
+func get_repr():
+	return {
+		'id' : id,
+		'people' : self.passenger_count,
+		'index_x' : active_path.index.x,
+		'index_y' : active_path.index.y
+	}
+
+func _get_passenger_count():
+	return _total_seats - _remaining_seats.size()
 
 func _ready():
-	_assign_model_tex()
-	_assign_seats()
-	_orient_start_rotation()
 	_t = 0
+	_assign_model_tex()
+	_orient_start_rotation()
+		
+	_remaining_seats = _get_seats()
+	_total_seats = _remaining_seats.size()
+	
+	for i in _start_passengers:
+		var item = obj_collectable.instance()
+		_rescue_collectable(item)
+		
 
 func _assign_model_tex():
 	for i in PRIMARY_TEX_ALTAS:
-		$MeshInstance.set_surface_material(i, ACTOR_TEXTURE[index])
+		$MeshInstance.set_surface_material(i, ACTOR_TEXTURE[id])
 
 func _orient_start_rotation():
 	# Find the first connection and rotate facing that direction.
@@ -61,7 +88,7 @@ func _orient_start_rotation():
 func set_route(route):
 	self._route = route
 	#Bind to end path of route
-	active_path = _route[-1]
+	active_path = _route.back()
 	_reset_moving_values()
 
 func _process(delta):
@@ -105,9 +132,9 @@ func _reset_moving_values():
 		var vector_difference = (_route.front().translation - _start_pos).normalized()
 		_target_angle = atan2(vector_difference.x, vector_difference.z)
 		var deg = _target_angle * 180 / PI
-		print(deg)
 		_start_angle = rotation.y
-			
+	else:
+		emit_signal('final_target_reached')
 
 func _has_route():
 	return _route != null && len(_route) > 0
@@ -117,25 +144,25 @@ func _has_route():
 func _check_for_collectable():
 	if active_path.has_collectable: 
 		if _has_seat():
-			_rescue_collectable()
+			var item = active_path.pickup_collectable()
+			_rescue_collectable(item)
 		else:
 			print('No more room!')
 
 func _has_seat():
-	return _seat_positions != null && _seat_positions.size() > 0
+	return _remaining_seats != null && _remaining_seats.size() > 0
 
-func _rescue_collectable():
-	var item = active_path.pickup_collectable()
-	item.scale = COLLECTABLE_SCALE
-	item.translation = _seat_positions.pop_front()
-	
+func _rescue_collectable(item):
 	add_child(item)
+	item.set_process(false)
+	item.scale = COLLECTABLE_SCALE
+	item.translation = _remaining_seats.pop_front()
+
 	emit_signal("collected_item", item)
 	
-func _assign_seats():
-	_seat_positions = []
+func _get_seats():
+	var seats = []
 	for c in get_children():
 		if c.name.find('Seat') != -1:
-			_seat_positions.append(c.translation)
-	
-	
+			seats.append(c.translation)
+	return seats

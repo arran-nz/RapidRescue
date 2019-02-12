@@ -15,11 +15,10 @@ extends Resource
 
 const MAP_SIZE = Vector2(7,7)
 
-enum {
-	C, # Connections
-	M, # Moveable
-}
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
+const I = PD.INDEX
+const C = PD.CONNECTIONS
+const M = PD.MOVEABLE
 
 const DEFAULT_MAP = [
 				{C:'SE', M:0}, {M:1}, {C:'ESW', M:0}, {M:1}, {C:'ESW', M:0}, {M:1}, {C:'SW', M:0},
@@ -52,23 +51,34 @@ var path_cells setget ,_get_path_cells
 
 var _available_paths  = []
 
+var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
 var obj_path = preload("res://Objects/3D/Path_Block.tscn")
 
-func _init(map_data=null, extra_path_connections=null):
-	if map_data != null and extra_path_connections != null:
+func _init(map_data=null, extra_path_data=null):
+	if map_data != null and extra_path_data != null:
 		# If you define map_data
 		_map_data = map_data
 	else:
 		# Else default map will load.
 		_map_data = DEFAULT_MAP
-		print('DEFAULT')
+		
+		# Extend DEFAULT MAP.
+		# Append indices as the order of the array is fixed.
+		# Whereas the loaded Path array dictionay need's to store their individual indices.
+		var x = 0
+		var y = 0
+		for count in range(_map_data.size()):
+			x = int(count) % int(MAP_SIZE.x ) 
+			if count > 0 and x == 0: y+=1
+			_map_data[count][I] = Vector2(x,y)
+			
 		# Distribute and shuffle avaliable path types.
 		_distribute_paths()
-		extra_path_connections = _pop_distributed_path_type()
+		extra_path_data = {C: _pop_distributed_path_type(), M:1}
 		
 	# Compute
 	path_cells = _compute_path_cells()
-	extra_path = _get_path(null, {C: extra_path_connections, M:1})
+	extra_path = _get_path(null, extra_path_data)
 	
 func _get_path_cells():
 	return path_cells
@@ -78,16 +88,24 @@ func _get_extra_path():
 	
 func _compute_path_cells():
 	var path_cells = []
-	var y = 0
-	for index in range(MAP_SIZE.x * MAP_SIZE.y):
-		
-		var x = int(index) % int(MAP_SIZE.x ) 
-		if index > 0 and x == 0: y+=1
-		
-		var path_tile = _get_path(Vector2(x, y), _map_data[index])
+	for dict in _map_data:
+		var path_tile = _get_path(_get_index(dict), dict)
 		path_cells.append(path_tile)
-	
 	return path_cells
+
+func _get_index(dict):
+	var index
+	if dict.has(I):
+		# FOR DEFAULT MAP
+		index = dict[I]
+	elif dict.has(str(I)):
+		# FOR JSON LOAD MAP
+		# Convert string to Vector2()
+		index = _str_to_vec2(dict[str(I)])
+	else:
+		print("ERR: Index not set")
+		
+	return index
 
 func _get_path(index, content):
 	var path_tile = obj_path.instance()
@@ -114,17 +132,31 @@ func _get_path(index, content):
 		connections[c] = true
 	
 	# Moveable flag
+	var moveable
 	if content.has(M):
 		# FOR DEFAULT MAP
-		path_tile.setup(index, connections, bool(content[M]))
+		moveable = bool(content[M])
 	elif content.has(str(M)):
 		# FOR JSON LOAD MAP
-		path_tile.setup(index, connections, bool(content[str(M)]))
+		moveable = bool(content[str(M)])
 	else:
 		print("ERR: Moveable flag not set")
-		
+		return
+
+	if content.has(str(PD.COLLECTABLE)):
+		var collectable = obj_collectable.instance()
+		path_tile.setup(index, connections, moveable,collectable)
+	else:
+		path_tile.setup(index, connections, moveable)
 	
 	return path_tile
+
+func _str_to_vec2(string):
+	"""Input: `(0, 4)` Output: Vector2(0, 4)"""
+	string = (string.substr(1, len(string)-2))
+	var split = string.split(',')
+	var vec2 = Vector2(float(split[0]), float(split[1]))
+	return vec2
 
 func _pop_distributed_path_type():
 	if len(_available_paths ) > 0:

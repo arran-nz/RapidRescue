@@ -1,12 +1,11 @@
 # Route_Finder - Use A-STAR to find the shortest route between two `PATH` items.
 
-extends Node
+extends Resource
 
-var DIRECTION
+const DIRECTION = preload('res://Scripts/Board/Definitions.gd').PathData.DIRECTION
 var get_path
 
-func _init(DIRECTION, get_path):
-	self.DIRECTION = DIRECTION
+func _init(get_path):
 	self.get_path = get_path
 
 func get_route(start_path, end_path):

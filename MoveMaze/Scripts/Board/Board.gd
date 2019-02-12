@@ -7,58 +7,71 @@ var tile_size = get_cell_size()
 
 var path_cells = []
 var injectors = []
+var hand
 
 const MAX_ACTORS = 4
 var actors = []
 
 signal board_paths_updated
 
-const DIRECTION = {
-				'N' : Vector2(0, -1),
-				'E' : Vector2(1, 0),
-				'S' : Vector2(0, 1),
-				'W' : Vector2(-1, 0),
-	}
+const PD = preload('res://Scripts/Board/Definitions.gd').PathData
+const DIRECTION = PD.DIRECTION
 	
 # Load the class resource when calling new().
 var obj_injector = preload("res://Objects/3D/Path_Injector.tscn")
 var obj_actor = preload("res://Objects/3D/Actor.tscn")
-var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
+var obj_hand = preload("res://Objects/3D/Hand.tscn")
 
 var _path_gen_res = load("res://Scripts/Board/Path_Generator.gd")
 var _route_finder_res = load("res://Scripts/Board/Route_Finder.gd")
 
-var route_finder = _route_finder_res.new(DIRECTION, funcref(self, "get_path"))
+var route_finder = _route_finder_res.new(funcref(self, "get_path"))
 
 var _path_generator
 var board_size
+		
+func setup_from_dict(map_data):
+	_path_generator = _path_gen_res.new(map_data['map'], map_data['hand'])
+	board_size = _path_generator.MAP_SIZE
+	path_cells = _path_generator.path_cells
+	_spawn_injectors()
+	_spawn_path_cells()
+	_spawn_actors(map_data['actors'])
+	_spawn_hand()
 
-func setup():
-	var json = '{"map":[{"0":"ES","1":0},{"0":"NES","1":1},{"0":"ESW","1":0},{"0":"NE","1":1},{"0":"ESW","1":0},{"0":"EW","1":1},{"0":"SW","1":0},{"0":"NSW","1":1},{"0":"NES","1":1},{"0":"EW","1":1},{"0":"NS","1":1},{"0":"EW","1":1},{"0":"NS","1":1},{"0":"ES","1":1},{"0":"NES","1":0},{"0":"EW","1":1},{"0":"NES","1":0},{"0":"ES","1":1},{"0":"ESW","1":0},{"0":"EW","1":1},{"0":"NSW","1":0},{"0":"NS","1":1},{"0":"NE","1":1},{"0":"SW","1":1},{"0":"NW","1":1},{"0":"ES","1":1},{"0":"NE","1":1},{"0":"NW","1":1},{"0":"NES","1":0},{"0":"NS","1":1},{"0":"NEW","1":0},{"0":"ESW","1":1},{"0":"NSW","1":0},{"0":"ESW","1":1},{"0":"NSW","1":0},{"0":"NE","1":1},{"0":"SW","1":1},{"0":"EW","1":1},{"0":"ES","1":1},{"0":"NSW","1":1},{"0":"SW","1":1},{"0":"NE","1":1},{"0":"NE","1":0},{"0":"NE","1":1},{"0":"NEW","1":0},{"0":"NE","1":1},{"0":"NEW","1":0},{"0":"EW","1":1},{"0":"NW","1":0}]}'
-	var map = parse_json(json)['map']
-
+func setup_new_game(actor_count):
 	_path_generator = _path_gen_res.new()
 	board_size = _path_generator.MAP_SIZE
 	path_cells = _path_generator.path_cells
-	
-	#Spawn Cells
-	for cell in path_cells:
-		cell.translation = map_to_world(cell.index.x, 0, cell.index.y)
-		add_child(cell)
-	
 	_spawn_injectors()
-	
-func get_map_repr():
-	"""Return a list of path representations."""
-	var map = []
-	for p in path_cells:
-		map.append(p.get_path_repr())
-	return map
+	_spawn_path_cells()
+	_spawn_new_actors(actor_count)
+	_spawn_hand()
+	spawn_collectable()
 
-func get_extra_path():
+func get_repr():
+	"""Return map representation."""
+	var path_repr = []
+	var actor_repr = []
+
+	for p in path_cells:
+		path_repr.append(p.get_repr())
+
+	for a in actors:
+		actor_repr.append(a.get_repr())
+
+	return {
+		'map' : path_repr,
+		'actors' : actor_repr,
+		'hand' : hand.get_repr()
+	}
+	
+func _spawn_hand():
+	hand = obj_hand.instance()
 	var extra_path = _path_generator.extra_path
+	hand.setup(funcref(self, 'inject_path'), extra_path)
+	add_child(hand)
 	add_child(extra_path)
-	return extra_path
 
 func spawn_collectable():
 	
@@ -80,48 +93,8 @@ func spawn_collectable():
 	# Choose randomly from open cells
 	var x = randi() % len(open_cells)
 	var path = open_cells[x]
-	var collectable = obj_collectable.instance()
+	var collectable = _path_generator.obj_collectable.instance()
 	path.store_collectable(collectable)
-
-func spawn_actors(count):
-	# Don't add more actors than max
-	if count > MAX_ACTORS:
-		print("You can only have %s actors." % MAX_ACTORS)
-		return
-
-	# Ensure this function only runs if there isnt any exsisting actors
-	if len(actors) > 0:
-		print("Actors already exsist.")
-		return
-
-	#Create list of all spawn paths (Corners)
-	var nw_path = get_path(Vector2())
-	var ne_path = get_path(Vector2(board_size.x - 1, 0))
-	var se_path = get_path(Vector2(board_size.x - 1, board_size.y -1))
-	var sw_path = get_path(Vector2(0, board_size.y - 1))
-
-	var corner_paths = []
-	
-	# If there are 2 desired actors, put them diagonal to each other
-	if count == 2:
-		if randi() % 2 == 1:
-			corner_paths.append(nw_path)
-			corner_paths.append(se_path)
-		else:
-			corner_paths.append(ne_path)
-			corner_paths.append(sw_path)
-	else:
-		corner_paths.append(nw_path)
-		corner_paths.append(ne_path)
-		corner_paths.append(se_path)
-		corner_paths.append(sw_path)
-
-	# Iterate for the count of desired actors	
-	for i in range(count):
-		var actor = obj_actor.instance()
-		actor.setup(i, corner_paths[i])
-		add_child(actor)
-		actors.append(actor)
 
 func request_actor_movement(target_path, actor):
 	_remove_temp_path_properties()
@@ -212,14 +185,18 @@ func inject_path(inject_index, dir, injected_path):
 			ejected_path.set_target(map_to_world(new_path_index.x, 0, new_path_index.y))
 	
 	path_cells.erase(ejected_path)
-	
+	hand.collect_path(ejected_path)
 	emit_signal('board_paths_updated')
-	return ejected_path
 
 func _remove_temp_path_properties():
 	for path in path_cells:
 		path.properties.remove('pallete_index')
 		path.properties.remove('test')
+
+func _spawn_path_cells():
+	for cell in path_cells:
+		cell.translation = map_to_world(cell.index.x, 0, cell.index.y)
+		add_child(cell)
 
 func _spawn_injectors():
 	
@@ -273,6 +250,57 @@ func _spawn_injectors():
 		injectors.append(new_west_inj)
 		add_child(new_east_inj)
 		add_child(new_west_inj)
+
+
+func _spawn_actors(actor_data):
+	"""Spawn actors from a defined dictionary."""
+	for a in actor_data:
+		var index = Vector2( a.index_x, a.index_y)
+		var actor = obj_actor.instance()
+		actor.setup(a.id, get_path(index), a.people)
+		add_child(actor)
+		actors.append(actor)
+
+func _spawn_new_actors(count):
+	"""Calculate and spawn actors."""
+	# Don't add more actors than max
+	if count > MAX_ACTORS:
+		print("You can only have %s actors." % MAX_ACTORS)
+		return
+
+	# Ensure this function only runs if there isnt any exsisting actors
+	if len(actors) > 0:
+		print("Actors already exsist.")
+		return
+
+	#Create list of all spawn paths (Corners)
+	var nw_path = get_path(Vector2())
+	var ne_path = get_path(Vector2(board_size.x - 1, 0))
+	var se_path = get_path(Vector2(board_size.x - 1, board_size.y -1))
+	var sw_path = get_path(Vector2(0, board_size.y - 1))
+
+	var corner_paths = []
+	
+	# If there are 2 desired actors, put them diagonal to each other
+	if count == 2:
+		if randi() % 2 == 1:
+			corner_paths.append(nw_path)
+			corner_paths.append(se_path)
+		else:
+			corner_paths.append(ne_path)
+			corner_paths.append(sw_path)
+	else:
+		corner_paths.append(nw_path)
+		corner_paths.append(ne_path)
+		corner_paths.append(se_path)
+		corner_paths.append(sw_path)
+
+	# Iterate for the count of desired actors
+	for i in range(count):
+		var actor = obj_actor.instance()
+		actor.setup(i, corner_paths[i])
+		add_child(actor)
+		actors.append(actor)
 
 func _move_path(path, new_index):
 	var pos = map_to_world(new_index.x, 0, new_index.y)

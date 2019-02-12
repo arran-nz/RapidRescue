@@ -63,21 +63,36 @@ func _ready():
 	if !moveable:
 		#var mesh = model_ref.find_node('Mesh', true)
 		model_ref.scale.y = MODEL_SCALE.y * NON_MOVEABLE_Y_SCALAR
+		
+	if collectable:
+		add_child(collectable)
 
-func get_path_repr():
+func get_repr():
 	"""Return path connections string representation."""
-	var repr = ''
+	if _has_collectable():
+		return {
+			PD.INDEX : index,
+			PD.CONNECTIONS : _get_connection_str(),
+			PD.MOVEABLE : int(moveable),
+			PD.COLLECTABLE : collectable.get_repr()
+		}
+	else:
+		return {
+			PD.INDEX : index,
+			PD.CONNECTIONS : _get_connection_str(),
+			PD.MOVEABLE : int(moveable),
+		}
+		
+func _get_connection_str():
+	var con_str = ''
 	for c in connections:
 		if connections[c]:
-			repr += c
-	return {
-		PD.CONNECTIONS : repr,
-		PD.MOVEABLE : int(moveable)
-	}
+			con_str += c
+	return con_str
 
 func _set_model():
 	# Update model based on connections
-	var connection_string = get_path_repr()[PD.CONNECTIONS]
+	var connection_string = _get_connection_str()
 	match connection_string:
 		# Straight
 		'NS', 'EW':
