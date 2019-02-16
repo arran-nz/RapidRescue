@@ -3,37 +3,48 @@
 extends Node
 
 onready var obj_board = preload("res://Objects/3D/GridMap.tscn")
-var res_persistent_data = preload('res://Scripts/System/PersistentData.gd')
+onready var obj_tile_selector = preload('res://Objects/3D/Tile_Selector.tscn')
+
+var res_persistent_data = preload('res://Scripts/System/Persistent_Data.gd')
+var res_inj_selector = preload('res://Scripts/System/Injector_Selector.gd')
 var persistent_io
+var inj_selector
 
 onready var player_indc = get_parent().get_node("Player_Indicator")
 
+var tile_selector
 var board
 var hand
-
-var players = 2
 
 # Turn Mananger
 var tm
 
 func _ready():
 	persistent_io = res_persistent_data.new()
-	setup_board()
-
-func setup_board():
-	"""Called when the board has signaled."""
 	board = obj_board.instance()
+	tile_selector = obj_tile_selector.instance()
 	add_child(board)
-	
-	#persistent_io.remove_auto()
+	add_child(tile_selector)
+
+func setup_from_autosave():
+	if board.initialized:
+		return
 	var autosave = persistent_io.auto_load()
 	if autosave != null:
 		print("Loaded Auto")
 		board.setup_from_dict(autosave)
+		setup_game()
 	else:
-		print("New Game")
-		board.setup_new_game(players)
+		print("No Autosave found.")
 	
+func setup_new_game(players=2):
+	if board.initialized:
+		return
+	print("New Game")
+	board.setup_new_game(players)
+	setup_game()
+	
+func setup_game():
 	board.connect('board_paths_updated', self, 'can_current_player_move')
 	
 	# Setup Injector input
@@ -57,7 +68,16 @@ func setup_board():
 		actor.connect("collected_item", players[i], "receive_collectable")
 		actor.connect("collected_item", self, "manage_collection")
 		
+	# Tile Selector
+	tile_selector = get_node('TileSelector')
+	tile_selector.setup(board, false)
+	
+	#Injector Selector
+	inj_selector = res_inj_selector.new()
+	inj_selector.setup(board, true)
+		
 	tm = TurnManager.new(players)
+	tile_selector.current_index = tm.current_player.actor.active_path.index
 	
 	# Update Player Indicator
 	player_indc.update_indicator(tm.current_player.actor)
@@ -67,19 +87,22 @@ func auto_save():
 	
 func path_select(path):
 	"""Called when a path has been pressed."""
-	if tm.current_player.has_injected:
+	if tm.current_state == tm.WAITING_FOR_MOVEMENT:
 		var success = board.request_actor_movement(path, tm.current_player.actor)
 		if success:
-			tm.current_player.has_moved = true
 			cycle_turn()
 	else:
 		print("%s must place path first!" % tm.current_player.display_name)
 
 func request_path_injection(injector):
 	"""Called when an injector has been pressed."""
-	if not tm.current_player.has_injected:
+	if tm.current_state == tm.WAITING_FOR_INJECTION:
 		board.hand.move_path_to_injector(injector)
-		tm.current_player.has_injected = true
+		tm.current_state = tm.WAITING_FOR_MOVEMENT
+		tile_selector.current_index = tm.current_player.actor.active_path.index
+		tile_selector.active = true
+		inj_selector.active = false
+
 	else:
 		print("Already placed path, %s please move." % tm.current_player.display_name)
 
@@ -93,8 +116,13 @@ func can_current_player_move():
 func cycle_turn():
 	auto_save()
 	tm.cycle()
+	
 	# Update Player Indicator
 	player_indc.update_indicator(tm.current_player.actor)
+	
+	#As Injection comes first, disable the tile_selector
+	tile_selector.active = false
+	inj_selector.active = true
 	
 func manage_collection(collected_item):
 	# Update Player Indicator
@@ -107,31 +135,32 @@ class TurnManager:
 	var _players = []
 	var _player_count
 	
+	enum States {
+		WAITING_FOR_INJECTION,
+		WAITING_FOR_MOVEMENT,
+	}
+	var current_state
+	
 	func _init(players):
 		self._players = players
 		self._player_count = len(players)
 		# Choose random starting player
 		current_player = players[randi() % _player_count]
+		current_state = WAITING_FOR_INJECTION
 	
 	func cycle():
-		
 		if current_player.index + 1 < _player_count:
 			current_player = _players[current_player.index + 1]
 		else:
 			current_player = _players[0]
 			
-		for p in _players:
-			p.reset_turn()
-			
 		print("%s, you're up!" % current_player.display_name)
+		current_state = WAITING_FOR_INJECTION
 
 class Player:
 	var index setget ,_get_index
 	var display_name
 	var actor
-	
-	var has_injected
-	var has_moved
 	
 	var collected_items = 0
 	
@@ -146,8 +175,3 @@ class Player:
 	func receive_collectable(item):
 		print(display_name + ": Collected an item")
 		collected_items += 1
-		
-	func reset_turn():
-		has_injected = false
-		has_moved = false
-		

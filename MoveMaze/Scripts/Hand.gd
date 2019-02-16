@@ -6,12 +6,13 @@ var current_path
 
 var _inject_ref
 
+func _ready():
+	InputManager.subscribe("rotate_hand", self, "rotate_path")
+
 func setup(inject_ref, start_path):
 	self._inject_ref = inject_ref
 	current_path = start_path
 	current_path.set_target(translation, true)
-	
-	__Input__.subscribe("rotate_hand", self, "rotate_path")
 
 func move_path_to_injector(injector):
 	current_path.set_target(injector.translation)

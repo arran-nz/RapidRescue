@@ -3,6 +3,7 @@
 extends Spatial
 
 var disabled setget _set_disabled
+var hovered setget _set_hovered
 
 signal injector_pressed
 
@@ -10,6 +11,18 @@ signal injector_pressed
 var inj_direction
 """Where the path get injected."""
 var inj_board_index
+
+func _set_hovered(value):
+	if value:
+		var tmp = $Mesh.get_surface_material(0).duplicate()
+		tmp.albedo_color = Color('f58765')
+		$Mesh.set_surface_material(0, tmp)
+		pass
+	else:
+		$Mesh.get_surface_material(0).albedo_color = Color(1, 1, 1)
+		pass
+		
+	disabled = value
 
 func _set_disabled(value):
 	visible = !value
@@ -21,8 +34,11 @@ func init(inj_board_index, inj_direction):
 	
 func _ready():
 	#orient in the injection direction.
-	look_at(translation + Vector3(inj_direction.x, 0 ,inj_direction.y), Vector3(0,1,0))
+	look_at(translation + Vector3(inj_direction.x, 0 ,inj_direction.y), Vector3(0,1,0))	
 
 func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx):
 	if event.is_pressed() and !disabled:
 		emit_signal("injector_pressed", self)
+
+func press_injector():
+	emit_signal("injector_pressed", self)

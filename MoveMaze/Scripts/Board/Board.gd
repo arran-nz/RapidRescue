@@ -29,6 +29,8 @@ var route_finder = _route_finder_res.new(funcref(self, "get_path"))
 
 var _path_generator
 var board_size
+
+var initialized = false
 		
 func setup_from_dict(map_data):
 	_path_generator = _path_gen_res.new(map_data['map'], map_data['hand'])
@@ -38,6 +40,7 @@ func setup_from_dict(map_data):
 	_spawn_path_cells()
 	_spawn_actors(map_data['actors'])
 	_spawn_hand()
+	initialized = true
 
 func setup_new_game(actor_count):
 	_path_generator = _path_gen_res.new()
@@ -48,6 +51,7 @@ func setup_new_game(actor_count):
 	_spawn_new_actors(actor_count)
 	_spawn_hand()
 	spawn_collectable()
+	initialized = true
 
 func get_repr():
 	"""Return map representation."""
@@ -125,7 +129,7 @@ func get_path_from_world(world_pos):
 	return get_path(index)
 
 func get_path(index):
-	if _in_board(index):
+	if index_in_board(index):
 		for item in path_cells:
 			if item.index == index:
 				return item
@@ -133,14 +137,14 @@ func get_path(index):
 func inject_path(inject_index, dir, injected_path):
 	_remove_temp_path_properties()
 	
-	#Enable All Injectors
+	#Enable All Disabled Injectors
 	for inj in injectors:
 		if inj.disabled:
 			inj.disabled = false
 	
 	#Disable a Injector
 	var disabled_inj_index = inject_index + (dir * board_size) - dir
-	_get_injector(disabled_inj_index).disabled = true
+	_get_injector_from_board_index(disabled_inj_index).disabled = true
 	
 	# Set World Target
 	var world_target = map_to_world(inject_index.x, 0, inject_index.y)
@@ -170,7 +174,7 @@ func inject_path(inject_index, dir, injected_path):
 		var new_path_index = current_path.index + dir
 		
 		# If in board, move it
-		if _in_board(new_path_index):
+		if index_in_board(new_path_index):
 			_move_path(current_path, new_path_index)
 		else:
 			# Check if an actor is riding this current path
@@ -207,7 +211,7 @@ func _spawn_injectors():
 		if path.moveable:
 			x_indices.append(path.index.x)
 	
-	var west_col = _get_col(0)		
+	var west_col = _get_col(0)
 	var y_indices = []
 	for path in west_col:
 		if path.moveable:
@@ -215,42 +219,44 @@ func _spawn_injectors():
 	
 	var NW = Vector2(north_row[0].index)
 	
-	#NORTH AND SOUTH SIDES
+	# NORTH ROW
 	for x_i in x_indices:
 		var new_north_inj = obj_injector.instance()
-		var new_south_inj = obj_injector.instance()
-		
 		var n_index = Vector2(NW.x + x_i, NW.y + DIRECTION.N.y)
 		new_north_inj.translation = map_to_world(n_index.x, 0, n_index.y)
 		new_north_inj.init(Vector2(x_i, n_index.y) + DIRECTION.S, DIRECTION.S)
-
-		var s_index = Vector2(NW.x + x_i, NW.y + (board_size.y - 1) + DIRECTION.S.y)
-		new_south_inj.translation = map_to_world(s_index.x, 0, s_index.y)
-		new_south_inj.init(Vector2(x_i, s_index.y) + DIRECTION.N, DIRECTION.N)
-		
 		injectors.append(new_north_inj)
-		injectors.append(new_south_inj)
 		add_child(new_north_inj)
-		add_child(new_south_inj)
-	
-	#EAST AND WEST SIDES
+		
+	# EAST ROW
 	for y_i in y_indices:
 		var new_east_inj = obj_injector.instance()
-		var new_west_inj = obj_injector.instance()
-		
 		var e_index = Vector2(NW.x + (board_size.x - 1) + DIRECTION.E.x, NW.y + y_i)
 		new_east_inj.translation = map_to_world(e_index.x, 0, e_index.y)
 		new_east_inj.init(Vector2(e_index.x, y_i) + DIRECTION.W , DIRECTION.W)
-
+		injectors.append(new_east_inj)
+		add_child(new_east_inj)
+	
+	x_indices.invert()
+	y_indices.invert()
+	
+	# SOUTH ROW
+	for x_i in x_indices:
+		var new_south_inj = obj_injector.instance()
+		var s_index = Vector2(NW.x + x_i, NW.y + (board_size.y - 1) + DIRECTION.S.y)
+		new_south_inj.translation = map_to_world(s_index.x, 0, s_index.y)
+		new_south_inj.init(Vector2(x_i, s_index.y) + DIRECTION.N, DIRECTION.N)
+		injectors.append(new_south_inj)
+		add_child(new_south_inj)
+		
+	# WEST ROW
+	for y_i in y_indices:
+		var new_west_inj = obj_injector.instance()
 		var w_index = Vector2(NW.x + DIRECTION.W.x, NW.y + y_i)
 		new_west_inj.translation = map_to_world(w_index.x, 0, w_index.y)
 		new_west_inj.init(Vector2(w_index.x, y_i) + DIRECTION.E, DIRECTION.E)
-		
-		injectors.append(new_east_inj)
 		injectors.append(new_west_inj)
-		add_child(new_east_inj)
 		add_child(new_west_inj)
-
 
 func _spawn_actors(actor_data):
 	"""Spawn actors from a defined dictionary."""
@@ -323,12 +329,12 @@ func _get_row(y_index):
 	
 	return row
 
-func _get_injector(inj_board_index):
+func _get_injector_from_board_index(inj_board_index):
 	for inj in injectors:
 		if inj.inj_board_index == inj_board_index:
 			return inj
 
-func _in_board(index):
+func index_in_board(index):
 	if index.x < board_size.x and index.x >= 0:
 		if index.y < board_size.y and index.y >= 0:
 			return true

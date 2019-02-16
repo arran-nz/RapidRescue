@@ -194,7 +194,10 @@ func rotate():
 func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx):
 	# Check if index is not null, as null would indicate it's in the HAND
 	if event.is_pressed() and index != null:
-		emit_signal("path_pressed", self)
+		press_path()
+		
+func press_path():
+	emit_signal("path_pressed", self)
 
 # Region: Collectable
 
