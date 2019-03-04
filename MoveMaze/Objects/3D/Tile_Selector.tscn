@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Scripts/System/Path_Selector.gd" type="Script" id=1]
+[ext_resource path="res://Animations/UI/Spatial/spin.tres" type="Animation" id=2]
+[ext_resource path="res://Models/interface/gem-3-cut.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://Materials/human.tres" type="Material" id=4]
+
+
+[node name="TileSelector" type="Spatial" index="0"]
+
+script = ExtResource( 1 )
+
+[node name="Indicator" type="Spatial" parent="." index="0"]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Indicator" index="0"]
+
+root_node = NodePath("../Mesh")
+autoplay = "spin"
+playback_process_mode = 1
+playback_default_blend_time = 0.0
+playback_speed = 1.0
+anims/spin = ExtResource( 2 )
+blend_times = [  ]
+_sections_unfolded = [ "Playback Options" ]
+
+[node name="Mesh" type="MeshInstance" parent="Indicator" index="1"]
+
+transform = Transform( 0.1, 0, 0, 0, -6.55671e-009, 0.1, 0, -0.15, -4.37114e-009, 0, 1.3, 0 )
+layers = 1
+material_override = null
+cast_shadow = 1
+extra_cull_margin = 0.0
+use_in_baked_light = false
+lod_min_distance = 0.0
+lod_min_hysteresis = 0.0
+lod_max_distance = 0.0
+lod_max_hysteresis = 0.0
+mesh = ExtResource( 3 )
+skeleton = NodePath("..")
+material/0 = ExtResource( 4 )
+_sections_unfolded = [ "Transform", "material" ]
+
+

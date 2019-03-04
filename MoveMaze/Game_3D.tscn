@@ -1,28 +1,62 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://default_env.tres" type="Environment" id=1]
-[ext_resource path="res://Scripts/Camera.gd" type="Script" id=2]
-[ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=3]
-[ext_resource path="res://Scripts/Player_Indicator.gd" type="Script" id=4]
+[ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/System/Injector_Manager.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/Player_Indicator.gd" type="Script" id=3]
+[ext_resource path="res://Objects/3D/Actor.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Objects/3D/Hand.tscn" type="PackedScene" id=5]
+[ext_resource path="res://default_env.tres" type="Environment" id=6]
+[ext_resource path="res://Scripts/Camera.gd" type="Script" id=7]
+[ext_resource path="res://Scripts/System/UI/InGameMenu.gd" type="Script" id=8]
+[ext_resource path="res://UserInterface/main_theme.tres" type="Theme" id=9]
 
 [node name="Root" type="Spatial" index="0"]
 
-[node name="Camera" type="Camera" parent="." index="0"]
+_sections_unfolded = [ "Transform" ]
 
-transform = Transform( 0.707107, -0.385118, 0.593029, 0, 0.838671, 0.544639, -0.707107, -0.385118, 0.593029, 15, 9.83481, 15 )
+[node name="Game_Master" type="Node" parent="." index="0"]
+
+script = ExtResource( 1 )
+
+[node name="Master_Board" type="Spatial" parent="Game_Master" index="0"]
+
+transform = Transform( 0.798981, 0, 0.601356, 0, 1, 0, -0.601356, 0, 0.798981, 0, 0, 0 )
+
+[node name="Injectors" type="Spatial" parent="Game_Master/Master_Board" index="0"]
+
+script = ExtResource( 2 )
+
+[node name="Player_Indicator" type="Spatial" parent="Game_Master" index="1"]
+
+editor/display_folded = true
+transform = Transform( 2, 0, 0, 0, 2, 0, 0, 0, 2, 8.13579, 5.56643, 0 )
+script = ExtResource( 3 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="Actor" parent="Game_Master/Player_Indicator" index="0" instance=ExtResource( 4 )]
+
+script = null
+
+[node name="Hand" parent="Game_Master" index="2" instance=ExtResource( 5 )]
+
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.51118, 3.52677, 6.15359 )
+
+[node name="Camera" type="Camera" parent="." index="1"]
+
+transform = Transform( 1, 0, 0, 0, 0.658008, 0.75301, 0, -0.753011, 0.658007, 0, 10.9583, 10.4996 )
 keep_aspect = 1
 cull_mask = 1048575
-environment = ExtResource( 1 )
+environment = ExtResource( 6 )
 h_offset = 0.0
 v_offset = 0.0
 doppler_tracking = 0
-projection = 1
+projection = 0
 current = true
 fov = 66.0556
-size = 14.0
+size = 16.0
 near = 0.05
 far = 100.0
-script = ExtResource( 2 )
+script = ExtResource( 7 )
 _sections_unfolded = [ "Transform", "Visibility" ]
 decay_rate = 0.4
 max_yaw = 0.05
@@ -31,7 +65,7 @@ max_roll = 0.1
 max_offset = 0.2
 perlin = true
 
-[node name="DirectionalLight" type="DirectionalLight" parent="." index="1"]
+[node name="DirectionalLight" type="DirectionalLight" parent="." index="2"]
 
 transform = Transform( 0.535736, -0.314666, 0.783563, -0.22718, 0.840037, 0.492672, -0.813249, -0.441952, 0.378553, 0, 3.61035, 0 )
 layers = 1
@@ -59,14 +93,113 @@ directional_shadow_depth_range = 0
 directional_shadow_max_distance = 2.0
 _sections_unfolded = [ "Light", "Shadow", "Transform" ]
 
-[node name="Game_Master" type="Node" parent="." index="2"]
+[node name="InGameMenu" type="MarginContainer" parent="." index="3"]
 
-script = ExtResource( 3 )
+editor/display_folded = true
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_constants/margin_right = 120
+custom_constants/margin_top = 80
+custom_constants/margin_left = 120
+custom_constants/margin_bottom = 80
+script = ExtResource( 8 )
 
-[node name="Player_Indicator" type="Spatial" parent="." index="3"]
+[node name="Center" type="CenterContainer" parent="InGameMenu" index="0"]
 
-transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 8.62462, 2.96716, -1.78156 )
-script = ExtResource( 4 )
-_sections_unfolded = [ "Transform" ]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 120.0
+margin_top = 80.0
+margin_right = 904.0
+margin_bottom = 520.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+use_top_left = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InGameMenu/Center" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 351.0
+margin_top = 196.0
+margin_right = 433.0
+margin_bottom = 244.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+theme = ExtResource( 9 )
+alignment = 0
+_sections_unfolded = [ "Theme" ]
+
+[node name="LoadSave" type="ToolButton" parent="InGameMenu/Center/VBoxContainer" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 82.0
+margin_bottom = 22.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Load Save"
+flat = true
+align = 1
+_sections_unfolded = [ "Size Flags" ]
+
+[node name="NewGame" type="ToolButton" parent="InGameMenu/Center/VBoxContainer" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 26.0
+margin_right = 82.0
+margin_bottom = 48.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "New Game"
+flat = true
+align = 1
+
+[connection signal="pressed" from="InGameMenu/Center/VBoxContainer/LoadSave" to="InGameMenu" method="_on_LoadSave_pressed"]
+
+[connection signal="pressed" from="InGameMenu/Center/VBoxContainer/NewGame" to="InGameMenu" method="_on_NewGame_pressed"]
 
 

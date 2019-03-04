@@ -29,5 +29,3 @@ func _recursive_child_func(node):
 			
 func _apply_modifiers(node):
 	node.set_script(null)
-	if node is MeshInstance:
-		node.cast_shadow = GeometryInstance.SHADOW_CASTING_SETTING_OFF

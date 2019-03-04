@@ -1,4 +1,4 @@
-# Board - Store and maintain all `PATHS`, `INJECTORS` and `ACTORS`.
+# Board - Store and maintain all `PATHS` and `ACTORS`.
 # Responsile for every interaction on the playing board.
 
 extends GridMap
@@ -6,21 +6,17 @@ extends GridMap
 var tile_size = get_cell_size()
 
 var path_cells = []
-var injectors = []
-var hand
 
 const MAX_ACTORS = 4
 var actors = []
 
 signal board_paths_updated
+signal disable_injector
 
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
 const DIRECTION = PD.DIRECTION
 	
-# Load the class resource when calling new().
-var obj_injector = preload("res://Objects/3D/Path_Injector.tscn")
 var obj_actor = preload("res://Objects/3D/Actor.tscn")
-var obj_hand = preload("res://Objects/3D/Hand.tscn")
 
 var _path_gen_res = load("res://Scripts/Board/Path_Generator.gd")
 var _route_finder_res = load("res://Scripts/Board/Route_Finder.gd")
@@ -29,25 +25,26 @@ var route_finder = _route_finder_res.new(funcref(self, "get_path"))
 
 var _path_generator
 var board_size
+
+var initialized = false
 		
 func setup_from_dict(map_data):
 	_path_generator = _path_gen_res.new(map_data['map'], map_data['hand'])
 	board_size = _path_generator.MAP_SIZE
 	path_cells = _path_generator.path_cells
-	_spawn_injectors()
 	_spawn_path_cells()
 	_spawn_actors(map_data['actors'])
-	_spawn_hand()
+	_center_board()
+	initialized = true
 
 func setup_new_game(actor_count):
 	_path_generator = _path_gen_res.new()
 	board_size = _path_generator.MAP_SIZE
 	path_cells = _path_generator.path_cells
-	_spawn_injectors()
 	_spawn_path_cells()
 	_spawn_new_actors(actor_count)
-	_spawn_hand()
-	spawn_collectable()
+	_center_board()
+	initialized = true
 
 func get_repr():
 	"""Return map representation."""
@@ -63,15 +60,12 @@ func get_repr():
 	return {
 		'map' : path_repr,
 		'actors' : actor_repr,
-		'hand' : hand.get_repr()
 	}
 	
-func _spawn_hand():
-	hand = obj_hand.instance()
+func get_and_spawn_extra_path():
 	var extra_path = _path_generator.extra_path
-	hand.setup(funcref(self, 'inject_path'), extra_path)
-	add_child(hand)
 	add_child(extra_path)
+	return extra_path
 
 func spawn_collectable():
 	
@@ -97,7 +91,6 @@ func spawn_collectable():
 	path.store_collectable(collectable)
 
 func request_actor_movement(target_path, actor):
-	_remove_temp_path_properties()
 	var start_path = actor.active_path
 	
 	if start_path == target_path:
@@ -125,22 +118,20 @@ func get_path_from_world(world_pos):
 	return get_path(index)
 
 func get_path(index):
-	if _in_board(index):
+	if index_in_board(index):
 		for item in path_cells:
 			if item.index == index:
 				return item
 
+func _center_board():
+	var x = (tile_size.x * board_size.x) / 2
+	var z = (tile_size.y * board_size.y) / 2
+	translation = Vector3(-x, 0, -z) 
+
 func inject_path(inject_index, dir, injected_path):
-	_remove_temp_path_properties()
 	
-	#Enable All Injectors
-	for inj in injectors:
-		if inj.disabled:
-			inj.disabled = false
-	
-	#Disable a Injector
-	var disabled_inj_index = inject_index + (dir * board_size) - dir
-	_get_injector(disabled_inj_index).disabled = true
+	var disabled_inj_board_index = inject_index + (dir * board_size) - dir
+	emit_signal('disable_injector', disabled_inj_board_index)
 	
 	# Set World Target
 	var world_target = map_to_world(inject_index.x, 0, inject_index.y)
@@ -170,7 +161,7 @@ func inject_path(inject_index, dir, injected_path):
 		var new_path_index = current_path.index + dir
 		
 		# If in board, move it
-		if _in_board(new_path_index):
+		if index_in_board(new_path_index):
 			_move_path(current_path, new_path_index)
 		else:
 			# Check if an actor is riding this current path
@@ -185,72 +176,13 @@ func inject_path(inject_index, dir, injected_path):
 			ejected_path.set_target(map_to_world(new_path_index.x, 0, new_path_index.y))
 	
 	path_cells.erase(ejected_path)
-	hand.collect_path(ejected_path)
 	emit_signal('board_paths_updated')
-
-func _remove_temp_path_properties():
-	for path in path_cells:
-		path.properties.remove('pallete_index')
-		path.properties.remove('test')
+	return ejected_path
 
 func _spawn_path_cells():
 	for cell in path_cells:
 		cell.translation = map_to_world(cell.index.x, 0, cell.index.y)
 		add_child(cell)
-
-func _spawn_injectors():
-	
-	# Get Indices of only moveable paths along north and west rows
-	var north_row = _get_row(0)
-	var x_indices = []
-	for path in north_row:
-		if path.moveable:
-			x_indices.append(path.index.x)
-	
-	var west_col = _get_col(0)		
-	var y_indices = []
-	for path in west_col:
-		if path.moveable:
-			y_indices.append(path.index.y)
-	
-	var NW = Vector2(north_row[0].index)
-	
-	#NORTH AND SOUTH SIDES
-	for x_i in x_indices:
-		var new_north_inj = obj_injector.instance()
-		var new_south_inj = obj_injector.instance()
-		
-		var n_index = Vector2(NW.x + x_i, NW.y + DIRECTION.N.y)
-		new_north_inj.translation = map_to_world(n_index.x, 0, n_index.y)
-		new_north_inj.init(Vector2(x_i, n_index.y) + DIRECTION.S, DIRECTION.S)
-
-		var s_index = Vector2(NW.x + x_i, NW.y + (board_size.y - 1) + DIRECTION.S.y)
-		new_south_inj.translation = map_to_world(s_index.x, 0, s_index.y)
-		new_south_inj.init(Vector2(x_i, s_index.y) + DIRECTION.N, DIRECTION.N)
-		
-		injectors.append(new_north_inj)
-		injectors.append(new_south_inj)
-		add_child(new_north_inj)
-		add_child(new_south_inj)
-	
-	#EAST AND WEST SIDES
-	for y_i in y_indices:
-		var new_east_inj = obj_injector.instance()
-		var new_west_inj = obj_injector.instance()
-		
-		var e_index = Vector2(NW.x + (board_size.x - 1) + DIRECTION.E.x, NW.y + y_i)
-		new_east_inj.translation = map_to_world(e_index.x, 0, e_index.y)
-		new_east_inj.init(Vector2(e_index.x, y_i) + DIRECTION.W , DIRECTION.W)
-
-		var w_index = Vector2(NW.x + DIRECTION.W.x, NW.y + y_i)
-		new_west_inj.translation = map_to_world(w_index.x, 0, w_index.y)
-		new_west_inj.init(Vector2(w_index.x, y_i) + DIRECTION.E, DIRECTION.E)
-		
-		injectors.append(new_east_inj)
-		injectors.append(new_west_inj)
-		add_child(new_east_inj)
-		add_child(new_west_inj)
-
 
 func _spawn_actors(actor_data):
 	"""Spawn actors from a defined dictionary."""
@@ -323,12 +255,7 @@ func _get_row(y_index):
 	
 	return row
 
-func _get_injector(inj_board_index):
-	for inj in injectors:
-		if inj.inj_board_index == inj_board_index:
-			return inj
-
-func _in_board(index):
+func index_in_board(index):
 	if index.x < board_size.x and index.x >= 0:
 		if index.y < board_size.y and index.y >= 0:
 			return true
