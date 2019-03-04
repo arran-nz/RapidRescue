@@ -6,29 +6,29 @@ var current_path
 
 var _inject_ref
 
-func _ready():
-	InputManager.subscribe("rotate_hand", self, "rotate_path")
+func _unhandled_input(event):
+	if event.is_pressed():
+		if event.is_action('rotate_hand') : current_path.rotate()
 
 func setup(inject_ref, start_path):
 	self._inject_ref = inject_ref
 	current_path = start_path
 	current_path.set_target(translation, true)
 
-func move_path_to_injector(injector):
+func inject_current_path(injector):
+	# Move to injection location
 	current_path.set_target(injector.translation)
 	yield(current_path, "target_reached")
-	_inject_path(injector.inj_board_index, injector.inj_direction)
-
-func _inject_path(board_index, direction):
-	_inject_ref.call_func(board_index, direction, current_path)
+	# Wait until target is reached then inject the path
+	var ejected = _inject_ref.call_func(injector.inj_board_index, injector.inj_direction, current_path)
+	# Shake camera as injection occurs
 	get_viewport().get_camera().add_trauma(0.2)
+	# Collect the ejected path
+	collect_path(ejected)
 
 func collect_path(path):
 	current_path = path
 	current_path.set_target(translation)
-
-func rotate_path():
-	current_path.rotate()
 	
 func get_repr():
 	return current_path.get_repr()

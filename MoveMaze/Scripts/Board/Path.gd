@@ -13,7 +13,7 @@ var traversal = TraversalInfo.new()
 var has_collectable setget ,_has_collectable
 
 
-signal path_pressed
+signal pressed
 
 const model_map = {
 	# Straight
@@ -197,7 +197,7 @@ func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx
 		press_path()
 		
 func press_path():
-	emit_signal("path_pressed", self)
+	emit_signal("pressed", self)
 
 # Region: Collectable
 

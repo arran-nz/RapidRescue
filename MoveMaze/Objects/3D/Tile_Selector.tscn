@@ -1,11 +1,12 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Scripts/System/Tile_Selector.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/System/Path_Selector.gd" type="Script" id=1]
 [ext_resource path="res://Animations/UI/Spatial/spin.tres" type="Animation" id=2]
 [ext_resource path="res://Models/interface/gem-3-cut.obj" type="ArrayMesh" id=3]
 [ext_resource path="res://Materials/human.tres" type="Material" id=4]
 
-[node name="TileSelector" type="Node" index="0"]
+
+[node name="TileSelector" type="Spatial" index="0"]
 
 script = ExtResource( 1 )
 
