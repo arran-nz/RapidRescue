@@ -52,7 +52,7 @@ var path_cells setget ,_get_path_cells
 var _available_paths  = []
 
 var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
-var obj_path = preload("res://Objects/3D/Path_Block.tscn")
+var obj_path = preload("res://Objects/3D/Path.tscn")
 
 func _init(map_data=null, extra_path_data=null):
 	if map_data != null and extra_path_data != null:

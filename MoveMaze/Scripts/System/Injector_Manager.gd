@@ -3,7 +3,7 @@ extends Spatial
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
 const DIRECTION = PD.DIRECTION
 
-var obj_injector = preload("res://Objects/3D/Path_Injector.tscn")
+var obj_injector = preload("res://Objects/3D/Injector.tscn")
 
 var injectors = []
 

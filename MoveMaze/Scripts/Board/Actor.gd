@@ -100,7 +100,7 @@ func _process(delta):
 		_move_toward_target()
 	else:
 		_check_for_collectable()
-		translation = active_path.translation
+		translation = active_path.traversal_pos
 
 func _rotate_toward_target():
 	
@@ -113,14 +113,14 @@ func _rotate_toward_target():
 func _move_toward_target():
 	
 	if _t >= _TRAVEL_TIME:
-		translation = _route.front().translation
+		translation = _route.front().traversal_pos
 		_route.pop_front()
 		_reset_moving_values()
 		return
 	
 	var progress = _t / _TRAVEL_TIME
 	
-	var vector_difference = _route.front().translation - _start_pos
+	var vector_difference = _route.front().traversal_pos - _start_pos
 	var next_pos = _start_pos + (progress * vector_difference)
 
 	translation = next_pos
@@ -129,9 +129,8 @@ func _reset_moving_values():
 	_t = 0
 	_start_pos = translation
 	if _has_route():
-		var vector_difference = (_route.front().translation - _start_pos).normalized()
+		var vector_difference = (_route.front().traversal_pos - _start_pos).normalized()
 		_target_angle = atan2(vector_difference.x, vector_difference.z)
-		var deg = _target_angle * 180 / PI
 		_start_angle = rotation.y
 	else:
 		emit_signal('final_target_reached')

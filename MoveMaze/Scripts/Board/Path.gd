@@ -15,7 +15,7 @@ var has_collectable setget ,_has_collectable
 
 signal pressed
 
-const model_map = {
+const MESH_MAP = {
 	# Straight
 	'S': preload('res://Objects/3D/Path_Meshs/Straight.tscn'),
 	# Corner
@@ -24,7 +24,7 @@ const model_map = {
 	'T': preload('res://Objects/3D/Path_Meshs/Intersection.tscn')
 }
 
-const init_rotation_map = {
+const INIT_ROTATION_MAP = {
 	# Straight
 	'NS' : 90,
 	'EW' : 0,
@@ -40,13 +40,15 @@ const init_rotation_map = {
 	'NSW' : 270,
 }
 
-const MODEL_SCALE = Vector3(0.25,0.25,0.25)
 const NON_MOVEABLE_Y_SCALAR = 1.4
-var model_ref
+var mesh_instance
 
 var easing = preload('res://Scripts/Easing.gd')
 var move_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
 var rot_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
+
+# Custom position for Actor traversal.
+var traversal_pos setget ,get_traversal_pos
 
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
 
@@ -59,13 +61,21 @@ func setup(index, connections, moveable, collectable=null):
 	self.collectable = collectable
 
 func _ready():
-	_set_model()
+	_set_model_and_rotation()
 	if !moveable:
-		#var mesh = model_ref.find_node('Mesh', true)
-		model_ref.scale.y = MODEL_SCALE.y * NON_MOVEABLE_Y_SCALAR
-		
+		# If not moveable, scale the Y axis of the model.
+		mesh_instance.scale.y *=  NON_MOVEABLE_Y_SCALAR
+
 	if collectable:
 		add_child(collectable)
+
+func get_traversal_pos():
+	if moveable:
+		return translation
+	else:
+		var tr = translation
+		tr.y *= NON_MOVEABLE_Y_SCALAR
+		return tr
 
 func get_repr():
 	"""Return path connections string representation."""
@@ -90,23 +100,24 @@ func _get_connection_str():
 			con_str += c
 	return con_str
 
-func _set_model():
+func _set_model_and_rotation():
 	# Update model based on connections
 	var connection_string = _get_connection_str()
+	# Set the Initial rotation of this node based on the connection string.
+	rotation_degrees.y = INIT_ROTATION_MAP[connection_string]
+	
 	match connection_string:
 		# Straight
 		'NS', 'EW':
-			add_child(model_map['S'].instance())
+			mesh_instance = MESH_MAP['S'].instance()
 		# Corner
 		'ES', 'NE', 'NW', 'SW':
-			add_child(model_map['C'].instance())
+			mesh_instance = MESH_MAP['C'].instance()
 		# T-Intersection
 		'ESW', 'NES', 'NEW', 'NSW':
-			add_child(model_map['T'].instance())
+			mesh_instance = MESH_MAP['T'].instance()
 
-	rotation_degrees.y = init_rotation_map[connection_string]
-	model_ref = get_child(1)
-	model_ref.scale = MODEL_SCALE
+	add_child(mesh_instance)
 
 func update_index(index):
 	self.index = index

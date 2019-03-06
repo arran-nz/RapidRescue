@@ -27,10 +27,8 @@ func _set_disabled(value):
 func setup(inj_board_index, inj_direction):
 	self.inj_board_index = inj_board_index
 	self.inj_direction = inj_direction
-	
-func _ready():
-	#orient in the injection direction.
-	look_at(translation + Vector3(inj_direction.x, 0 ,inj_direction.y), Vector3(0,1,0))
+	# Look toward Injection Direction
+	rotation.y = atan2(inj_direction.x, inj_direction.y) - PI
 
 func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx):
 	if event.is_pressed() and !disabled:

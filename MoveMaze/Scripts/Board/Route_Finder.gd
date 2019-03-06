@@ -5,6 +5,8 @@ extends Resource
 const DIRECTION = preload('res://Scripts/Board/Definitions.gd').PathData.DIRECTION
 var get_path
 
+const SIMPLIFY_ROUTE = true
+
 func _init(get_path):
 	self.get_path = get_path
 
@@ -47,15 +49,15 @@ func _retrace_route(start_path, end_path):
 	var route = []
 	var current_path = end_path
 
-		
 	while current_path != start_path:
 		route.append(current_path)
 		current_path = current_path.traversal.parent
 	
-	route.append(start_path)
-	route = _simplify_route(route)
+	if SIMPLIFY_ROUTE:
+		route.append(start_path)
+		route = _simplify_route(route)
+		
 	route.invert()
-	
 	return route
 	
 func _simplify_route(route):
