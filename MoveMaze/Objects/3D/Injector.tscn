@@ -4,20 +4,18 @@
 [ext_resource path="res://Models/interface/gem-3-cut.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://Materials/injector/inject.tres" type="Material" id=3]
 
-
-
 [sub_resource type="BoxShape" id=1]
 
 extents = Vector3( 1, 1, 1 )
 
-[node name="Path_Block" type="Spatial"]
+[node name="Injector" type="Spatial" index="0"]
 
 script = ExtResource( 1 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Mesh" type="MeshInstance" parent="." index="0"]
 
-transform = Transform( 0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.06, 0, 0, 0 )
+transform = Transform( 0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.045, 0, 0, -0.249853 )
 layers = 1
 material_override = null
 cast_shadow = 1

@@ -3,9 +3,10 @@
 [ext_resource path="res://Models/obj/road-corner-low.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://Materials/road_mat.tres" type="Material" id=2]
 
-[node name="Root" type="Spatial"]
+[node name="Root" type="Spatial" index="0"]
 
 editor/display_folded = true
+transform = Transform( 0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0 )
 _sections_unfolded = [ "Transform", "material" ]
 
 [node name="Mesh_Group" type="Spatial" parent="." index="0"]

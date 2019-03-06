@@ -5,7 +5,8 @@
 
 [node name="Root" type="Spatial"]
 
-_sections_unfolded = [ "material" ]
+transform = Transform( 0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0 )
+_sections_unfolded = [ "Transform", "material" ]
 
 [node name="Mesh_Group" type="Spatial" parent="." index="0"]
 

@@ -73,7 +73,7 @@ anim_offset_random = 0.0
 anim_loop = false
 _sections_unfolded = [ "Angle", "Angular Velocity", "Color", "Emission Shape", "Flags", "Initial Velocity", "Scale", "Spread", "Tangential Accel" ]
 
-[node name="Root" type="Spatial"]
+[node name="Root" type="Spatial" index="0"]
 
 script = ExtResource( 1 )
 _sections_unfolded = [ "Transform" ]
@@ -129,7 +129,7 @@ lod_min_hysteresis = 0.0
 lod_max_distance = 0.0
 lod_max_hysteresis = 0.0
 emitting = false
-amount = 40
+amount = 80
 lifetime = 0.6
 one_shot = true
 preprocess = 0.0

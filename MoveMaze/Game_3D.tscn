@@ -20,7 +20,8 @@ script = ExtResource( 1 )
 
 [node name="Master_Board" type="Spatial" parent="Game_Master" index="0"]
 
-transform = Transform( 0.798981, 0, 0.601356, 0, 1, 0, -0.601356, 0, 0.798981, 0, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+_sections_unfolded = [ "Transform" ]
 
 [node name="Injectors" type="Spatial" parent="Game_Master/Master_Board" index="0"]
 
@@ -29,7 +30,7 @@ script = ExtResource( 2 )
 [node name="Player_Indicator" type="Spatial" parent="Game_Master" index="1"]
 
 editor/display_folded = true
-transform = Transform( 2, 0, 0, 0, 2, 0, 0, 0, 2, 8.13579, 5.56643, 0 )
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 6.25531, 5.04479, 1.74951 )
 script = ExtResource( 3 )
 _sections_unfolded = [ "Transform" ]
 
@@ -39,11 +40,11 @@ script = null
 
 [node name="Hand" parent="Game_Master" index="2" instance=ExtResource( 5 )]
 
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.51118, 3.52677, 6.15359 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.54227, 3.9869, 4.5964 )
 
 [node name="Camera" type="Camera" parent="." index="1"]
 
-transform = Transform( 1, 0, 0, 0, 0.658008, 0.75301, 0, -0.753011, 0.658007, 0, 10.9583, 10.4996 )
+transform = Transform( 1, 0, 0, 0, 0.676747, 0.736214, 0, -0.736215, 0.676746, 0, 9.10636, 9.49966 )
 keep_aspect = 1
 cull_mask = 1048575
 environment = ExtResource( 6 )
@@ -52,7 +53,7 @@ v_offset = 0.0
 doppler_tracking = 0
 projection = 0
 current = true
-fov = 66.0556
+fov = 62.0
 size = 16.0
 near = 0.05
 far = 100.0
@@ -65,35 +66,7 @@ max_roll = 0.1
 max_offset = 0.2
 perlin = true
 
-[node name="DirectionalLight" type="DirectionalLight" parent="." index="2"]
-
-transform = Transform( 0.535736, -0.314666, 0.783563, -0.22718, 0.840037, 0.492672, -0.813249, -0.441952, 0.378553, 0, 3.61035, 0 )
-layers = 1
-light_color = Color( 1, 1, 1, 1 )
-light_energy = 1.0
-light_indirect_energy = 0.5
-light_negative = false
-light_specular = 0.5
-light_bake_mode = 0
-light_cull_mask = -1
-shadow_enabled = true
-shadow_color = Color( 0, 0, 0, 1 )
-shadow_bias = 0.1
-shadow_contact = 0.5
-shadow_reverse_cull_face = false
-editor_only = false
-directional_shadow_mode = 0
-directional_shadow_split_1 = 0.1
-directional_shadow_split_2 = 0.2
-directional_shadow_split_3 = 0.0
-directional_shadow_blend_splits = true
-directional_shadow_normal_bias = 0.8
-directional_shadow_bias_split_scale = 0.25
-directional_shadow_depth_range = 0
-directional_shadow_max_distance = 2.0
-_sections_unfolded = [ "Light", "Shadow", "Transform" ]
-
-[node name="InGameMenu" type="MarginContainer" parent="." index="3"]
+[node name="InGameMenu" type="MarginContainer" parent="." index="2"]
 
 editor/display_folded = true
 anchor_left = 0.0
@@ -197,6 +170,34 @@ group = null
 text = "New Game"
 flat = true
 align = 1
+
+[node name="DirectionalLight" type="DirectionalLight" parent="." index="3"]
+
+transform = Transform( 0.908353, 0.0795137, -0.410575, 0.318071, 0.506064, 0.801704, 0.271524, -0.858822, 0.434394, 0, 0, 0 )
+layers = 1
+light_color = Color( 1, 1, 1, 1 )
+light_energy = 1.0
+light_indirect_energy = 1.0
+light_negative = false
+light_specular = 0.0
+light_bake_mode = 1
+light_cull_mask = -1
+shadow_enabled = true
+shadow_color = Color( 0, 0, 0, 1 )
+shadow_bias = 0.1
+shadow_contact = 1.0
+shadow_reverse_cull_face = false
+editor_only = false
+directional_shadow_mode = 1
+directional_shadow_split_1 = 0.1
+directional_shadow_split_2 = 0.2
+directional_shadow_split_3 = 0.5
+directional_shadow_blend_splits = false
+directional_shadow_normal_bias = 0.8
+directional_shadow_bias_split_scale = 0.25
+directional_shadow_depth_range = 1
+directional_shadow_max_distance = 200.0
+_sections_unfolded = [ "Directional Shadow", "Light", "Shadow" ]
 
 [connection signal="pressed" from="InGameMenu/Center/VBoxContainer/LoadSave" to="InGameMenu" method="_on_LoadSave_pressed"]
 

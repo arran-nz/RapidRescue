@@ -44,7 +44,7 @@ ssao_radius2 = 0.2
 ssao_intensity2 = 0.5
 ssao_bias = 0.005
 ssao_light_affect = 0.0
-ssao_color = Color( 0, 0, 0, 1 )
+ssao_color = Color( 0.0523376, 0.0833213, 0.136719, 1 )
 ssao_quality = 2
 ssao_blur = 1
 ssao_edge_sharpness = 32.0
@@ -77,5 +77,5 @@ adjustment_enabled = false
 adjustment_brightness = 1.0
 adjustment_contrast = 1.0
 adjustment_saturation = 1.0
-_sections_unfolded = [ "Ambient Light", "Background", "SSAO" ]
+_sections_unfolded = [ "Ambient Light" ]
 
