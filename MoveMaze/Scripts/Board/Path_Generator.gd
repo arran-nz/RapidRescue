@@ -170,6 +170,7 @@ func _distribute_paths():
 	randomize()
 	var paths = []
 	for type in PATH_DISTRIBUTION:
+#warning-ignore:unused_variable
 		for i in range(PATH_DISTRIBUTION[type]):
 			paths.append(type)
 	
@@ -178,6 +179,7 @@ func _distribute_paths():
 func _shuffleList(list):
     var shuffled_list = [] 
     var index_list = range(list.size())
+#warning-ignore:unused_variable
     for i in range(list.size()):
         var x = randi()%index_list.size()
         shuffled_list.append(list[index_list[x]])

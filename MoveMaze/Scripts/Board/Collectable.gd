@@ -1,8 +1,6 @@
 extends Spatial
 
 const SPAWN_HEIGHT = 18
-var size
-var start_position
 
 const IMPACT_TRAMA = 0.3
 
@@ -42,7 +40,7 @@ func get_repr():
 	"""Return unique representation for saving object information."""
 	return 1
 
-func collect(collector):
+func collect():
 	#move to collector avaliabe position
 	pass
 	

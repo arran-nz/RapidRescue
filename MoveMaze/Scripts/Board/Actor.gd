@@ -27,12 +27,11 @@ var _target_angle
 var _t
 
 
-var traversing setget ,_has_route
+#var traversing setget ,_has_route
 
 var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
 var _total_seats
 var _start_passengers
-var passenger_count setget ,_get_passenger_count
 
 signal collected_item
 signal final_target_reached
@@ -45,12 +44,12 @@ func setup(id, active_path, start_passengers=0):
 func get_repr():
 	return {
 		'id' : id,
-		'people' : self.passenger_count,
+		'people' : get_passenger_count(),
 		'index_x' : active_path.index.x,
 		'index_y' : active_path.index.y
 	}
 
-func _get_passenger_count():
+func get_passenger_count():
 	return _total_seats - _remaining_seats.size()
 
 func _ready():

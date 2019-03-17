@@ -72,13 +72,6 @@ func _simplify_route(route):
 			simple_route.append(route[i-1])
 		old_dir = new_dir
 	
-#	for path in simple_route:
-#		Draw3D.DrawLine(
-#			path.translation + Vector3(0,0.2,0),
-#			path.translation + Vector3(0,0.6,0),
-#			Color(0.023163, 0.060863, 0.988281),
-#			6)
-	
 	return simple_route
 	
 func _get_dist(path_a, path_b):

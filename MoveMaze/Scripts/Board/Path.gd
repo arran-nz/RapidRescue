@@ -8,7 +8,6 @@ var collectable
 # Index Relative to the playing board
 var index
 
-var properties = PropertyManager.new()
 var traversal = TraversalInfo.new()
 var has_collectable setget ,_has_collectable
 
@@ -172,7 +171,7 @@ func _rotate_toward_angle(delta):
 	var next_rot = rot_easer.start + (rot_easer.progress * difference)
 	rotation_degrees.y = next_rot
 
-func rotate():
+func rotate_90():
 	var names = connections.keys()
 	var values = connections.values()
 	var temp_values = values.duplicate()
@@ -234,34 +233,3 @@ class TraversalInfo:
 	func _init():
 		self.g_cost = 0
 		self.h_cost = 0
-
-
-class PropertyManager:
-	var _properties = []
-
-	func set(key, value):
-
-		var success = false
-		for p in _properties:
-			if p.has(key):
-				success = true
-				p = value
-
-		if !success:
-			_properties.append({key : value})
-
-	func get(key):
-		for p in _properties:
-			if p.has(key):
-				return p[key]
-
-	func remove(key):
-		for p in _properties:
-			if p.has(key):
-				_properties.erase(p)
-
-	func has(key):
-		for p in _properties:
-			if p.has(key):
-				return true
-		return false

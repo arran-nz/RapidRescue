@@ -8,7 +8,7 @@ var _inject_ref
 
 func _unhandled_input(event):
 	if event.is_pressed():
-		if event.is_action('rotate_hand') : current_path.rotate()
+		if event.is_action('rotate_hand') : current_path.rotate_90()
 
 func setup(inject_ref, start_path):
 	self._inject_ref = inject_ref

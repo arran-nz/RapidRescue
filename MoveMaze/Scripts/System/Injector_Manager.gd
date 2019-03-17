@@ -79,7 +79,7 @@ func _spawn_injectors():
 		if path.moveable:
 			y_indices.append(path.index.y)
 	
-	var NW = Vector2(north_row[0].index)
+	var NW = north_row[0].index
 	
 	# NORTH ROW
 	for x_i in x_indices:

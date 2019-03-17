@@ -92,7 +92,7 @@ func auto_save():
 	
 func path_select(path):
 	"""Called when a path has been pressed."""
-	if tm.current_state == tm.WAITING_FOR_MOVEMENT:
+	if tm.current_state == tm.STATES.WAITING_FOR_MOVEMENT:
 		var success = board.request_actor_movement(path, tm.current_player.actor)
 		if success:
 			cycle_turn()
@@ -101,9 +101,9 @@ func path_select(path):
 
 func request_path_injection(injector):
 	"""Called when an injector has been pressed."""
-	if tm.current_state == tm.WAITING_FOR_INJECTION:
+	if tm.current_state == tm.STATES.WAITING_FOR_INJECTION:
 		hand.inject_current_path(injector)
-		tm.current_state = tm.WAITING_FOR_MOVEMENT
+		tm.current_state = tm.STATES.WAITING_FOR_MOVEMENT
 		tile_selector.current_index = tm.current_player.actor.active_path.index
 		tile_selector.active = true
 		injector_input.active = false
@@ -140,7 +140,7 @@ class TurnManager:
 	var _players = []
 	var _player_count
 	
-	enum States {
+	enum STATES {
 		WAITING_FOR_INJECTION,
 		WAITING_FOR_MOVEMENT,
 	}
@@ -151,7 +151,7 @@ class TurnManager:
 		self._player_count = len(players)
 		# Choose random starting player
 		current_player = players[randi() % _player_count]
-		current_state = WAITING_FOR_INJECTION
+		current_state = STATES.WAITING_FOR_INJECTION
 	
 	func cycle():
 		if current_player.index + 1 < _player_count:
@@ -160,7 +160,7 @@ class TurnManager:
 			current_player = _players[0]
 			
 		print("%s, you're up!" % current_player.display_name)
-		current_state = WAITING_FOR_INJECTION
+		current_state = STATES.WAITING_FOR_INJECTION
 
 class Player:
 	var index setget ,_get_index

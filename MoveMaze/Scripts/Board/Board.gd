@@ -21,7 +21,7 @@ var obj_actor = preload("res://Objects/3D/Actor.tscn")
 var _path_gen_res = load("res://Scripts/Board/Path_Generator.gd")
 var _route_finder_res = load("res://Scripts/Board/Route_Finder.gd")
 
-var route_finder = _route_finder_res.new(funcref(self, "get_path"))
+var route_finder = _route_finder_res.new(funcref(self, "get_path_cell"))
 
 var _path_generator
 var board_size
@@ -115,9 +115,9 @@ func get_path_from_world(world_pos):
 	var pos  = (world_pos - self.position)
 	
 	var index = world_to_map(pos)
-	return get_path(index)
+	return get_path_cell(index)
 
-func get_path(index):
+func get_path_cell(index):
 	if index_in_board(index):
 		for item in path_cells:
 			if item.index == index:
@@ -189,7 +189,7 @@ func _spawn_actors(actor_data):
 	for a in actor_data:
 		var index = Vector2( a.index_x, a.index_y)
 		var actor = obj_actor.instance()
-		actor.setup(a.id, get_path(index), a.people)
+		actor.setup(a.id, get_path_cell(index), a.people)
 		add_child(actor)
 		actors.append(actor)
 
@@ -206,10 +206,10 @@ func _spawn_new_actors(count):
 		return
 
 	#Create list of all spawn paths (Corners)
-	var nw_path = get_path(Vector2())
-	var ne_path = get_path(Vector2(board_size.x - 1, 0))
-	var se_path = get_path(Vector2(board_size.x - 1, board_size.y -1))
-	var sw_path = get_path(Vector2(0, board_size.y - 1))
+	var nw_path = get_path_cell(Vector2())
+	var ne_path = get_path_cell(Vector2(board_size.x - 1, 0))
+	var se_path = get_path_cell(Vector2(board_size.x - 1, board_size.y -1))
+	var sw_path = get_path_cell(Vector2(0, board_size.y - 1))
 
 	var corner_paths = []
 	
