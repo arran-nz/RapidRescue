@@ -23,20 +23,20 @@ const M = PD.MOVEABLE
 const DEFAULT_MAP = [
 				{C:'SE', M:0}, {M:1}, {C:'ESW', M:0}, {M:1}, {C:'ESW', M:0}, {M:1}, {C:'SW', M:0},
 				{M:1}, {M:1}, {M:1}, {M:1}, {M:1}, {M:1}, {M:1},
-				
+
 				{C:'NES', M:0}, {M:1}, {C:'NES', M:0}, {M:1}, {C:'ESW', M:0}, {M:1}, {C:'NSW', M:0},
 				{M:1}, {M:1}, {M:1}, {M:1}, {M:1}, {M:1}, {M:1},
-				
+
 				{C:'NES', M:0}, {M:1}, {C:'NEW', M:0}, {M:1}, {C:'NSW', M:0}, {M:1}, {C:'NWS', M:0},
 				{M:1}, {M:1}, {M:1}, {M:1}, {M:1}, {M:1}, {M:1},
-				
+
 				{C:'NE', M:0}, {M:1}, {C:'NEW', M:0}, {M:1}, {C:'NEW', M:0}, {M:1}, {C:'NW', M:0},
 	]
 
-const PATH_VARIATIONS = { 
+const PATH_VARIATIONS = {
 				'T' : ['ESW', 'NSW', 'NEW', 'NES'],
 				'I' : ['NS', 'EW'],
-				'L' : ['NE', 'SE', 'SW', 'NW'] 
+				'L' : ['NE', 'SE', 'SW', 'NW']
 	}
 
 const PATH_DISTRIBUTION = {
@@ -44,7 +44,7 @@ const PATH_DISTRIBUTION = {
 				'I' : 12,
 				'L' : 16,
 	}
-	
+
 var _map_data
 var extra_path setget ,_get_extra_path
 var path_cells setget ,_get_path_cells
@@ -61,31 +61,31 @@ func _init(map_data=null, extra_path_data=null):
 	else:
 		# Else default map will load.
 		_map_data = DEFAULT_MAP
-		
+
 		# Extend DEFAULT MAP.
 		# Append indices as the order of the array is fixed.
 		# Whereas the loaded Path array dictionay need's to store their individual indices.
 		var x = 0
 		var y = 0
 		for count in range(_map_data.size()):
-			x = int(count) % int(MAP_SIZE.x ) 
+			x = int(count) % int(MAP_SIZE.x )
 			if count > 0 and x == 0: y+=1
 			_map_data[count][I] = Vector2(x,y)
-			
+
 		# Distribute and shuffle avaliable path types.
 		_distribute_paths()
 		extra_path_data = {C: _pop_distributed_path_type(), M:1}
-		
+
 	# Compute
 	path_cells = _compute_path_cells()
 	extra_path = _get_path(null, extra_path_data)
-	
+
 func _get_path_cells():
 	return path_cells
-	
+
 func _get_extra_path():
 	return extra_path
-	
+
 func _compute_path_cells():
 	var path_cells = []
 	for dict in _map_data:
@@ -104,7 +104,7 @@ func _get_index(dict):
 		index = _str_to_vec2(dict[str(I)])
 	else:
 		print("ERR: Index not set")
-		
+
 	return index
 
 func _get_path(index, content):
@@ -115,7 +115,7 @@ func _get_path(index, content):
 			'S': false,
 			'W': false
 	}
-	
+
 	# Connection string eg "NESW"
 	var connection_string
 	if content.has(C):
@@ -126,11 +126,11 @@ func _get_path(index, content):
 		connection_string = content[str(C)]
 	else:
 		connection_string = _pop_distributed_path_type()
-	
+
 	# Flip flag if CHAR is found in loaded connection_string
 	for c in connection_string:
 		connections[c] = true
-	
+
 	# Moveable flag
 	var moveable
 	if content.has(M):
@@ -148,7 +148,7 @@ func _get_path(index, content):
 		path_tile.setup(index, connections, moveable,collectable)
 	else:
 		path_tile.setup(index, connections, moveable)
-	
+
 	return path_tile
 
 func _str_to_vec2(string):
@@ -173,11 +173,11 @@ func _distribute_paths():
 #warning-ignore:unused_variable
 		for i in range(PATH_DISTRIBUTION[type]):
 			paths.append(type)
-	
+
 	_available_paths  = _shuffleList(paths)
 
 func _shuffleList(list):
-    var shuffled_list = [] 
+    var shuffled_list = []
     var index_list = range(list.size())
 #warning-ignore:unused_variable
     for i in range(list.size()):

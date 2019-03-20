@@ -15,7 +15,7 @@ func _ready():
 func setup(board, start_active : bool):
 	self.board = board
 	self.active = start_active
-	
+
 func _set_active(value : bool):
 	spatial_indicator.visible = value
 	set_process(value)

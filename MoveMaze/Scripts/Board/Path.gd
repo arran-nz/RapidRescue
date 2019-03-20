@@ -91,7 +91,7 @@ func get_repr():
 			PD.CONNECTIONS : _get_connection_str(),
 			PD.MOVEABLE : int(moveable),
 		}
-		
+
 func _get_connection_str():
 	var con_str = ''
 	for c in connections:
@@ -104,7 +104,7 @@ func _set_model_and_rotation():
 	var connection_string = _get_connection_str()
 	# Set the Initial rotation of this node based on the connection string.
 	rotation_degrees.y = INIT_ROTATION_MAP[connection_string]
-	
+
 	match connection_string:
 		# Straight
 		'NS', 'EW':
@@ -124,7 +124,7 @@ func update_index(index):
 func _process(delta):
 	if move_easer.is_valid():
 		_move_toward_target(delta)
-		
+
 	if rot_easer.is_valid():
 		_rotate_toward_angle(delta)
 
@@ -158,9 +158,9 @@ func set_target(target, is_instant=false):
 # Region: Rotation
 
 func _rotate_toward_angle(delta):
-	
+
 	rot_easer.process(delta)
-	
+
 	if rot_easer.progress >= 1:
 		rotation_degrees.y = rot_easer.target
 		rot_easer.reset()
@@ -187,9 +187,9 @@ func rotate_90():
 	# Apply Rotation to connections
 	for i in len(connections):
 		connections[names[i]] = values[i]
-		
+
 	# Set start rotation and target
-	
+
 	# If this a new rotation from progress zero, rotate 90 from current roations.
 	if rot_easer.progress == 0:
 		rot_easer.start = rotation_degrees.y
@@ -200,12 +200,12 @@ func rotate_90():
 		rot_easer.start = rotation_degrees.y
 		rot_easer.target = rot_easer.target - 90
 		rot_easer.reset()
-		
+
 func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx):
 	# Check if index is not null, as null would indicate it's in the HAND
 	if event.is_pressed() and index != null:
 		press_path()
-		
+
 func press_path():
 	emit_signal("pressed", self)
 

@@ -29,6 +29,6 @@ func inject_current_path(injector):
 func collect_path(path):
 	current_path = path
 	current_path.set_target(translation)
-	
+
 func get_repr():
 	return current_path.get_repr()

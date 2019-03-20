@@ -33,13 +33,11 @@ var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
 var _total_seats
 var _start_passengers
 
-signal collected_item
 signal final_target_reached
 
-func setup(id, active_path, start_passengers=0):
+func setup(id, active_path):
 	self.id = int(id)
 	self.active_path = active_path
-	self._start_passengers = start_passengers
 
 func get_repr():
 	return {
@@ -56,14 +54,9 @@ func _ready():
 	_t = 0
 	_assign_model_tex()
 	_orient_start_rotation()
-		
+
 	_remaining_seats = _get_seats()
 	_total_seats = _remaining_seats.size()
-	
-	for i in _start_passengers:
-		var item = obj_collectable.instance()
-		_rescue_collectable(item)
-		
 
 func _assign_model_tex():
 	for i in PRIMARY_TEX_ALTAS:
@@ -91,18 +84,17 @@ func set_route(route):
 	_reset_moving_values()
 
 func _process(delta):
-	
+
 	_t += delta
-	
+
 	if _has_route():
 		_rotate_toward_target()
 		_move_toward_target()
 	else:
-		_check_for_collectable()
 		translation = active_path.traversal_pos
 
 func _rotate_toward_target():
-	
+
 	var progress = _t / _TRAVEL_TIME
 	if progress <= _ROTATION_PROGRESS:
 		rotation.y = lerp(_start_angle, _target_angle, progress / _ROTATION_PROGRESS)
@@ -110,20 +102,20 @@ func _rotate_toward_target():
 		rotation.y = _target_angle
 
 func _move_toward_target():
-	
+
 	if _t >= _TRAVEL_TIME:
 		translation = _route.front().traversal_pos
 		_route.pop_front()
 		_reset_moving_values()
 		return
-	
+
 	var progress = _t / _TRAVEL_TIME
-	
+
 	var vector_difference = _route.front().traversal_pos - _start_pos
 	var next_pos = _start_pos + (progress * vector_difference)
 
 	translation = next_pos
-	
+
 func _reset_moving_values():
 	_t = 0
 	_start_pos = translation
@@ -132,32 +124,19 @@ func _reset_moving_values():
 		_target_angle = atan2(vector_difference.x, vector_difference.z)
 		_start_angle = rotation.y
 	else:
-		emit_signal('final_target_reached')
+		emit_signal('final_target_reached', self)
 
 func _has_route():
 	return _route != null && len(_route) > 0
 
-# Region: Collectable
+# Region: Collectable Seats
 
-func _check_for_collectable():
-	if active_path.has_collectable: 
-		if _has_seat():
-			var item = active_path.pickup_collectable()
-			_rescue_collectable(item)
-		else:
-			print('No more room!')
-
-func _has_seat():
+func has_seat():
 	return _remaining_seats != null && _remaining_seats.size() > 0
 
-func _rescue_collectable(item):
-	add_child(item)
-	item.set_process(false)
-	item.scale = COLLECTABLE_SCALE
-	item.translation = _remaining_seats.pop_front()
+func get_seat_position():
+	return _remaining_seats.pop_front()
 
-	emit_signal("collected_item", item)
-	
 func _get_seats():
 	var seats = []
 	for c in get_children():

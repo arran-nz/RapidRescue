@@ -3,7 +3,6 @@
 [ext_resource path="res://Scripts/Board/Board.gd" type="Script" id=1]
 
 [node name="GridMap" type="GridMap"]
-
 theme = null
 cell_size = Vector3( 2, 2, 2 )
 cell_octant_size = 1
@@ -21,5 +20,4 @@ _sections_unfolded = [ "Cell" ]
 __meta__ = {
 "_editor_clip_": 0
 }
-
 

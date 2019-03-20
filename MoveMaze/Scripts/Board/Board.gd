@@ -10,12 +10,13 @@ var path_cells = []
 const MAX_ACTORS = 4
 var actors = []
 
+signal item_collected
 signal board_paths_updated
 signal disable_injector
 
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
 const DIRECTION = PD.DIRECTION
-	
+
 var obj_actor = preload("res://Objects/3D/Actor.tscn")
 
 var _path_gen_res = load("res://Scripts/Board/Path_Generator.gd")
@@ -27,7 +28,7 @@ var _path_generator
 var board_size
 
 var initialized = false
-		
+
 func setup_from_dict(map_data):
 	_path_generator = _path_gen_res.new(map_data['map'], map_data['hand'])
 	board_size = _path_generator.MAP_SIZE
@@ -37,12 +38,13 @@ func setup_from_dict(map_data):
 	_center_board()
 	initialized = true
 
-func setup_new_game(actor_count):
+func setup_new(actor_count):
 	_path_generator = _path_gen_res.new()
 	board_size = _path_generator.MAP_SIZE
 	path_cells = _path_generator.path_cells
 	_spawn_path_cells()
 	_spawn_new_actors(actor_count)
+
 	_center_board()
 	initialized = true
 
@@ -61,14 +63,14 @@ func get_repr():
 		'map' : path_repr,
 		'actors' : actor_repr,
 	}
-	
+
 func get_and_spawn_extra_path():
 	var extra_path = _path_generator.extra_path
 	add_child(extra_path)
 	return extra_path
 
-func spawn_collectable():
-	
+func spawn_new_collectable():
+
 	var open_cells = []
 	var closed_cells = []
 	# Rule out cells are within reach of ALL actors
@@ -77,13 +79,13 @@ func spawn_collectable():
 		var reach = route_finder.get_reach(actor.active_path)
 		for cell in reach:
 			closed_cells.append(cell)
-	
+
 	# Add the remaining cells to the open list
 	for cell in path_cells:
 		if !closed_cells.has(cell):
 			open_cells.append(cell)
-	
-	
+
+
 	# Choose randomly from open cells
 	var x = randi() % len(open_cells)
 	var path = open_cells[x]
@@ -92,13 +94,13 @@ func spawn_collectable():
 
 func request_actor_movement(target_path, actor):
 	var start_path = actor.active_path
-	
+
 	if start_path == target_path:
 		print('Turn Skipped')
 		return true
-	
+
 	var route = route_finder.get_route(start_path, target_path)
-	
+
 	if route != null:
 		if len(route) >= 1:
 			actor.set_route(route)
@@ -106,16 +108,22 @@ func request_actor_movement(target_path, actor):
 
 	return false
 
+func actor_target_reached(actor):
+	# Check for Actor
+	# Soon
+
+	# Check for Collectable
+	if actor.active_path.has_collectable and actor.has_seat():
+		var item = actor.active_path.pickup_collectable()
+		actor.add_child(item)
+		item.set_process(false)
+		item.scale = actor.COLLECTABLE_SCALE
+		item.translation = actor.get_seat_position()
+		# If Collectable signal the information
+		emit_signal("item_collected")
+
 func request_actor_reach(actor):
 	return route_finder.get_reach(actor.active_path)
-
-func get_path_from_world(world_pos):
-	breakpoint
-	# Map position relative to board
-	var pos  = (world_pos - self.position)
-	
-	var index = world_to_map(pos)
-	return get_path_cell(index)
 
 func get_path_cell(index):
 	if index_in_board(index):
@@ -126,40 +134,40 @@ func get_path_cell(index):
 func _center_board():
 	var x = (tile_size.x * board_size.x) / 2
 	var z = (tile_size.y * board_size.y) / 2
-	translation = Vector3(-x, 0, -z) 
+	translation = Vector3(-x, 0, -z)
 
 func inject_path(inject_index, dir, injected_path):
-	
+
 	var disabled_inj_board_index = inject_index + (dir * board_size) - dir
 	emit_signal('disable_injector', disabled_inj_board_index)
-	
+
 	# Set World Target
 	var world_target = map_to_world(inject_index.x, 0, inject_index.y)
 	# Move to world target
 	injected_path.set_target(world_target, false)
-	
+
 	#Update index to injection location
 	injected_path.update_index(inject_index)
 	print(inject_index)
-	
+
 	#Get Existing Line without new path
 	var exsiting_line = []
-	
+
 	if dir == DIRECTION.S \
 	or dir == DIRECTION.N:
 		exsiting_line = _get_col(inject_index.x)
 	else:
 		exsiting_line = _get_row(inject_index.y)
-		
+
 	#Add New Path To Path_Cells Array
 	path_cells.append(injected_path)
-	
+
 	var ejected_path
 	# For every path in line
 	for current_path in exsiting_line:
 		# Get the new path index
 		var new_path_index = current_path.index + dir
-		
+
 		# If in board, move it
 		if index_in_board(new_path_index):
 			_move_path(current_path, new_path_index)
@@ -169,12 +177,12 @@ func inject_path(inject_index, dir, injected_path):
 				if a.active_path == current_path:
 					a.translation = injected_path.translation
 					a.active_path = injected_path
-		
+
 			#Collect the path
 			ejected_path = current_path
 			# Set target to off the board
 			ejected_path.set_target(map_to_world(new_path_index.x, 0, new_path_index.y))
-	
+
 	path_cells.erase(ejected_path)
 	emit_signal('board_paths_updated')
 	return ejected_path
@@ -189,9 +197,13 @@ func _spawn_actors(actor_data):
 	for a in actor_data:
 		var index = Vector2( a.index_x, a.index_y)
 		var actor = obj_actor.instance()
-		actor.setup(a.id, get_path_cell(index), a.people)
+		actor.setup(a.id, get_path_cell(index))
+		a.connect('final_target_reached', self, 'actor_target_reached')
 		add_child(actor)
 		actors.append(actor)
+		# Add Collectable People
+		# TODO: SPAWN WITH AMOUNT OF A.PEOPLE
+		print(a.people)
 
 func _spawn_new_actors(count):
 	"""Calculate and spawn actors."""
@@ -212,7 +224,7 @@ func _spawn_new_actors(count):
 	var sw_path = get_path_cell(Vector2(0, board_size.y - 1))
 
 	var corner_paths = []
-	
+
 	# If there are 2 desired actors, put them diagonal to each other
 	if count == 2:
 		if randi() % 2 == 1:
@@ -231,6 +243,7 @@ func _spawn_new_actors(count):
 	for i in range(count):
 		var actor = obj_actor.instance()
 		actor.setup(i, corner_paths[i])
+		actor.connect('final_target_reached', self, 'actor_target_reached')
 		add_child(actor)
 		actors.append(actor)
 
@@ -244,15 +257,15 @@ func _get_col(x_index):
 	for item in path_cells:
 			if item.index.x == x_index:
 				col.append(item)
-	
+
 	return col
 
 func _get_row(y_index):
-	var row = []	
+	var row = []
 	for item in path_cells:
 		if item.index.y == y_index:
 			row.append(item)
-	
+
 	return row
 
 func index_in_board(index):

@@ -19,6 +19,10 @@ config/name="MoveMaze"
 run/main_scene="res://Game_3D.tscn"
 config/icon="res://icon.png"
 
+[debug]
+
+gdscript/warnings/enable=false
+
 [input]
 
 rotate_hand={

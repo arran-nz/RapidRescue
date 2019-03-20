@@ -10,7 +10,7 @@ func auto_save(dict):
 
 func auto_load():
 	return load_saved_data(AUTO_SAVE_NAME)
-	
+
 func remove_auto():
 	var abs_path = SAVE_LOCATION + AUTO_SAVE_NAME + SAVE_EXT
 	Directory.new().remove(abs_path)
@@ -21,7 +21,7 @@ func save_data(dict, file_name):
 	var contents = to_json(dict)
 	save_file.store_string(contents)
 	save_file.close()
-	
+
 func load_saved_data(file_name):
 	var save_file = File.new()
 	var abs_path = SAVE_LOCATION + file_name + SAVE_EXT
