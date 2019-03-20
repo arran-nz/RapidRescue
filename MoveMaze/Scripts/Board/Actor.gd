@@ -16,6 +16,8 @@ const PRIMARY_TEX_ALTAS = [0, 2]
 var active_path
 # Unique ID
 var id
+# Starting Index
+var start_index
 
 var _remaining_seats
 const COLLECTABLE_SCALE = Vector3(0.5,0.5,0.5)
@@ -26,18 +28,16 @@ var _start_angle
 var _target_angle
 var _t
 
-
-#var traversing setget ,_has_route
-
-var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
 var _total_seats
 var _start_passengers
+var passengers = []
 
 signal final_target_reached
 
 func setup(id, active_path):
 	self.id = int(id)
 	self.active_path = active_path
+	start_index = active_path.index
 
 func get_repr():
 	return {
@@ -47,8 +47,20 @@ func get_repr():
 		'index_y' : active_path.index.y
 	}
 
+func add_passenger(item):
+	add_child(item)
+	item.set_process(false)
+	item.scale = COLLECTABLE_SCALE
+	item.translation = get_seat_position()
+	passengers.append(item)
+
+func remove_passengers():
+	while len(passengers) > 0:
+		remove_child(passengers.pop_front())
+	_remaining_seats = _get_seats()
+
 func get_passenger_count():
-	return _total_seats - _remaining_seats.size()
+	return passengers.size()
 
 func _ready():
 	_t = 0
@@ -60,7 +72,7 @@ func _ready():
 
 func _assign_model_tex():
 	for i in PRIMARY_TEX_ALTAS:
-		$MeshInstance.set_surface_material(i, ACTOR_TEXTURE[id])
+		$MeshContainer/MeshInstance.set_surface_material(i, ACTOR_TEXTURE[id])
 
 func _orient_start_rotation():
 	# Find the first connection and rotate facing that direction.
@@ -90,7 +102,9 @@ func _process(delta):
 	if _has_route():
 		_rotate_toward_target()
 		_move_toward_target()
+		$AnimationPlayer.play("drive")
 	else:
+		$AnimationPlayer.play("idle")
 		translation = active_path.traversal_pos
 
 func _rotate_toward_target():
@@ -139,7 +153,7 @@ func get_seat_position():
 
 func _get_seats():
 	var seats = []
-	for c in get_children():
+	for c in $MeshContainer.get_children():
 		if c.name.find('Seat') != -1:
 			seats.append(c.translation)
 	return seats

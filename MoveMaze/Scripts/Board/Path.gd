@@ -38,8 +38,6 @@ const INIT_ROTATION_MAP = {
 	'NEW' : 180,
 	'NSW' : 270,
 }
-
-const NON_MOVEABLE_Y_SCALAR = 1.4
 var mesh_instance
 
 var easing = preload('res://Scripts/Easing.gd')
@@ -61,20 +59,13 @@ func setup(index, connections, moveable, collectable=null):
 
 func _ready():
 	_set_model_and_rotation()
-	if !moveable:
-		# If not moveable, scale the Y axis of the model.
-		mesh_instance.scale.y *=  NON_MOVEABLE_Y_SCALAR
-
 	if collectable:
 		add_child(collectable)
 
 func get_traversal_pos():
-	if moveable:
-		return translation
-	else:
-		var tr = translation
-		tr.y *= NON_MOVEABLE_Y_SCALAR
-		return tr
+	var tp = translation
+	tp.y += 0.25
+	return tp
 
 func get_repr():
 	"""Return path connections string representation."""

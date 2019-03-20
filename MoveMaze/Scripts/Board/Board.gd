@@ -11,6 +11,7 @@ const MAX_ACTORS = 4
 var actors = []
 
 signal item_collected
+signal actor_sunk
 signal board_paths_updated
 signal disable_injector
 
@@ -110,20 +111,27 @@ func request_actor_movement(target_path, actor):
 
 func check_actor_collisions(actor):
 	# Check for Actor
-	# Soon
+
+	# Soon to be Dead (STBD) Actor
+	for other_actor in actors:
+		if actor.active_path == other_actor.active_path \
+		and other_actor != actor:
+			sink_and_respawn_actor(other_actor)
 
 	# Check for Collectable
 	if actor.active_path.has_collectable and actor.has_seat():
 		var item = actor.active_path.pickup_collectable()
-		actor.add_child(item)
-		item.set_process(false)
-		item.scale = actor.COLLECTABLE_SCALE
-		item.translation = actor.get_seat_position()
+		actor.add_passenger(item)
 		# If Collectable signal the information
 		emit_signal("item_collected")
 
 func request_actor_reach(actor):
 	return route_finder.get_reach(actor.active_path)
+
+func sink_and_respawn_actor(actor):
+	actor.remove_passengers()
+	actor.active_path = get_path_cell(actor.start_index)
+	emit_signal("actor_sunk")
 
 func get_path_cell(index):
 	if index_in_board(index):

@@ -32,7 +32,7 @@ func setup_from_autosave():
 	if autosave != null:
 		print("Loaded Auto")
 		board.setup_from_dict(autosave)
-		setup_game()
+		setup_master()
 	else:
 		print("No Autosave found.")
 
@@ -41,10 +41,10 @@ func setup_new_game(players=2):
 		return
 	print("New Game")
 	board.setup_new(players)
-	setup_game()
+	setup_master()
 	board.spawn_new_collectable()
 
-func setup_game():
+func setup_master():
 	board.connect('board_paths_updated', self, 'can_current_player_move')
 
 	# Setup Injector input
@@ -65,8 +65,11 @@ func setup_game():
 		var player = Player.new(i, d_name, actor)
 		players.append(player)
 
-	# Connect to the Board's Signal
+	# Connect to the Board's Item Collected Signal
 	board.connect("item_collected", self, "manage_collection")
+	# Connect to the Board's Actor Sunk Signal
+	board.connect("actor_sunk", self, "update_current_player_indictator")
+
 
 	# Tile Selector
 	tile_selector.setup(board, false)
@@ -74,8 +77,7 @@ func setup_game():
 	tm = TurnManager.new(players)
 	tile_selector.current_index = tm.current_player.actor.active_path.index
 
-	# Update Player Indicator
-	player_indc.update_indicator(tm.current_player.actor)
+	update_current_player_indictator()
 
 	# Hand's Extra path
 	hand.setup(funcref(board, "inject_path") ,board.get_and_spawn_extra_path())
@@ -120,8 +122,7 @@ func cycle_turn():
 	auto_save()
 	tm.cycle()
 
-	# Update Player Indicator
-	player_indc.update_indicator(tm.current_player.actor)
+	update_current_player_indictator()
 
 	#As Injection comes first, disable the tile_selector
 	tile_selector.active = false
@@ -129,8 +130,11 @@ func cycle_turn():
 
 func manage_collection():
 	# Update Player Indicator
-	player_indc.update_indicator(tm.current_player.actor)
+	update_current_player_indictator()
 	board.spawn_new_collectable()
+
+func update_current_player_indictator():
+	player_indc.update_indicator(tm.current_player.actor)
 
 class TurnManager:
 	var current_player
