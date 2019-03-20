@@ -8,7 +8,7 @@ class PathData:
 		MOVEABLE = 2,
 		COLLECTABLE = 3
 	}
-	
+
 	const DIRECTION = {
 				'N' : Vector2(0, -1),
 				'E' : Vector2(1, 0),

@@ -35,7 +35,7 @@ func _unhandled_input(event):
 
 func press_injector_from_index():
 	injectors[current_index].press_injector()
-	
+
 func disable_injector(inj_board_index):
 	#Enable All Disabled Injectors and Disable appropriate
 	for inj in injectors:
@@ -46,15 +46,15 @@ func disable_injector(inj_board_index):
 
 func cycle_current_index(dir):
 	var new_index = _get_injector_index_wrapping(current_index, dir)
-	
+
 	if injectors[new_index].disabled:
 		# Skip this injector and move to next index
 		new_index = _get_injector_index_wrapping(new_index, dir)
-		
+
 	injectors[current_index].hovered = false
 	injectors[new_index].hovered = true
 	current_index = new_index
-	
+
 func _get_injector_index_wrapping(index, dir):
 	var next_logical_pos = index + dir
 	if next_logical_pos < injectors.size() and next_logical_pos >= 0:
@@ -72,15 +72,15 @@ func _spawn_injectors():
 	for path in north_row:
 		if path.moveable:
 			x_indices.append(path.index.x)
-	
+
 	var west_col = board._get_col(0)
 	var y_indices = []
 	for path in west_col:
 		if path.moveable:
 			y_indices.append(path.index.y)
-	
-	var NW = Vector2(north_row[0].index)
-	
+
+	var NW = north_row[0].index
+
 	# NORTH ROW
 	for x_i in x_indices:
 		var new_north_inj = obj_injector.instance()
@@ -89,7 +89,7 @@ func _spawn_injectors():
 		new_north_inj.setup(Vector2(x_i, n_index.y) + DIRECTION.S, DIRECTION.S)
 		injectors.append(new_north_inj)
 		add_child(new_north_inj)
-		
+
 	# EAST ROW
 	for y_i in y_indices:
 		var new_east_inj = obj_injector.instance()
@@ -98,10 +98,10 @@ func _spawn_injectors():
 		new_east_inj.setup(Vector2(e_index.x, y_i) + DIRECTION.W , DIRECTION.W)
 		injectors.append(new_east_inj)
 		add_child(new_east_inj)
-	
+
 	x_indices.invert()
 	y_indices.invert()
-	
+
 	# SOUTH ROW
 	for x_i in x_indices:
 		var new_south_inj = obj_injector.instance()
@@ -110,7 +110,7 @@ func _spawn_injectors():
 		new_south_inj.setup(Vector2(x_i, s_index.y) + DIRECTION.N, DIRECTION.N)
 		injectors.append(new_south_inj)
 		add_child(new_south_inj)
-		
+
 	# WEST ROW
 	for y_i in y_indices:
 		var new_west_inj = obj_injector.instance()
