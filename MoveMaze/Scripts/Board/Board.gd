@@ -198,7 +198,7 @@ func _spawn_actors(actor_data):
 		var index = Vector2( a.index_x, a.index_y)
 		var actor = obj_actor.instance()
 		actor.setup(a.id, get_path_cell(index))
-		a.connect('final_target_reached', self, 'actor_target_reached')
+		actor.connect('final_target_reached', self, 'actor_target_reached')
 		add_child(actor)
 		actors.append(actor)
 		# Add Collectable People
