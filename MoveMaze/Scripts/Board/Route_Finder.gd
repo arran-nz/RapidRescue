@@ -5,7 +5,7 @@ extends Resource
 const DIRECTION = preload('res://Scripts/Board/Definitions.gd').PathData.DIRECTION
 var get_path
 
-const SIMPLIFY_ROUTE = true
+const SIMPLIFY_ROUTE = false
 
 func _init(get_path):
 	self.get_path = get_path

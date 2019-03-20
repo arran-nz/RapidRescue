@@ -2,7 +2,7 @@
 
 extends Spatial
 
-const _TRAVEL_TIME = 1.0
+const _TRAVEL_TIME = 0.7
 const _ROTATION_PROGRESS = 0.4
 
 const ACTOR_TEXTURE = {
