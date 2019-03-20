@@ -108,7 +108,7 @@ func request_actor_movement(target_path, actor):
 
 	return false
 
-func actor_target_reached(actor):
+func check_actor_collisions(actor):
 	# Check for Actor
 	# Soon
 
@@ -198,7 +198,7 @@ func _spawn_actors(actor_data):
 		var index = Vector2( a.index_x, a.index_y)
 		var actor = obj_actor.instance()
 		actor.setup(a.id, get_path_cell(index))
-		actor.connect('final_target_reached', self, 'actor_target_reached')
+		actor.connect('final_target_reached', self, 'check_actor_collisions')
 		add_child(actor)
 		actors.append(actor)
 		# Add Collectable People
@@ -243,7 +243,7 @@ func _spawn_new_actors(count):
 	for i in range(count):
 		var actor = obj_actor.instance()
 		actor.setup(i, corner_paths[i])
-		actor.connect('final_target_reached', self, 'actor_target_reached')
+		actor.connect('final_target_reached', self, 'check_actor_collisions')
 		add_child(actor)
 		actors.append(actor)
 
