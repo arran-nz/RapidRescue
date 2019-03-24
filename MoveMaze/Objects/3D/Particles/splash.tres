@@ -3,12 +3,8 @@
 [ext_resource path="res://Materials/edge_water.tres" type="Material" id=1]
 
 [resource]
-
 material = ExtResource( 1 )
-custom_aabb = AABB( 0, 0, 0, 0, 0, 0 )
-radius = 1.0
-height = 2.0
-radial_segments = 64
-rings = 32
-is_hemisphere = false
+flip_faces = true
+radial_segments = 6
+rings = 6
 

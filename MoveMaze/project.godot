@@ -8,9 +8,26 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Resource",
+"class": "PathGenerator",
+"language": "GDScript",
+"path": "res://Scripts/Board/Path_Generator.gd"
+}, {
+"base": "Resource",
+"class": "PersistentData",
+"language": "GDScript",
+"path": "res://Scripts/System/Persistent_Data.gd"
+}, {
+"base": "Resource",
+"class": "RouteFinder",
+"language": "GDScript",
+"path": "res://Scripts/Board/Route_Finder.gd"
+} ]
 _global_script_class_icons={
-
+"PathGenerator": "",
+"PersistentData": "",
+"RouteFinder": ""
 }
 
 [application]
@@ -18,6 +35,10 @@ _global_script_class_icons={
 config/name="MoveMaze"
 run/main_scene="res://Game_3D.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Draw3D="*res://Scripts/Draw3D.gd"
 
 [debug]
 

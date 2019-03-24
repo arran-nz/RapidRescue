@@ -2,6 +2,8 @@
 
 extends Resource
 
+class_name PathGenerator
+
 #Direction Representation
 # N = North / Up
 # E = East / Right
@@ -51,7 +53,7 @@ var path_cells setget ,_get_path_cells
 
 var _available_paths  = []
 
-var obj_collectable = preload("res://Objects/3D/Collectable.tscn")
+var obj_collectable = preload("res://Objects/3D/Collectables/Person.tscn")
 var obj_path = preload("res://Objects/3D/Path.tscn")
 
 func _init(map_data=null, extra_path_data=null):

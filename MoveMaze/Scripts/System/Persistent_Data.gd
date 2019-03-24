@@ -1,5 +1,7 @@
 extends Resource
 
+class_name PersistentData
+
 const SAVE_LOCATION = 'user://'
 const SAVE_EXT = '.dat'
 

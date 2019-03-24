@@ -12,4 +12,5 @@ ssao_radius2 = 0.2
 ssao_intensity2 = 0.5
 ssao_bias = 0.005
 ssao_color = Color( 0.0523376, 0.0833213, 0.136719, 1 )
+ssao_quality = 2
 

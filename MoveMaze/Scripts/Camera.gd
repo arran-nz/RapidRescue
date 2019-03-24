@@ -22,11 +22,11 @@ func _ready():
 	_trauma = 0.0
 
 func _process(delta):
-	
+
 	if _trauma > 0:
 		_decay_trauma(delta)
 		_apply_shake()
-		
+
 func _decay_trauma(delta):
 	var change = decay_rate * delta
 	_trauma = max(_trauma - change, 0)
@@ -43,5 +43,5 @@ func _apply_shake():
 	rotation = _start_rotation + Vector3(pitch, yaw, roll)
 
 func _get_neg_or_pos_scalar():
-		return rand_range(-1.0, 1.0)
+	return rand_range(-1.0, 1.0)
 

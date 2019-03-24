@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Objects/3D/Particles/splash.tres" type="SphereMesh" id=1]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 0.263672 ), 0.0, 1.05908, 0, 0, Vector2( 0.728792, 0.59668 ), -2.70792, -2.70792, 0, 0, Vector2( 1, 0 ), -2.44204, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=2]
+curve = SubResource( 1 )
+
+[sub_resource type="ParticlesMaterial" id=3]
+spread = 180.0
+flatness = 0.8
+gravity = Vector3( 0, -4, 0 )
+initial_velocity = 6.0
+initial_velocity_random = 0.2
+angular_velocity = 10.0
+linear_accel = 1.0
+damping = 10.0
+scale = 0.4
+scale_random = 0.05
+scale_curve = SubResource( 2 )
+color = Color( 0.250488, 0.84375, 0.6908, 1 )
+
+[node name="Particles" type="Particles"]
+cast_shadow = 0
+emitting = false
+amount = 80
+lifetime = 0.6
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+process_material = SubResource( 3 )
+draw_pass_1 = ExtResource( 1 )
+

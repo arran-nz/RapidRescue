@@ -10,8 +10,7 @@ var path_cells = []
 const MAX_ACTORS = 4
 var actors = []
 
-signal item_collected
-signal actor_sunk
+signal actor_updated
 signal board_paths_updated
 signal disable_injector
 
@@ -20,10 +19,8 @@ const DIRECTION = PD.DIRECTION
 
 var obj_actor = preload("res://Objects/3D/Actor.tscn")
 
-var _path_gen_res = load("res://Scripts/Board/Path_Generator.gd")
-var _route_finder_res = load("res://Scripts/Board/Route_Finder.gd")
 
-var route_finder = _route_finder_res.new(funcref(self, "get_path_cell"))
+var route_finder = RouteFinder.new(funcref(self, "get_path_cell"))
 
 var _path_generator
 var board_size
@@ -31,7 +28,7 @@ var board_size
 var initialized = false
 
 func setup_from_dict(map_data):
-	_path_generator = _path_gen_res.new(map_data['map'], map_data['hand'])
+	_path_generator = PathGenerator.new(map_data['map'], map_data['hand'])
 	board_size = _path_generator.MAP_SIZE
 	path_cells = _path_generator.path_cells
 	_spawn_path_cells()
@@ -40,7 +37,7 @@ func setup_from_dict(map_data):
 	initialized = true
 
 func setup_new(actor_count):
-	_path_generator = _path_gen_res.new()
+	_path_generator = PathGenerator.new()
 	board_size = _path_generator.MAP_SIZE
 	path_cells = _path_generator.path_cells
 	_spawn_path_cells()
@@ -71,25 +68,32 @@ func get_and_spawn_extra_path():
 	return extra_path
 
 func spawn_new_collectable():
+	# Find the most suitable location and spawn a new collectable.
+	var undersireable_cells = []
+	var desired_cells = []
+	var potential_cells = path_cells.duplicate()
 
-	var open_cells = []
-	var closed_cells = []
-	# Rule out cells are within reach of ALL actors
-
+	# Cells that are within reach are undesired
 	for actor in actors:
 		var reach = route_finder.get_reach(actor.active_path)
 		for cell in reach:
-			closed_cells.append(cell)
+			undersireable_cells.append(cell)
+		# Rule out the home dock for active players
+		potential_cells.erase(actor.home_dock)
 
 	# Add the remaining cells to the open list
-	for cell in path_cells:
-		if !closed_cells.has(cell):
-			open_cells.append(cell)
+	for cell in potential_cells:
+		if !undersireable_cells.has(cell):
+			desired_cells.append(cell)
 
+	var path
+	if desired_cells.size() >= 1:
+		# Choose randomly from open cells
+		path = desired_cells[randi() % len(desired_cells)]
+	else:
+		# Choose randomly from potential cells
+		path = potential_cells[randi() % len(potential_cells)]
 
-	# Choose randomly from open cells
-	var x = randi() % len(open_cells)
-	var path = open_cells[x]
 	var collectable = _path_generator.obj_collectable.instance()
 	path.store_collectable(collectable)
 
@@ -103,35 +107,40 @@ func request_actor_movement(target_path, actor):
 	var route = route_finder.get_route(start_path, target_path)
 
 	if route != null:
-		if len(route) >= 1:
-			actor.set_route(route)
+		if route.size() >= 1:
+			actor.set_route(route, target_path)
 			return true
 
 	return false
 
 func check_actor_collisions(actor):
-	# Check for Actor
-
 	# Soon to be Dead (STBD) Actor
 	for other_actor in actors:
 		if actor.active_path == other_actor.active_path \
 		and other_actor != actor:
-			sink_and_respawn_actor(other_actor)
+			other_actor.retreive_passengers()
+			other_actor.active_path = other_actor.home_dock
+			emit_signal("actor_updated")
+
+	# Check home dock
+	if actor.is_at_dock() and actor.get_passenger_count() > 0:
+		var rescued_passengers = actor.retreive_passengers()
+		for passenger in rescued_passengers:
+			print('s')
+
+		emit_signal("actor_updated")
 
 	# Check for Collectable
 	if actor.active_path.has_collectable and actor.has_seat():
 		var item = actor.active_path.pickup_collectable()
 		actor.add_passenger(item)
 		# If Collectable signal the information
-		emit_signal("item_collected")
+		emit_signal("actor_updated")
+		# Spawn another collectable
+		spawn_new_collectable()
 
 func request_actor_reach(actor):
 	return route_finder.get_reach(actor.active_path)
-
-func sink_and_respawn_actor(actor):
-	actor.remove_passengers()
-	actor.active_path = get_path_cell(actor.start_index)
-	emit_signal("actor_sunk")
 
 func get_path_cell(index):
 	if index_in_board(index):
@@ -145,7 +154,6 @@ func _center_board():
 	translation = Vector3(-x, 0, -z)
 
 func inject_path(inject_index, dir, injected_path):
-
 	var disabled_inj_board_index = inject_index + (dir * board_size) - dir
 	emit_signal('disable_injector', disabled_inj_board_index)
 

@@ -33,7 +33,6 @@ func _unhandled_input(event):
 func select_path_from_index():
 	board.get_path_cell(current_index).press_path()
 
-#warning-ignore:unused_argument
 func _process(delta: float):
 	if board:
 		var target_pos =  board.map_to_world(current_index.x, 0, current_index.y)

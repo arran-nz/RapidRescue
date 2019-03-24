@@ -2,10 +2,12 @@
 
 extends Resource
 
+class_name RouteFinder
+
 const DIRECTION = preload('res://Scripts/Board/Definitions.gd').PathData.DIRECTION
 var get_path
 
-const SIMPLIFY_ROUTE = false
+const SIMPLIFY_ROUTE = true
 
 func _init(get_path):
 	self.get_path = get_path
@@ -58,7 +60,15 @@ func _retrace_route(start_path, end_path):
 		route = _simplify_route(route)
 
 	route.invert()
-	return route
+	return _paths_to_vector_pool(route)
+
+func _paths_to_vector_pool(route):
+	# Convert the path objects to an array of Vector3 positions.
+	var position_route = PoolVector3Array()
+	for r in route:
+		position_route.append(r.traversal_pos)
+
+	return position_route
 
 func _simplify_route(route):
 	var simple_route = []
@@ -95,8 +105,6 @@ func get_reach(path):
 		for n in _get_connected_neighbors(current_path):
 			if !visited_set.has(n):
 				open_set.append(n)
-
-
 	return visited_set
 
 func _get_connected_neighbors(path):

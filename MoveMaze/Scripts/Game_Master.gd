@@ -4,8 +4,7 @@ extends Node
 
 onready var obj_tile_selector = preload('res://Objects/3D/Tile_Selector.tscn')
 
-var res_persistent_data = preload('res://Scripts/System/Persistent_Data.gd')
-var persistent_io
+var persistent_io = PersistentData.new()
 
 onready var player_indc = $Player_Indicator
 onready var injector_input = $Master_Board/Injectors
@@ -18,7 +17,6 @@ var board
 var tm
 
 func _ready():
-	persistent_io = res_persistent_data.new()
 	board = get_node("Master_Board/Board")
 
 	tile_selector = obj_tile_selector.instance()
@@ -65,11 +63,8 @@ func setup_master():
 		var player = Player.new(i, d_name, actor)
 		players.append(player)
 
-	# Connect to the Board's Item Collected Signal
-	board.connect("item_collected", self, "manage_collection")
-	# Connect to the Board's Actor Sunk Signal
-	board.connect("actor_sunk", self, "update_current_player_indictator")
-
+	# Connect to the Board's actor_updated Signal
+	board.connect("actor_updated", self, "update_current_player_indictator")
 
 	# Tile Selector
 	tile_selector.setup(board, false)
@@ -127,11 +122,6 @@ func cycle_turn():
 	#As Injection comes first, disable the tile_selector
 	tile_selector.active = false
 	injector_input.active = true
-
-func manage_collection():
-	# Update Player Indicator
-	update_current_player_indictator()
-	board.spawn_new_collectable()
 
 func update_current_player_indictator():
 	player_indc.update_indicator(tm.current_player.actor)
