@@ -3,7 +3,7 @@ extends Node
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
 const DIRECTION = PD.DIRECTION
 
-var current_index = Vector2(0,0)
+var current_index setget set_current_index
 var board
 var active setget _set_active
 
@@ -15,6 +15,11 @@ func _ready():
 func setup(board, start_active : bool):
 	self.board = board
 	self.active = start_active
+
+func set_current_index(index):
+	var f = board.index_has_actor(index) or board.index_has_path_with_collectable(index)
+	spatial_indicator.visible = !f
+	current_index = index
 
 func _set_active(value : bool):
 	spatial_indicator.visible = value
@@ -42,7 +47,7 @@ func move_current_index(dir: Vector2):
 	var new_pos = current_index + dir
 	if board.index_in_board(new_pos):
 		# Move to next index
-		current_index = new_pos
+		self.current_index = new_pos
 	else:
 		# Wrap around the board
-		current_index = new_pos - (dir * board.board_size)
+		self.current_index = new_pos - (dir * board.board_size)
