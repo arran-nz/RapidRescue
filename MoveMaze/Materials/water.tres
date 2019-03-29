@@ -1,0 +1,14 @@
+[gd_resource type="SpatialMaterial" format=2]
+
+[resource]
+flags_transparent = true
+flags_do_not_receive_shadows = true
+params_diffuse_mode = 4
+albedo_color = Color( 0.172549, 0.811765, 0.827451, 0.317647 )
+metallic = 0.74
+metallic_specular = 1.0
+roughness = 0.0
+clearcoat_enabled = true
+clearcoat = 1.0
+clearcoat_gloss = 1.0
+

@@ -1,31 +1,18 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://Models/obj/road-straight-low.obj" type="ArrayMesh" id=1]
-[ext_resource path="res://Materials/road_mat.tres" type="Material" id=2]
+[ext_resource path="res://Objects/3D/Path_Meshs/River/Straight.tscn" type="PackedScene" id=1]
 
 [node name="Root" type="Spatial"]
-
 transform = Transform( 0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0 )
-_sections_unfolded = [ "Transform", "material" ]
 
-[node name="Mesh_Group" type="Spatial" parent="." index="0"]
+[node name="Mesh_Group" type="Spatial" parent="."]
 
-[node name="Road" type="Spatial" parent="Mesh_Group" index="0"]
+[node name="Road" type="Spatial" parent="Mesh_Group"]
 
-[node name="Mesh" type="MeshInstance" parent="Mesh_Group/Road" index="0"]
+[node name="Straight" parent="Mesh_Group/Road" instance=ExtResource( 1 )]
+transform = Transform( -1.74846e-007, 0, -4, 0, 4, 0, 4, 0, -1.74846e-007, 0, 5.96046e-008, 0 )
 
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = ExtResource( 1 )
-skeleton = NodePath("..")
-material/0 = ExtResource( 2 )
-_sections_unfolded = [ "Geometry", "Transform", "material" ]
-
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 3.93923, -0.694593, 5.17512e-009, 0.0605378, 0.343327, 3.98478, -0.69195, -3.92424, 0.348623, 0, 0, 0 )
+visible = false
 

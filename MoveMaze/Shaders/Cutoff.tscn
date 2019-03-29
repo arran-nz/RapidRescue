@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Shaders/cutoff.shader" type="Shader" id=1]
+
+[sub_resource type="PlaneMesh" id=1]
+
+[sub_resource type="OpenSimplexNoise" id=5]
+
+[sub_resource type="NoiseTexture" id=6]
+noise = SubResource( 5 )
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 1 )
+shader_param/cutoff = 0.135
+shader_param/cut_color = Color( 0.243137, 0.776471, 0.113725, 1 )
+shader_param/std_color = Color( 1, 1, 1, 1 )
+shader_param/mask = SubResource( 6 )
+
+[node name="Mesh" type="MeshInstance"]
+mesh = SubResource( 1 )
+material/0 = SubResource( 4 )
+

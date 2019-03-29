@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/System/Path_Selector.gd" type="Script" id=1]
+[ext_resource path="res://Objects/3D/World_Objects/Buoy.tscn" type="PackedScene" id=2]
+
+[node name="TileSelector" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="Indicator" type="Spatial" parent="."]
+
+[node name="Buoy" parent="Indicator" instance=ExtResource( 2 )]
+
