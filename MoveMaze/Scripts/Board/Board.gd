@@ -139,6 +139,20 @@ func check_actor_collisions(actor):
 		# Spawn another collectable
 		spawn_new_collectable()
 
+func index_has_path_with_collectable(index):
+	return get_path_cell(index).has_collectable
+
+func index_has_actor(index):
+	if index_get_actor(index) != null:
+		return true
+	return false
+
+func index_get_actor(index):
+	var path_cell = get_path_cell(index)
+	for actor in actors:
+		if actor.active_path == path_cell:
+			return actor
+
 func request_actor_reach(actor):
 	return route_finder.get_reach(actor.active_path)
 
