@@ -2,7 +2,7 @@
 
 extends Node
 
-onready var obj_tile_selector = preload('res://Objects/3D/Tile_Selector.tscn')
+onready var obj_path_selector = preload('res://Objects/3D/Path_Selector.tscn')
 
 var persistent_io = PersistentData.new()
 
@@ -10,7 +10,7 @@ onready var player_indc = $Player_Indicator
 onready var injector_input = $Master_Board/Injectors
 onready var hand = $Hand
 
-var tile_selector
+var path_selector
 var board
 
 # Turn Mananger
@@ -19,9 +19,9 @@ var tm
 func _ready():
 	board = get_node("Master_Board/Board")
 
-	tile_selector = obj_tile_selector.instance()
+	path_selector = obj_path_selector.instance()
 
-	board.add_child(tile_selector)
+	board.add_child(path_selector)
 
 func setup_from_autosave():
 	if board.initialized:
@@ -66,11 +66,11 @@ func setup_master():
 	# Connect to the Board's actor_updated Signal
 	board.connect("actor_updated", self, "update_current_player_indictator")
 
-	# Tile Selector
-	tile_selector.setup(board, false)
+	# Path Selector
+	path_selector.setup(board, false)
 
 	tm = TurnManager.new(players)
-	tile_selector.current_index = tm.current_player.actor.active_path.index
+	path_selector.current_index = tm.current_player.actor.active_path.index
 
 	update_current_player_indictator()
 
@@ -90,7 +90,8 @@ func path_select(path):
 	if tm.current_state == tm.STATES.WAITING_FOR_MOVEMENT:
 		var success = board.request_actor_movement(path, tm.current_player.actor)
 		if success:
-			cycle_turn()
+			tm.current_player.actor.connect("final_target_reached", self, "disconnect_and_cycle_turn")
+			path_selector.active = false
 	else:
 		print("%s must place path first!" % tm.current_player.display_name)
 
@@ -99,12 +100,16 @@ func request_path_injection(injector):
 	if tm.current_state == tm.STATES.WAITING_FOR_INJECTION:
 		hand.inject_current_path(injector)
 		tm.current_state = tm.STATES.WAITING_FOR_MOVEMENT
-		tile_selector.current_index = tm.current_player.actor.active_path.index
-		tile_selector.active = true
+		path_selector.current_index = tm.current_player.actor.active_path.index
+		path_selector.active = true
 		injector_input.active = false
 
 	else:
 		print("Already placed path, %s please move." % tm.current_player.display_name)
+
+func disconnect_and_cycle_turn(actor):
+	actor.disconnect("final_target_reached", self, "disconnect_and_cycle_turn")
+	cycle_turn()
 
 func can_current_player_move():
 	"""Check current_player reach - if none, force a turn cycle"""
@@ -119,8 +124,8 @@ func cycle_turn():
 
 	update_current_player_indictator()
 
-	#As Injection comes first, disable the tile_selector
-	tile_selector.active = false
+	#As Injection comes first, disable the path_selector
+	path_selector.active = false
 	injector_input.active = true
 
 func update_current_player_indictator():
