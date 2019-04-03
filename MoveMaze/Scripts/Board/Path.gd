@@ -20,7 +20,10 @@ const MESH_MAP = {
 	# Corner
 	'C': preload('res://Objects/3D/Path_Meshs/Corner.tscn'),
 	# T-Intersection
-	'T': preload('res://Objects/3D/Path_Meshs/Intersection.tscn')
+	'T': preload('res://Objects/3D/Path_Meshs/Intersection.tscn'),
+
+	# STALE_FLOOR to hint non-moveable paths
+	'STALE_FLOOR':preload('res://Objects/3D/Path_Meshs/River/RiverBed_Seaweed.tscn')
 }
 
 const INIT_ROTATION_MAP = {
@@ -38,6 +41,7 @@ const INIT_ROTATION_MAP = {
 	'NEW' : 180,
 	'NSW' : 270,
 }
+
 var mesh_instance
 
 var easing = preload('res://Scripts/Easing.gd')
@@ -108,6 +112,9 @@ func _set_model_and_rotation():
 			mesh_instance = MESH_MAP['T'].instance()
 
 	add_child(mesh_instance)
+
+	if not moveable:
+		mesh_instance.get_child(0).get_child(0).mesh = MESH_MAP['STALE_FLOOR'].instance().mesh
 
 func update_index(index):
 	self.index = index
