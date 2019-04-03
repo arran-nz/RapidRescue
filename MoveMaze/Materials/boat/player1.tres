@@ -1,6 +1,5 @@
 [gd_resource type="SpatialMaterial" format=2]
 
 [resource]
-flags_do_not_receive_shadows = true
 albedo_color = Color( 0.694118, 0.431373, 0.372549, 1 )
 
