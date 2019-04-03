@@ -74,7 +74,6 @@ transform = Transform( 0.699929, -0.00998928, 0, 0.00998928, 0.699929, 0, 0, 0, 
 
 [node name="MeshInstance" type="MeshInstance" parent="MeshContainer"]
 transform = Transform( 1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0 )
-extra_cull_margin = 25.0
 mesh = ExtResource( 2 )
 material/0 = ExtResource( 3 )
 material/1 = ExtResource( 4 )

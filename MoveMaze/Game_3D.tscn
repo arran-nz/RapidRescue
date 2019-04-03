@@ -27,7 +27,6 @@ data = {
 script = ExtResource( 3 )
 
 [node name="Player_Indicator" type="Spatial" parent="Game_Master"]
-editor/display_folded = true
 transform = Transform( 2, 0, 0, 0, 2, 0, 0, 0, 2, -9.73104, 6.68884, 3.43326 )
 script = ExtResource( 4 )
 
