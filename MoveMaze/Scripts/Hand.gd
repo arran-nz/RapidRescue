@@ -15,6 +15,9 @@ func setup(inject_ref, start_path):
 	current_path = start_path
 	current_path.set_target(translation, true)
 
+func move_current_path_to_injector(injector):
+	current_path.set_target(injector.translation, true)
+
 func inject_current_path(injector):
 	# Move to injection location
 	current_path.set_target(injector.translation)

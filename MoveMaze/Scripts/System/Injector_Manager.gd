@@ -1,5 +1,7 @@
 extends Spatial
 
+signal new_injector_selected
+
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
 const DIRECTION = PD.DIRECTION
 
@@ -7,6 +9,7 @@ var obj_injector = preload("res://Objects/3D/Injector.tscn")
 
 var injectors = []
 
+var current_injector setget ,get_current_injector
 var current_index = 0
 var board
 var active setget _set_active
@@ -21,11 +24,11 @@ func setup(board):
 	board.connect('disable_injector', self, 'disable_injector')
 
 func _set_active(value):
-	if injectors:
-		injectors[current_index].hovered = value
-
 	set_process_unhandled_input(value)
 	active = value
+
+func get_current_injector():
+	return injectors[current_index]
 
 func _unhandled_input(event):
 	if event.is_pressed():
@@ -34,7 +37,7 @@ func _unhandled_input(event):
 		if event.is_action('ui_right') : cycle_current_index(1)
 
 func press_injector_from_index():
-	injectors[current_index].press_injector()
+	self.current_injector.press_injector()
 
 func disable_injector(inj_board_index):
 	#Enable All Disabled Injectors and Disable appropriate
@@ -51,9 +54,8 @@ func cycle_current_index(dir):
 		# Skip this injector and move to next index
 		new_index = _get_injector_index_wrapping(new_index, dir)
 
-	injectors[current_index].hovered = false
-	injectors[new_index].hovered = true
 	current_index = new_index
+	emit_signal("new_injector_selected", self.current_injector)
 
 func _get_injector_index_wrapping(index, dir):
 	var next_logical_pos = index + dir

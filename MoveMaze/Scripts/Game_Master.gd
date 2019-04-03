@@ -77,6 +77,7 @@ func setup_master():
 	# Hand's Extra path
 	hand.setup(funcref(board, "inject_path") ,board.get_and_spawn_extra_path())
 	hand.current_path.connect('pressed', self, 'path_select')
+	injector_input.connect('new_injector_selected', hand, 'move_current_path_to_injector')
 
 	injector_input.active = true
 

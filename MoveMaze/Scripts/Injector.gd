@@ -3,7 +3,6 @@
 extends Spatial
 
 var disabled setget set_disabled, get_disabled
-var hovered setget set_hovered, get_hovered
 
 signal pressed
 
@@ -12,19 +11,8 @@ var inj_direction
 # Where the path get injected.
 var inj_board_index
 
-func get_hovered():
-	return hovered
-
 func get_disabled():
 	return disabled
-
-func set_hovered(value):
-	if value:
-		var tmp = $Mesh.get_surface_material(0).duplicate()
-		tmp.albedo_color = Color('f58765')
-		$Mesh.set_surface_material(0, tmp)
-	else:
-		$Mesh.get_surface_material(0).albedo_color = Color(1, 1, 1)
 
 func set_disabled(value):
 	visible = !value
