@@ -42,7 +42,7 @@ environment = ExtResource( 7 )
 projection = 1
 current = true
 fov = 62.0
-size = 14.0
+size = 15.0
 script = ExtResource( 8 )
 perlin = true
 
