@@ -132,7 +132,7 @@ func _move_toward_target(delta):
 
 	move_easer.process(delta)
 
-	if  move_easer.progress >= 1:
+	if  move_easer.progress >= 1 or translation == move_easer.target:
 		translation = move_easer.target
 		move_easer.reset()
 		move_easer.enabled = false
@@ -148,6 +148,9 @@ func set_target(target, is_instant=false):
 
 	if is_instant:
 		translation = target
+		move_easer.start = translation
+		move_easer.target = translation
+		move_easer.enabled = false
 	else:
 		move_easer.start = translation
 		move_easer.target = target
