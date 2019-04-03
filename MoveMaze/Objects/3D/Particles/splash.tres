@@ -1,10 +1,15 @@
 [gd_resource type="SphereMesh" load_steps=2 format=2]
 
-[ext_resource path="res://Materials/edge_water.tres" type="Material" id=1]
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+params_diffuse_mode = 4
+params_specular_mode = 3
+albedo_color = Color( 0.878431, 0.894118, 0.890196, 1 )
 
 [resource]
-material = ExtResource( 1 )
+material = SubResource( 1 )
 flip_faces = true
-radial_segments = 6
-rings = 6
+radial_segments = 10
+rings = 10
 

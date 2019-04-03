@@ -11,8 +11,8 @@ curve = SubResource( 1 )
 [sub_resource type="ParticlesMaterial" id=3]
 spread = 180.0
 flatness = 0.8
-gravity = Vector3( 0, -4, 0 )
-initial_velocity = 6.0
+gravity = Vector3( 0, -2, 0 )
+initial_velocity = 5.0
 initial_velocity_random = 0.2
 angular_velocity = 10.0
 linear_accel = 1.0
@@ -20,16 +20,16 @@ damping = 10.0
 scale = 0.4
 scale_random = 0.05
 scale_curve = SubResource( 2 )
-color = Color( 0.250488, 0.84375, 0.6908, 1 )
 
 [node name="Particles" type="Particles"]
 cast_shadow = 0
 emitting = false
-amount = 80
-lifetime = 0.6
+amount = 30
+lifetime = 0.5
 one_shot = true
-explosiveness = 1.0
+explosiveness = 0.98
 randomness = 1.0
+draw_order = 1
 process_material = SubResource( 3 )
 draw_pass_1 = ExtResource( 1 )
 
