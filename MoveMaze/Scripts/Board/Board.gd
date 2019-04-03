@@ -181,13 +181,7 @@ func inject_path(inject_index, dir, injected_path):
 	print(inject_index)
 
 	#Get Existing Line without new path
-	var exsiting_line = []
-
-	if dir == DIRECTION.S \
-	or dir == DIRECTION.N:
-		exsiting_line = _get_col(inject_index.x)
-	else:
-		exsiting_line = _get_row(inject_index.y)
+	var exsiting_line = get_line(inject_index, dir)
 
 	#Add New Path To Path_Cells Array
 	path_cells.append(injected_path)
@@ -281,6 +275,14 @@ func _move_path(path, new_index):
 	var pos = map_to_world(new_index.x, 0, new_index.y)
 	path.update_index(new_index)
 	path.set_target(pos)
+
+func get_line(index, dir):
+	var line = []
+	if dir == DIRECTION.S \
+	or dir == DIRECTION.N:
+		return _get_col(index.x)
+	else:
+		return _get_row(index.y)
 
 func _get_col(x_index):
 	var col = []
