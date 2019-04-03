@@ -82,9 +82,12 @@ margin_bottom = 48.0
 text = "New Game"
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.803037, 0.166118, -0.572309, 0.47793, 0.394135, 0.78501, 0.355971, -0.903915, 0.237112, 0, 0, 0 )
+transform = Transform( 0.803037, 0.0123332, -0.595802, 0.47793, 0.583881, 0.656252, 0.355971, -0.811746, 0.462983, 0, 0, 0 )
+light_color = Color( 1, 0.615686, 0.498039, 1 )
+light_indirect_energy = 2.0
+light_specular = 1.0
 shadow_enabled = true
-shadow_color = Color( 0.105882, 0.109804, 0.137255, 1 )
+shadow_color = Color( 0.117647, 0.121569, 0.215686, 1 )
 directional_shadow_mode = 0
 
 [connection signal="pressed" from="InGameMenu/Center/VBoxContainer/LoadSave" to="InGameMenu" method="_on_LoadSave_pressed"]
