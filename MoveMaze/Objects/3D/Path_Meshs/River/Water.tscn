@@ -5,7 +5,7 @@
 [sub_resource type="PlaneMesh" id=1]
 
 [node name="Water" type="MeshInstance"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.152495, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
 cast_shadow = 0
 mesh = SubResource( 1 )
 material/0 = ExtResource( 1 )
