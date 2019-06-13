@@ -2,7 +2,7 @@
 
 extends Spatial
 
-const MAX_STEERING_FORCE = 2
+const MAX_STEERING_FORCE = 2.2
 const MASS = 8
 const MAX_SPEED = 4
 
