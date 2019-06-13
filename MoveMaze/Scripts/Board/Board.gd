@@ -33,7 +33,7 @@ func setup_from_dict(map_data):
 	path_cells = _path_generator.path_cells
 	_spawn_path_cells()
 	_spawn_actors(map_data['actors'])
-	_center_board()
+	_center_camera()
 	initialized = true
 
 func setup_new(actor_count):
@@ -42,9 +42,9 @@ func setup_new(actor_count):
 	path_cells = _path_generator.path_cells
 	_spawn_path_cells()
 	_spawn_new_actors(actor_count)
-
-	_center_board()
+	_center_camera()
 	initialized = true
+
 
 func get_repr():
 	"""Return map representation."""
@@ -162,10 +162,28 @@ func get_path_cell(index):
 			if item.index == index:
 				return item
 
-func _center_board():
+func _center_camera():
 	var x = (tile_size.x * board_size.x) / 2
 	var z = (tile_size.y * board_size.y) / 2
-	translation = Vector3(-x, 0, -z)
+	var offset = Vector3(x, 0, z)
+	var cam = get_viewport().get_camera()
+	cam.translation = Vector3(x, 10, z + 5)
+
+func reset_path_translations():
+	for path in path_cells:
+		path.set_target(map_to_world(path.index.x, 0, path.index.y), true)
+
+func highlight_line(index, dir):
+	var line = get_line(index, dir)
+	var nudge_vector = dir * 0.2
+	for path in line:
+		path.set_target(
+			Vector3(
+				path.translation.x + nudge_vector.x,
+				path.translation.y,
+				path.translation.z + nudge_vector.y
+			), true
+		)
 
 func inject_path(inject_index, dir, injected_path):
 	var disabled_inj_board_index = inject_index + (dir * board_size) - dir
