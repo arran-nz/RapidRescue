@@ -29,4 +29,5 @@ func _on_Area_input_event(camera, event, click_position, click_normal, shape_idx
 		press_injector()
 
 func press_injector():
-	emit_signal("pressed", self)
+	if not disabled:
+		emit_signal("pressed", self)

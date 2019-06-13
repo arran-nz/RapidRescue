@@ -16,6 +16,9 @@ var board
 # Turn Mananger
 var tm
 
+# Players
+var players = []
+
 func _ready():
 	board = get_node("Master_Board/Board")
 
@@ -56,7 +59,7 @@ func setup_master():
 
 	# Setup players and turn mananger
 	# Connect actors to send collected items to each respective player
-	var players = []
+	players = []
 	for i in range(board.actors.size()):
 		var actor = board.actors[i]
 		var d_name = "Player %s" % (i + 1)
@@ -75,11 +78,11 @@ func setup_master():
 	update_current_player_indictator()
 
 	# Hand's Extra path
-	hand.setup(funcref(board, "inject_path") ,board.get_and_spawn_extra_path())
+	hand.setup(injector_input.injectors, funcref(board, "inject_path") ,board.get_and_spawn_extra_path())
 	hand.current_path.connect('pressed', self, 'path_select')
-	injector_input.connect('new_injector_selected', hand, 'move_current_path_to_injector')
 
-	injector_input.active = true
+	# Scoring
+	board.connect('passenger_returned', self, 'reward_score')
 
 func auto_save():
 	var data = board.get_repr()
@@ -89,10 +92,15 @@ func auto_save():
 func path_select(path):
 	"""Called when a path has been pressed."""
 	if tm.current_state == tm.STATES.WAITING_FOR_MOVEMENT:
-		var success = board.request_actor_movement(path, tm.current_player.actor)
-		if success:
-			tm.current_player.actor.connect("final_target_reached", self, "disconnect_and_cycle_turn")
+
+		if tm.current_player.actor.active_path == path:
+			cycle_turn()
 			path_selector.active = false
+		else:
+			var success = board.request_actor_movement(path, tm.current_player.actor)
+			if success:
+					tm.current_player.actor.connect("final_target_reached", self, "disconnect_and_cycle_turn")
+					path_selector.active = false
 	else:
 		print("%s must place path first!" % tm.current_player.display_name)
 
@@ -100,10 +108,10 @@ func request_path_injection(injector):
 	"""Called when an injector has been pressed."""
 	if tm.current_state == tm.STATES.WAITING_FOR_INJECTION:
 		hand.inject_current_path(injector)
+		hand.disable_input()
 		tm.current_state = tm.STATES.WAITING_FOR_MOVEMENT
 		path_selector.current_index = tm.current_player.actor.active_path.index
 		path_selector.active = true
-		injector_input.active = false
 
 	else:
 		print("Already placed path, %s please move." % tm.current_player.display_name)
@@ -111,6 +119,9 @@ func request_path_injection(injector):
 func disconnect_and_cycle_turn(actor):
 	actor.disconnect("final_target_reached", self, "disconnect_and_cycle_turn")
 	cycle_turn()
+
+func reward_score(actor_id):
+	players[actor_id].collect_point()
 
 func can_current_player_move():
 	"""Check current_player reach - if none, force a turn cycle"""
@@ -127,7 +138,7 @@ func cycle_turn():
 
 	#As Injection comes first, disable the path_selector
 	path_selector.active = false
-	injector_input.active = true
+	hand.enable_input()
 
 func update_current_player_indictator():
 	player_indc.update_indicator(tm.current_player.actor)
@@ -165,14 +176,14 @@ class TurnManager:
 			current_player = _players[0]
 
 		print("%s, you're up!" % current_player.display_name)
-		current_state = STATES.WAITING_FOR_INJECTION
+		self.current_state = STATES.WAITING_FOR_INJECTION
 
 class Player:
 	var index setget ,_get_index
 	var display_name
 	var actor
 
-	var collected_items = 0
+	var score = 0
 
 	func _init(index, display_name, actor):
 		self.index = index
@@ -182,6 +193,6 @@ class Player:
 	func _get_index():
 		return index
 
-	func receive_collectable(item):
+	func collect_point():
 		print(display_name + ": Collected an item")
-		collected_items += 1
+		score += 1

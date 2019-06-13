@@ -17,8 +17,6 @@ func setup(board, start_active : bool):
 	self.active = start_active
 
 func set_current_index(index):
-	var f = board.index_has_actor(index) or board.index_has_path_with_collectable(index)
-	spatial_indicator.visible = !f
 	current_index = index
 
 func _set_active(value : bool):

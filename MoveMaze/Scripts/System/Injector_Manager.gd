@@ -1,43 +1,29 @@
 extends Spatial
-
-signal new_injector_selected
-
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
 const DIRECTION = PD.DIRECTION
 
 var obj_injector = preload("res://Objects/3D/Injector.tscn")
 
-var injectors = []
-
-var current_injector setget ,get_current_injector
-var current_index = 0
+var current_injector
+var selected_injector_index = 0
 var board
-var active setget _set_active
 
-func _ready():
-	self.active = false
+# Injectors
+
+var previous_input
+
+var north = []
+var east = []
+var south = []
+var west = []
+
+var injectors = []
 
 func setup(board):
 	self.board = board
 	translation = board.translation
 	_spawn_injectors()
 	board.connect('disable_injector', self, 'disable_injector')
-
-func _set_active(value):
-	set_process_unhandled_input(value)
-	active = value
-
-func get_current_injector():
-	return injectors[current_index]
-
-func _unhandled_input(event):
-	if event.is_pressed():
-		if event.is_action('ui_accept') : press_injector_from_index()
-		if event.is_action('ui_left') : cycle_current_index(-1)
-		if event.is_action('ui_right') : cycle_current_index(1)
-
-func press_injector_from_index():
-	self.current_injector.press_injector()
 
 func disable_injector(inj_board_index):
 	#Enable All Disabled Injectors and Disable appropriate
@@ -46,26 +32,6 @@ func disable_injector(inj_board_index):
 			inj.disabled = false
 		if inj.inj_board_index == inj_board_index:
 			inj.disabled = true
-
-func cycle_current_index(dir):
-	var new_index = _get_injector_index_wrapping(current_index, dir)
-
-	if injectors[new_index].disabled:
-		# Skip this injector and move to next index
-		new_index = _get_injector_index_wrapping(new_index, dir)
-
-	current_index = new_index
-	emit_signal("new_injector_selected", self.current_injector)
-
-func _get_injector_index_wrapping(index, dir):
-	var next_logical_pos = index + dir
-	if next_logical_pos < injectors.size() and next_logical_pos >= 0:
-		return next_logical_pos
-	else:
-		if dir > 0:
-			return 0
-		else:
-			return injectors.size() - 1
 
 func _spawn_injectors():
 	# Get Indices of only moveable paths along north and west rows
@@ -90,6 +56,7 @@ func _spawn_injectors():
 		new_north_inj.translation = board.map_to_world(n_index.x, 0, n_index.y)
 		new_north_inj.setup(Vector2(x_i, n_index.y) + DIRECTION.S, DIRECTION.S)
 		injectors.append(new_north_inj)
+		north.append(new_north_inj)
 		add_child(new_north_inj)
 
 	# EAST ROW
@@ -99,6 +66,7 @@ func _spawn_injectors():
 		new_east_inj.translation = board.map_to_world(e_index.x, 0, e_index.y)
 		new_east_inj.setup(Vector2(e_index.x, y_i) + DIRECTION.W , DIRECTION.W)
 		injectors.append(new_east_inj)
+		east.append(new_east_inj)
 		add_child(new_east_inj)
 
 	x_indices.invert()
@@ -111,6 +79,7 @@ func _spawn_injectors():
 		new_south_inj.translation = board.map_to_world(s_index.x, 0, s_index.y)
 		new_south_inj.setup(Vector2(x_i, s_index.y) + DIRECTION.N, DIRECTION.N)
 		injectors.append(new_south_inj)
+		south.append(new_south_inj)
 		add_child(new_south_inj)
 
 	# WEST ROW
@@ -120,4 +89,5 @@ func _spawn_injectors():
 		new_west_inj.translation = board.map_to_world(w_index.x, 0, w_index.y)
 		new_west_inj.setup(Vector2(w_index.x, y_i) + DIRECTION.E, DIRECTION.E)
 		injectors.append(new_west_inj)
+		west.append(new_west_inj)
 		add_child(new_west_inj)
