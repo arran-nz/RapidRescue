@@ -56,6 +56,5 @@ rotate_hand={
 [rendering]
 
 quality/filters/anisotropic_filter_level=8
-environment/default_clear_color=Color( 0.540527, 0.872257, 0.960938, 1 )
 quality/filters/msaa=3
 environment/default_environment="res://default_env.tres"

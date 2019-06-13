@@ -1,0 +1,23 @@
+[gd_scene format=2]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -233.0
+margin_right = 167.0
+
+[node name="Entry" type="HSplitContainer" parent="VSplitContainer"]
+editor/display_folded = true
+margin_right = 167.0
+hint_tooltip = "Hi
+"
+focus_mode = 1
+size_flags_vertical = 0
+
+[node name="Panel" type="Panel" parent="VSplitContainer/Entry"]
+margin_right = 167.0
+

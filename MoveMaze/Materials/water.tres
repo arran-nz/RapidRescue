@@ -1,14 +1,30 @@
-[gd_resource type="SpatialMaterial" format=2]
+[gd_resource type="SpatialMaterial" load_steps=3 format=2]
+
+[sub_resource type="OpenSimplexNoise" id=1]
+seed = 2
+octaves = 1
+period = 8.0
+persistence = 1.0
+lacunarity = 4.0
+
+[sub_resource type="NoiseTexture" id=2]
+flags = 39
+width = 256
+height = 256
+seamless = true
+noise = SubResource( 1 )
 
 [resource]
 flags_transparent = true
 flags_do_not_receive_shadows = true
 params_diffuse_mode = 4
-albedo_color = Color( 0.172549, 0.811765, 0.827451, 0.227451 )
+params_specular_mode = 3
+albedo_color = Color( 0.541176, 0.886275, 0.890196, 0.227451 )
 metallic = 0.7
 metallic_specular = 1.0
 roughness = 0.0
-clearcoat_enabled = true
-clearcoat = 1.0
-clearcoat_gloss = 1.0
+refraction_enabled = true
+refraction_scale = -0.03
+refraction_texture = SubResource( 2 )
+refraction_texture_channel = 0
 

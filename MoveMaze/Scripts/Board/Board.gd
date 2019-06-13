@@ -10,6 +10,7 @@ var path_cells = []
 const MAX_ACTORS = 4
 var actors = []
 
+signal passenger_returned
 signal actor_updated
 signal board_paths_updated
 signal disable_injector
@@ -144,20 +145,11 @@ func spawn_new_collectable():
 	path.store_collectable(collectable)
 
 func request_actor_movement(target_path, actor):
-	var start_path = actor.active_path
-
-	if start_path == target_path:
-		print('Turn Skipped')
-		return true
-
-	var route = route_finder.get_route(start_path, target_path)
-
+	var route = route_finder.get_route(actor.active_path, target_path)
 	if route != null:
 		if route.size() >= 1:
 			actor.set_route(route, target_path)
 			return true
-
-	return false
 
 func check_actor_collisions(actor):
 	# Soon to be Dead (STBD) Actor
@@ -166,24 +158,21 @@ func check_actor_collisions(actor):
 		and other_actor != actor:
 			other_actor.retreive_passengers()
 			other_actor.active_path = other_actor.home_dock
-			emit_signal("actor_updated")
 
 	# Check home dock
 	if actor.is_at_dock() and actor.get_passenger_count() > 0:
 		var rescued_passengers = actor.retreive_passengers()
 		for passenger in rescued_passengers:
-			print('s')
-
-		emit_signal("actor_updated")
+			emit_signal("passenger_returned", actor.id)
 
 	# Check for Collectable
 	if actor.active_path.has_collectable and actor.has_seat():
 		var item = actor.active_path.pickup_collectable()
 		actor.add_passenger(item)
-		# If Collectable signal the information
-		emit_signal("actor_updated")
 		# Spawn another collectable
 		spawn_new_collectable()
+
+	emit_signal("actor_updated")
 
 func index_has_path_with_collectable(index):
 	return get_path_cell(index).has_collectable
@@ -283,9 +272,14 @@ func _spawn_path_cells():
 func _spawn_actors(actor_data):
 	"""Spawn actors from a defined dictionary."""
 	for a in actor_data:
-		var index = Vector2( a.index_x, a.index_y)
+		var index = Vector2(a.index_x, a.index_y)
+
+		# TODO: Save and load HOME_DOCK this properly.
+		var home_dock_index = index
+		var active_path = get_path_cell(index)
+		var home_dock_path = active_path
 		var actor = obj_actor.instance()
-		actor.setup(a.id, get_path_cell(index))
+		actor.setup(a.id, active_path, home_dock_path)
 		actor.connect('final_target_reached', self, 'check_actor_collisions')
 		add_child(actor)
 		actors.append(actor)
@@ -330,7 +324,7 @@ func _spawn_new_actors(count):
 	# Iterate for the count of desired actors
 	for i in range(count):
 		var actor = obj_actor.instance()
-		actor.setup(i, corner_paths[i])
+		actor.setup(i, corner_paths[i], corner_paths[i])
 		actor.connect('final_target_reached', self, 'check_actor_collisions')
 		add_child(actor)
 		actors.append(actor)

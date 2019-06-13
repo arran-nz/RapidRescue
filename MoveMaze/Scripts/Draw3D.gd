@@ -5,15 +5,18 @@ class Line:
 	var End
 	var LineColor
 	var Time
+	var Width
 
-	func _init(Start, End, LineColor, Time):
+	func _init(Start, End, LineColor, Time, Width):
 		self.Start = Start
 		self.End = End
 		self.LineColor = LineColor
 		self.Time = Time
+		self.Width = Width
 
 var Lines = []
 var RemovedLine = false
+
 
 func _process(delta):
 	for i in range(len(Lines)):
@@ -36,7 +39,7 @@ func _draw():
 			Cam.is_position_behind(Lines[i].End)):
 			continue
 
-		draw_line(ScreenPointStart, ScreenPointEnd, Lines[i].LineColor)
+		draw_line(ScreenPointStart, ScreenPointEnd, Lines[i].LineColor, Lines[i].Width)
 
 	#Remove lines that have timed out
 	var i = Lines.size() - 1
@@ -46,11 +49,12 @@ func _draw():
 			RemovedLine = true
 		i -= 1
 
-func DrawLine(Start, End, LineColor, Time = 0.0):
-	Lines.append(Line.new(Start, End, LineColor, Time))
+func DrawLine(Start, End, LineColor, Time = 0.0, Width=1):
+	breakpoint
+	Lines.append(Line.new(Start, End, LineColor, Time, Width))
 
-func DrawRay(Start, Ray, LineColor, Time = 0.0):
-	Lines.append(Line.new(Start, Start + Ray, LineColor, Time))
+func DrawRay(Start, Ray, LineColor, Time = 0.0,  Width=1):
+	Lines.append(Line.new(Start, Start + Ray, LineColor, Time, Width))
 
 func DrawCube(Center, HalfExtents, LineColor, Time = 0.0):
 	#Start at the 'top left'

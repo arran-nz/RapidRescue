@@ -35,10 +35,10 @@ signal final_target_reached
 
 var velocity = Vector3()
 
-func setup(id, active_path):
+func setup(id, active_path, home_dock_path):
 	self.id = int(id)
 	self.active_path = active_path
-	self.home_dock = active_path
+	self.home_dock = home_dock_path
 
 func get_repr():
 	return {
@@ -67,8 +67,10 @@ func _process(delta):
 func set_route(route, end_path):
 	self.route = route
 	current_node = 0
-	#Bind to end path of route
+	# Bind to end path of route
 	active_path = end_path
+	# Reset Velocity
+	velocity = Vector3()
 
 func follow_route():
 	var target = route[current_node]
