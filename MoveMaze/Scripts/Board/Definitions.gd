@@ -15,3 +15,8 @@ class PathData:
 				'S' : Vector2(0, 1),
 				'W' : Vector2(-1, 0),
 	}
+
+
+class Options:
+	const DEBUG_MAP = false
+	const DISABLE_INJECTION = false

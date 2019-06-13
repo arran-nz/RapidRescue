@@ -142,14 +142,21 @@ class TurnManager:
 		WAITING_FOR_INJECTION,
 		WAITING_FOR_MOVEMENT,
 	}
-	var current_state
+	var current_state setget set_current_state
+
+	const OPTIONS = preload('res://Scripts/Board/Definitions.gd').Options
+
+	func set_current_state(new_state):
+		current_state = new_state
+		if OPTIONS.DISABLE_INJECTION:
+			current_state = STATES.WAITING_FOR_MOVEMENT
 
 	func _init(players):
 		self._players = players
 		self._player_count = len(players)
 		# Choose random starting player
 		current_player = players[randi() % _player_count]
-		current_state = STATES.WAITING_FOR_INJECTION
+		self.current_state = STATES.WAITING_FOR_INJECTION
 
 	func cycle():
 		if current_player.index + 1 < _player_count:

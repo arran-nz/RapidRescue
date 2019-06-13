@@ -17,7 +17,8 @@ class_name PathGenerator
 
 const MAP_SIZE = Vector2(7,7)
 
-const PD = preload('res://Scripts/Board/Definitions.gd').PathData
+const DEFINITIONS = preload('res://Scripts/Board/Definitions.gd')
+const PD = DEFINITIONS.PathData
 const I = PD.INDEX
 const C = PD.CONNECTIONS
 const M = PD.MOVEABLE
@@ -33,6 +34,22 @@ const DEFAULT_MAP = [
 				{M:1}, {M:1}, {M:1}, {M:1}, {M:1}, {M:1}, {M:1},
 
 				{C:'NE', M:0}, {M:1}, {C:'NEW', M:0}, {M:1}, {C:'NEW', M:0}, {M:1}, {C:'NW', M:0},
+	]
+
+const DEBUG_MAP = [
+				{C:'SE', M:0}, {C:'WE', M:1}, {C:'ESW', M:0}, {C:'SWE', M:1}, {C:'ESW', M:0}, {C:'SWE', M:1}, {C:'SW', M:0},
+
+				{C:'NSE', M:1}, {C:'WS', M:1}, {C:'NS', M:1}, {C:'NE', M:1}, {C:'NWE', M:1}, {C:'NW', M:1}, {C:'NS', M:1},
+
+				{C:'NES', M:0}, {C:'WNS', M:1}, {C:'NES', M:0}, {C:'WE', M:1}, {C:'ESW', M:0}, {C:'EW', M:1}, {C:'NSW', M:0},
+
+				{C:'NSE', M:1}, {C:'WN', M:1}, {C:'NSE', M:1}, {C:'EW', M:1}, {C:'WNS', M:1}, {C:'ES', M:1}, {C:'WNS', M:1},
+
+				{C:'NES', M:0}, {C:'EW', M:1}, {C:'NEW', M:0}, {C:'WE', M:1}, {C:'NSW', M:0}, {C:'NSE', M:1}, {C:'NWS', M:0},
+
+				{C:'NS', M:1}, {C:'SE', M:1}, {C:'EWS', M:1}, {C:'WS', M:1}, {C:'NS', M:1}, {C:'NSE', M:1}, {C:'WNS', M:1},
+
+				{C:'NE', M:0}, {C:'NWE', M:1}, {C:'NEW', M:0}, {C:'NWE', M:1}, {C:'NEW', M:0}, {C:'WE', M:1}, {C:'NW', M:0},
 	]
 
 const PATH_VARIATIONS = {
@@ -63,6 +80,9 @@ func _init(map_data=null, extra_path_data=null):
 	else:
 		# Else default map will load.
 		_map_data = DEFAULT_MAP
+
+		if DEFINITIONS.Options.DEBUG_MAP:
+			_map_data = DEBUG_MAP
 
 		# Extend DEFAULT MAP.
 		# Append indices as the order of the array is fixed.

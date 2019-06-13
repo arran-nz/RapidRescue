@@ -2,7 +2,7 @@ extends Spatial
 
 const SPAWN_HEIGHT = 18
 
-const IMPACT_TRAMA = 0.3
+const IMPACT_TRAMA = 0.65
 
 var easing = preload('res://Scripts/Easing.gd')
 var move_easer = easing.Helper.new(3.3, funcref(easing,'smooth_start4'))

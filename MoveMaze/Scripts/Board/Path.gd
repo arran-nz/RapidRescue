@@ -45,8 +45,8 @@ const INIT_ROTATION_MAP = {
 var mesh_instance
 
 var easing = preload('res://Scripts/Easing.gd')
-var move_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
-var rot_easer = easing.Helper.new(0.6, funcref(easing,'smooth_stop5'))
+var move_easer = easing.Helper.new(0.4, funcref(easing,'smooth_stop5'))
+var rot_easer = easing.Helper.new(0.4, funcref(easing,'smooth_stop5'))
 
 # Custom position for Actor traversal.
 var traversal_pos setget ,get_traversal_pos
@@ -155,6 +155,7 @@ func set_target(target, is_instant=false):
 		move_easer.start = translation
 		move_easer.target = target
 		move_easer.enabled = true
+		move_easer.reset()
 
 # Region: Rotation
 
