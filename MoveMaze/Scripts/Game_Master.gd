@@ -70,7 +70,7 @@ func setup_master():
 	board.connect("actor_updated", self, "update_current_player_indictator")
 
 	# Path Selector
-	path_selector.setup(board, false)
+	path_selector.setup(board)
 
 	tm = TurnManager.new(players)
 	path_selector.current_index = tm.current_player.actor.active_path.index
@@ -95,12 +95,12 @@ func path_select(path):
 
 		if tm.current_player.actor.active_path == path:
 			cycle_turn()
-			path_selector.active = false
+			path_selector.disable_input()
 		else:
 			var success = board.request_actor_movement(path, tm.current_player.actor)
 			if success:
 					tm.current_player.actor.connect("final_target_reached", self, "disconnect_and_cycle_turn")
-					path_selector.active = false
+					path_selector.disable_input()
 	else:
 		print("%s must place path first!" % tm.current_player.display_name)
 
@@ -111,7 +111,7 @@ func request_path_injection(injector):
 		hand.disable_input()
 		tm.current_state = tm.STATES.WAITING_FOR_MOVEMENT
 		path_selector.current_index = tm.current_player.actor.active_path.index
-		path_selector.active = true
+		path_selector.enable_input()
 
 	else:
 		print("Already placed path, %s please move." % tm.current_player.display_name)
@@ -137,7 +137,7 @@ func cycle_turn():
 	update_current_player_indictator()
 
 	#As Injection comes first, disable the path_selector
-	path_selector.active = false
+	path_selector.disable_input()
 	hand.enable_input()
 
 func update_current_player_indictator():

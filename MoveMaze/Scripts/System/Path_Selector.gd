@@ -5,28 +5,28 @@ const DIRECTION = PD.DIRECTION
 
 var current_index setget set_current_index
 var board
-var active setget _set_active
 
 onready var spatial_indicator = $Indicator
 
-func _ready():
-	self.active = false
-
-func setup(board, start_active : bool):
+func setup(board):
 	self.board = board
-	self.active = start_active
+	disable_input()
 
 func set_current_index(index):
 	current_index = index
 
-func _set_active(value : bool):
-	spatial_indicator.visible = value
-	set_process(value)
-	set_process_unhandled_input(value)
-	active = value
+func enable_input():
+	set_process(true)
+	set_process_unhandled_input(true)
+
+func disable_input():
+	spatial_indicator.visible = false
+	set_process(false)
+	set_process_unhandled_input(false)
 
 func _unhandled_input(event):
 	if event.is_pressed():
+		spatial_indicator.visible = true
 		if event.is_action('ui_accept') : select_path_from_index()
 		if event.is_action('ui_up') : move_current_index(DIRECTION['N'])
 		if event.is_action('ui_down') : move_current_index(DIRECTION['S'])

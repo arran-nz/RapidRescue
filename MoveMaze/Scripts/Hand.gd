@@ -7,7 +7,7 @@ var selected_injector
 
 
 var _injection_ref
-var _injectors
+var _injectors = []
 
 var MAGNECTIC_THRESHOLD = 1.25
 var PATH_HOVER_OFFSET = Vector3(0,1.5,0)
