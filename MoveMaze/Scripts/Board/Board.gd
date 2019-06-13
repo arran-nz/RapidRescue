@@ -67,6 +67,52 @@ func get_and_spawn_extra_path():
 	add_child(extra_path)
 	return extra_path
 
+
+func draw_grid():
+
+	var color = Color(1, 0.996078, 0.996078, 0.184314)
+	var width = 2
+
+	var time = INF
+
+	var z = 1.5
+	var buffer = 0.5
+
+	var x_min = -buffer
+	var y_min = -buffer
+
+	var x_max = (board_size.x * tile_size.x) + buffer
+	var y_max = (board_size.y * tile_size.y) + buffer
+
+	#Cols
+	var start_pos = Vector3(x_min,z, y_min)
+	var end_pos = Vector3(x_max, z, y_max)
+	for x in range(board_size.x + 1):
+		var x_pos = x * tile_size.x
+		start_pos.x = x_pos
+		end_pos.x = x_pos
+		Draw3D.DrawLine(
+			translation + start_pos,
+			translation + end_pos,
+			color,
+			time,
+			width)
+
+	# Rows
+	start_pos = Vector3(x_min,z, y_min)
+	end_pos = Vector3(x_max, z, y_max)
+	for y in range(board_size.y + 1):
+		var y_pos = y * tile_size.z
+		start_pos.z = y_pos
+		end_pos.z = y_pos
+		Draw3D.DrawLine(
+			translation + start_pos,
+			translation + end_pos,
+			color,
+			time,
+			width)
+
+
 func spawn_new_collectable():
 	# Find the most suitable location and spawn a new collectable.
 	var undersireable_cells = []
