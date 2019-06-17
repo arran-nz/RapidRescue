@@ -72,7 +72,7 @@ func setup_master():
 	# Path Selector
 	path_selector.setup(board)
 
-	tm = TurnManager.new(players)
+	tm = TurnManager.new(players, path_selector, hand)
 	path_selector.current_index = tm.current_player.actor.active_path.index
 
 	update_current_player_indictator()
@@ -91,16 +91,21 @@ func auto_save():
 
 func path_select(path):
 	"""Called when a path has been pressed."""
-	if tm.current_state == tm.STATES.WAITING_FOR_MOVEMENT:
+	var actor_signal = 'final_target_reached'
+	var signalled_method = 'disconnect_and_cycle_turn'
 
+	if tm.current_player.actor.is_connected(actor_signal, self, signalled_method):
+		print("Actor is in route, wait!")
+		return
+
+	if tm.current_state == tm.STATES.WAITING_FOR_MOVEMENT:
 		if tm.current_player.actor.active_path == path:
 			cycle_turn()
 			path_selector.disable_input()
 		else:
 			var success = board.request_actor_movement(path, tm.current_player.actor)
 			if success:
-					tm.current_player.actor.connect("final_target_reached", self, "disconnect_and_cycle_turn")
-					path_selector.disable_input()
+					tm.current_player.actor.connect(actor_signal, self, signalled_method)
 	else:
 		print("%s must place path first!" % tm.current_player.display_name)
 
@@ -111,7 +116,6 @@ func request_path_injection(injector):
 		hand.disable_input()
 		tm.current_state = tm.STATES.WAITING_FOR_MOVEMENT
 		path_selector.current_index = tm.current_player.actor.active_path.index
-		path_selector.enable_input()
 
 	else:
 		print("Already placed path, %s please move." % tm.current_player.display_name)
@@ -133,12 +137,7 @@ func can_current_player_move():
 func cycle_turn():
 	auto_save()
 	tm.cycle()
-
 	update_current_player_indictator()
-
-	#As Injection comes first, disable the path_selector
-	path_selector.disable_input()
-	hand.enable_input()
 
 func update_current_player_indictator():
 	player_indc.update_indicator(tm.current_player.actor)
@@ -149,6 +148,9 @@ class TurnManager:
 	var _players = []
 	var _player_count
 
+	var path_selector
+	var hand
+
 	enum STATES {
 		WAITING_FOR_INJECTION,
 		WAITING_FOR_MOVEMENT,
@@ -158,13 +160,24 @@ class TurnManager:
 	const OPTIONS = preload('res://Scripts/Board/Definitions.gd').Options
 
 	func set_current_state(new_state):
-		current_state = new_state
 		if OPTIONS.DISABLE_INJECTION:
-			current_state = STATES.WAITING_FOR_MOVEMENT
+			new_state = STATES.WAITING_FOR_MOVEMENT
 
-	func _init(players):
+		match new_state:
+			STATES.WAITING_FOR_INJECTION:
+				path_selector.disable_input()
+				hand.enable_input()
+			STATES.WAITING_FOR_MOVEMENT:
+				path_selector.enable_input()
+				hand.disable_input()
+
+		current_state = new_state
+
+	func _init(players, path_selector, hand):
 		self._players = players
 		self._player_count = len(players)
+		self.path_selector = path_selector
+		self.hand = hand
 		# Choose random starting player
 		current_player = players[randi() % _player_count]
 		self.current_state = STATES.WAITING_FOR_INJECTION
