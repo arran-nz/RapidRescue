@@ -29,7 +29,7 @@ script = ExtResource( 3 )
 
 [node name="Player_Indicator" type="Spatial" parent="Game_Master"]
 editor/display_folded = true
-transform = Transform( 2, 0, 0, 0, 2, 0, 0, 0, 2, -3.89888, 6.68884, 3.43326 )
+transform = Transform( 4, 0, 0, 0, 4, 0, 0, 0, 4, -3.89888, 6.68884, 3.43326 )
 script = ExtResource( 4 )
 
 [node name="Actor" parent="Game_Master/Player_Indicator" instance=ExtResource( 5 )]
@@ -44,7 +44,7 @@ environment = ExtResource( 7 )
 projection = 1
 current = true
 fov = 62.0
-size = 18.0
+size = 15.0
 script = ExtResource( 8 )
 decay_rate = 0.8
 max_yaw = 0.0
@@ -96,7 +96,7 @@ mouse_default_cursor_shape = 2
 text = "Load Save"
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.803037, 0.0123332, -0.595802, 0.47793, 0.583881, 0.656252, 0.355971, -0.811746, 0.462983, 0, 0, 0 )
+transform = Transform( 0.863355, 0.119604, -0.490217, 0.390857, 0.455925, 0.799602, 0.319138, -0.881945, 0.346877, 0.0799891, 0.0201474, 0.102185 )
 light_color = Color( 1, 0.980392, 0.972549, 1 )
 light_indirect_energy = 2.0
 light_specular = 1.0

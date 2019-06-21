@@ -14,8 +14,8 @@ export var max_roll := 0.1
 export var max_offset := 0.2
 
 # default values
-onready var start_position := translation
 onready var start_rotation := rotation
+var anchor_position
 var trauma := 0.0
 var time := 0.0
 var noise := OpenSimplexNoise.new()
@@ -29,11 +29,15 @@ func _init() -> void:
 	noise.period = 256.0
 	noise.persistence = 0.5
 	noise.lacunarity = 1.0
+	anchor_position = translation
+
+func set_anchor_position(pos):
+	anchor_position = pos
 
 
 # apply shake if there's any trauma
 func _process(delta: float) -> void:
-	if trauma > 0.0 and false:
+	if trauma > 0.0:
 		decay_trauma(delta)
 		apply_shake(delta)
 
@@ -60,7 +64,7 @@ func apply_shake(delta: float) -> void:
 	var offset_x := max_offset * shake * get_noise_value(noise_seed + 3, time)
 	var offset_y := max_offset * shake * get_noise_value(noise_seed + 4, time)
 	var offset_z := max_offset * shake * get_noise_value(noise_seed + 5, time)
-	translation = start_position + Vector3(offset_x, offset_y, offset_z)
+	translation = anchor_position + Vector3(offset_x, offset_y, offset_z)
 	rotation = start_rotation + Vector3(pitch, yaw, roll)
 
 # return a random float in range(-1, 1) using OpenSimplex noise

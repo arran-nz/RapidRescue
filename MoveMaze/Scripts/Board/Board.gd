@@ -201,9 +201,10 @@ func get_path_cell(index):
 func _center_camera():
 	var x = (tile_size.x * board_size.x) / 2
 	var z = (tile_size.y * board_size.y) / 2
-	var offset = Vector3(x, 0, z)
+	var offset = Vector3(x, 10, z+5)
 	var cam = get_viewport().get_camera()
-	cam.translation = Vector3(x, 10, z + 5)
+	cam.set_anchor_position(offset)
+	cam.translation = offset
 
 func reset_path_translations(is_instant=false):
 	for path in path_cells:
