@@ -17,6 +17,7 @@ signal disable_injector
 
 const PD = preload('res://Scripts/Board/Definitions.gd').PathData
 const DIRECTION = PD.DIRECTION
+const NUDGE_AMOUNT = 0.4
 
 var obj_actor = preload("res://Objects/3D/Actor.tscn")
 
@@ -204,21 +205,23 @@ func _center_camera():
 	var cam = get_viewport().get_camera()
 	cam.translation = Vector3(x, 10, z + 5)
 
-func reset_path_translations():
+func reset_path_translations(is_instant=false):
 	for path in path_cells:
-		path.set_target(map_to_world(path.index.x, 0, path.index.y), true)
+		path.set_target(map_to_world(path.index.x, 0, path.index.y), is_instant)
 
-func highlight_line(index, dir):
+func nudge_line(index, dir):
 	var line = get_line(index, dir)
-	var nudge_vector = dir * 0.2
 	for path in line:
-		path.set_target(
-			Vector3(
-				path.translation.x + nudge_vector.x,
-				path.translation.y,
-				path.translation.z + nudge_vector.y
-			), true
-		)
+		path.set_target(get_nudge_pos(path.index, dir))
+
+func get_nudge_pos(index, dir):
+	var world_pos = map_to_world(index.x, 0, index.y)
+	var nudge_vector = dir * NUDGE_AMOUNT
+	return Vector3(
+		world_pos.x + nudge_vector.x,
+		world_pos.y,
+		world_pos.z + nudge_vector.y
+	)
 
 func inject_path(inject_index, dir, injected_path):
 	var disabled_inj_board_index = inject_index + (dir * board_size) - dir

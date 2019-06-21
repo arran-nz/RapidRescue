@@ -2,15 +2,17 @@
 
 extends Spatial
 
+var board
 var current_path
 var selected_injector
-
+var line_selected
 
 var _injection_ref
 var _injectors = []
 
 var MAGNECTIC_THRESHOLD = 1.25
 var PATH_HOVER_OFFSET = Vector3(0,1.5,0)
+
 
 func enable_input():
 	set_process_unhandled_input(true)
@@ -32,9 +34,13 @@ func _unhandled_input(event):
 						selected_injector.press_injector()
 				BUTTON_RIGHT:
 					current_path.rotate_90()
+			get_tree().set_input_as_handled()
 
 	if event.is_pressed() and event.is_action('rotate_hand'):
 		current_path.rotate_90()
+
+func _process(delta):
+	check_selected_line()
 
 func move_current_path_to_cursor(cursor_position):
 	var cam = get_viewport().get_camera()
@@ -64,16 +70,30 @@ func move_current_path_to_cursor(cursor_position):
 
 	var target_position
 	if mag < MAGNECTIC_THRESHOLD:
-		target_position = closest_injector.translation
 		selected_injector = closest_injector
+		target_position = board.get_nudge_pos(
+			selected_injector.inj_board_index - selected_injector.inj_direction,
+			selected_injector.inj_direction)
 	else:
 		target_position = mouse_world_pos + PATH_HOVER_OFFSET
 		selected_injector = null
 
 	current_path.set_target(target_position)
 
-func setup(injectors, injection_ref, start_path):
-	self._injection_ref = injection_ref
+func check_selected_line():
+	var board = get_parent().get_node("Master_Board/Board")
+	if selected_injector and not line_selected:
+		line_selected = true
+		board.nudge_line(
+			selected_injector.inj_board_index,
+			selected_injector.inj_direction)
+
+	if not selected_injector:
+		line_selected = false
+		board.reset_path_translations()
+
+func setup(board, injectors, start_path):
+	self.board = board
 	self._injectors = injectors
 	current_path = start_path
 	current_path.set_target(translation, true)
@@ -83,7 +103,7 @@ func inject_current_path(injector):
 	current_path.set_target(injector.translation)
 	yield(current_path, "target_reached")
 	# Wait until target is reached then inject the path
-	current_path = _injection_ref.call_func(injector.inj_board_index, injector.inj_direction, current_path)
+	current_path = board.inject_path(injector.inj_board_index, injector.inj_direction, current_path)
 	# Shake camera as injection occurs
 	get_viewport().get_camera().add_trauma(0.5)
 

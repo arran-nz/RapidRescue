@@ -78,7 +78,11 @@ func setup_master():
 	update_current_player_indictator()
 
 	# Hand's Extra path
-	hand.setup(injector_input.injectors, funcref(board, "inject_path") ,board.get_and_spawn_extra_path())
+	hand.setup(
+		board,
+		injector_input.injectors,
+		board.get_and_spawn_extra_path()
+	)
 	hand.current_path.connect('pressed', self, 'path_select')
 
 	# Scoring
