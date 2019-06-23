@@ -21,6 +21,8 @@ const MESH_MAP = {
 	'C': preload('res://Objects/3D/Path_Meshs/Corner.tscn'),
 	# T-Intersection
 	'T': preload('res://Objects/3D/Path_Meshs/Intersection.tscn'),
+	# Three Pillars
+	'P': preload('res://Objects/3D/Path_Meshs/River/Three_Pilars.tscn'),
 
 	# STALE_FLOOR to hint non-moveable paths
 	'STALE_FLOOR':preload('res://Objects/3D/Path_Meshs/River/RiverBed_Seaweed.tscn')
@@ -93,6 +95,12 @@ func _get_connection_str():
 		if connections[c]:
 			con_str += c
 	return con_str
+
+func set_as_dock():
+	if mesh_instance:
+		remove_child(mesh_instance)
+	mesh_instance = MESH_MAP['P'].instance()
+	add_child(mesh_instance)
 
 func _set_model_and_rotation():
 	# Update model based on connections

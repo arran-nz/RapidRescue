@@ -328,7 +328,9 @@ func _spawn_new_actors(count):
 	# Iterate for the count of desired actors
 	for i in range(count):
 		var actor = obj_actor.instance()
-		actor.setup(i, corner_paths[i], corner_paths[i])
+		var homebase = corner_paths[i]
+		homebase.set_as_dock()
+		actor.setup(i, corner_paths[i], homebase)
 		actor.connect('final_target_reached', self, 'check_actor_collisions')
 		add_child(actor)
 		actors.append(actor)
