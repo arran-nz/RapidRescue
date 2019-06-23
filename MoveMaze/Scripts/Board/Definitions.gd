@@ -18,5 +18,5 @@ class PathData:
 
 
 class Options:
-	const DEBUG_MAP = false
+	const DEBUG_MAP = true
 	const DISABLE_INJECTION = false
