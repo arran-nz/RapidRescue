@@ -22,7 +22,7 @@ const MESH_MAP = {
 	# T-Intersection
 	'T': preload('res://Objects/3D/Path_Meshs/Intersection.tscn'),
 	# Three Pillars
-	'P': preload('res://Objects/3D/Path_Meshs/River/Three_Pilars.tscn'),
+	'P': preload('res://Objects/3D/Path_Meshs/River/Home_Dock.tscn'),
 
 	# STALE_FLOOR to hint non-moveable paths
 	'STALE_FLOOR':preload('res://Objects/3D/Path_Meshs/River/RiverBed_Seaweed.tscn')
