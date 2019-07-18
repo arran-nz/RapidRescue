@@ -44,12 +44,11 @@ environment = ExtResource( 7 )
 projection = 1
 current = true
 fov = 62.0
-size = 15.0
+size = 15.2
 script = ExtResource( 8 )
-decay_rate = 0.8
+decay_rate = 0.65
 max_yaw = 0.0
-max_roll = 0.05
-max_offset = 0.1
+max_offset = 1.0
 
 [node name="InGameMenu" type="MarginContainer" parent="."]
 editor/display_folded = true

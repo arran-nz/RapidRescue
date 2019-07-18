@@ -34,37 +34,38 @@ func _init() -> void:
 func set_anchor_position(pos):
 	anchor_position = pos
 
-
 # apply shake if there's any trauma
 func _process(delta: float) -> void:
 	if trauma > 0.0:
 		decay_trauma(delta)
 		apply_shake(delta)
 
-
 # add trauma to start/continue the shake
 func add_trauma(amount: float) -> void:
 	trauma = min(trauma + amount, 1.0)
-
 
 # decay the trauma effect over time
 func decay_trauma(delta: float) -> void:
 	var change := decay_rate * delta
 	trauma = max(trauma - change, 0.0)
 
-
 # apply shake to starting camera position
 func apply_shake(delta: float) -> void:
 	# using a magic number here to get a pleasing effect at speed 1.0
-	time += delta * speed * 5000.0
+	time += delta * speed * 3000.0
 	var shake := trauma * trauma
-	var yaw := max_yaw * shake * get_noise_value(noise_seed, time)
-	var pitch := max_pitch * shake * get_noise_value(noise_seed + 1, time)
-	var roll := max_roll * shake * get_noise_value(noise_seed + 2, time)
-	var offset_x := max_offset * shake * get_noise_value(noise_seed + 3, time)
-	var offset_y := max_offset * shake * get_noise_value(noise_seed + 4, time)
-	var offset_z := max_offset * shake * get_noise_value(noise_seed + 5, time)
-	translation = anchor_position + Vector3(offset_x, offset_y, offset_z)
+	var yaw := 0
+	var pitch := 0
+	var roll := 0
+	var offset := Vector3(0,0,0)
+	yaw = max_yaw * shake * get_noise_value(noise_seed, time)
+	pitch = max_pitch * shake * get_noise_value(noise_seed + 1, time)
+	roll = max_roll * shake * get_noise_value(noise_seed + 2, time)
+	offset.x = max_offset * shake * get_noise_value(noise_seed + 3, time)
+	offset.y = max_offset * shake * get_noise_value(noise_seed + 4, time)
+	offset.z = max_offset * shake * get_noise_value(noise_seed + 5, time)
+
+	translation = anchor_position + offset
 	rotation = start_rotation + Vector3(pitch, yaw, roll)
 
 # return a random float in range(-1, 1) using OpenSimplex noise
