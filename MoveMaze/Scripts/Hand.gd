@@ -12,6 +12,8 @@ var _injectors = []
 
 var MAGNECTIC_THRESHOLD = 1.25
 var PATH_HOVER_OFFSET = Vector3(0,1.5,0)
+var SLAM_PATH = false
+var IMPACT_TRAUMA = 0.4
 
 
 func enable_input():
@@ -43,6 +45,8 @@ func _process(delta):
 	check_selected_line()
 
 func move_current_path_to_cursor(cursor_position):
+	if not board:
+		return
 	var cam = get_viewport().get_camera()
 	var from = cam.project_ray_origin(cursor_position)
 	# I don't know why this works, it was a lucky first guess.
@@ -50,9 +54,7 @@ func move_current_path_to_cursor(cursor_position):
 	var to = from + cam.project_ray_normal(cursor_position) * from.y
 	var mouse_world_pos = Vector3(to.x, 1, to.z)
 
-	# Cancel if there are no injectors
-	if len(_injectors) < 1:
-		return
+	var target_position
 
 	# FIND CLOSEST INJECTOR
 	var closest_injector = _injectors[0]
@@ -68,7 +70,6 @@ func move_current_path_to_cursor(cursor_position):
 
 	var mag = (mouse_world_pos - closest_injector.translation).length()
 
-	var target_position
 	if mag < MAGNECTIC_THRESHOLD:
 		selected_injector = closest_injector
 		target_position = board.get_nudge_pos(
@@ -81,7 +82,9 @@ func move_current_path_to_cursor(cursor_position):
 	current_path.set_target(target_position)
 
 func check_selected_line():
-	var board = get_parent().get_node("Master_Board/Board")
+	if not board:
+		return
+
 	if selected_injector and not line_selected:
 		line_selected = true
 		board.nudge_line(
@@ -100,12 +103,13 @@ func setup(board, injectors, start_path):
 
 func inject_current_path(injector):
 	# Move to injection location
-	current_path.set_target(injector.translation)
-	yield(current_path, "target_reached")
-	# Wait until target is reached then inject the path
+	if SLAM_PATH:
+		current_path.set_target(injector.translation)
+		# Wait until target is reached then inject the path
+		yield(current_path, "target_reached")
 	current_path = board.inject_path(injector.inj_board_index, injector.inj_direction, current_path)
 	# Shake camera as injection occurs
-	get_viewport().get_camera().add_trauma(0.5)
+	get_viewport().get_camera().add_trauma(IMPACT_TRAUMA)
 
 func get_repr():
 	return current_path.get_repr()
