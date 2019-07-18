@@ -198,14 +198,6 @@ func get_path_cell(index):
 			if item.index == index:
 				return item
 
-func _center_camera():
-	var x = (tile_size.x * board_size.x) / 2
-	var z = (tile_size.y * board_size.y) / 2
-	var offset = Vector3(x, 10, z+5)
-	var cam = get_viewport().get_camera()
-	cam.set_anchor_position(offset)
-	cam.translation = offset
-
 func reset_path_translations(is_instant=false):
 	for path in path_cells:
 		path.set_target(map_to_world(path.index.x, 0, path.index.y), is_instant)
@@ -363,6 +355,14 @@ func _get_row(y_index):
 			row.append(item)
 
 	return row
+
+func _center_camera():
+	var x = (tile_size.x * board_size.x) / 2
+	var z = (tile_size.y * board_size.y) / 2
+	var offset = Vector3(x, 10, z+5)
+	var cam = get_viewport().get_camera()
+	cam.set_anchor_position(offset)
+	cam.translation = offset
 
 func index_in_board(index):
 	if index.x < board_size.x and index.x >= 0:
