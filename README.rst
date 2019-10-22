@@ -10,7 +10,11 @@ Move river tiles and create a path through the rapid to rescue the stranded peep
    :width: 600
    :alt: Gameplay Input example
    
-
+Controls
+========
+- ``Mouse Input``: Move the River Tile
+- ``Mouse (Right)``: Rotate the current River Tile
+- ``Mouse (Left)``: Inject River Tile, Move Player
    
 Contributions
 =============
