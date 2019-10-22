@@ -27,6 +27,11 @@ func _ready():
 	board.add_child(path_selector)
 
 func setup_from_autosave():
+	# THIS IS BROKEN
+	# TODO: RE-IMPLEMENT SAVE SYSTEM
+	print('Save / Load Function is not operational')
+	return
+
 	if board.initialized:
 		return
 	var autosave = persistent_io.auto_load()

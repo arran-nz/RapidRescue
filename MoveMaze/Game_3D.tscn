@@ -86,14 +86,6 @@ mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
 text = "New Game"
 
-[node name="load" type="Button" parent="InGameMenu/Center/VBoxContainer"]
-margin_top = 65.0
-margin_right = 200.0
-margin_bottom = 88.0
-hint_tooltip = "Load a previous game"
-mouse_default_cursor_shape = 2
-text = "Load Save"
-
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 0.863355, 0.119604, -0.490217, 0.390857, 0.455925, 0.799602, 0.319138, -0.881945, 0.346877, 0.0799891, 0.0201474, 0.102185 )
 light_color = Color( 1, 0.980392, 0.972549, 1 )
@@ -104,4 +96,3 @@ shadow_color = Color( 0.117647, 0.121569, 0.215686, 1 )
 directional_shadow_mode = 0
 
 [connection signal="pressed" from="InGameMenu/Center/VBoxContainer/new" to="InGameMenu" method="_on_new_pressed"]
-[connection signal="pressed" from="InGameMenu/Center/VBoxContainer/load" to="InGameMenu" method="_on_load_pressed"]
