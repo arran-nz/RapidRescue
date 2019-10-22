@@ -19,6 +19,10 @@ var tm
 # Players
 var players = []
 
+# Scoring
+# The win condition
+const AMOUNT_TO_RESCUE = 1
+
 func _ready():
 	board = get_node("Master_Board/Board")
 
@@ -134,7 +138,11 @@ func disconnect_and_cycle_turn(actor):
 	cycle_turn()
 
 func reward_score(actor_id):
-	players[actor_id].collect_point()
+	var current_player = players[actor_id]
+	current_player.collect_point()
+	print(current_player.display_name + " Rescued a peep")
+	if current_player.score >= AMOUNT_TO_RESCUE:
+		print(current_player.display_name + ' won the game!')
 
 func can_current_player_move():
 	"""Check current_player reach - if none, force a turn cycle"""
@@ -216,5 +224,4 @@ class Player:
 		return index
 
 	func collect_point():
-		print(display_name + ": Delivered an item")
 		score += 1
