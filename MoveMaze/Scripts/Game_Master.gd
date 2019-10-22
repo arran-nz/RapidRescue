@@ -21,7 +21,7 @@ var players = []
 
 # Scoring
 # The win condition
-const AMOUNT_TO_RESCUE = 1
+const AMOUNT_TO_RESCUE = 5
 
 func _ready():
 	board = get_node("Master_Board/Board")
