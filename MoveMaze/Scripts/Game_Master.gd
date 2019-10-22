@@ -211,5 +211,5 @@ class Player:
 		return index
 
 	func collect_point():
-		print(display_name + ": Collected an item")
+		print(display_name + ": Delivered an item")
 		score += 1
