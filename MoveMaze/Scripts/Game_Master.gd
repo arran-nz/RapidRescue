@@ -46,7 +46,7 @@ func setup_from_autosave():
 	else:
 		print("No Autosave found.")
 
-func setup_new_game(players=2):
+func setup_new_game(players=4):
 	if board.initialized:
 		return
 	print("New Game")
