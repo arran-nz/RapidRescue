@@ -8,8 +8,8 @@
 [ext_resource path="res://Objects/3D/Hand.tscn" type="PackedScene" id=6]
 [ext_resource path="res://default_env.tres" type="Environment" id=7]
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=8]
-[ext_resource path="res://Scripts/System/UI/InGameMenu.gd" type="Script" id=9]
-[ext_resource path="res://UserInterface/main_theme.tres" type="Theme" id=10]
+[ext_resource path="res://Scripts/System/UI/StartMenu.gd" type="Script" id=9]
+[ext_resource path="res://UserInterface/interface_theme.tres" type="Theme" id=10]
 
 [node name="Root" type="Spatial"]
 
@@ -51,7 +51,6 @@ max_yaw = 0.0
 max_offset = 1.0
 
 [node name="InGameMenu" type="MarginContainer" parent="."]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -1.50732
@@ -67,6 +66,7 @@ margin_left = 120.0
 margin_top = 80.0
 margin_right = 904.0
 margin_bottom = 520.0
+theme = ExtResource( 10 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="InGameMenu/Center"]
 margin_left = 292.0
@@ -77,14 +77,38 @@ rect_min_size = Vector2( 200, 200 )
 theme = ExtResource( 10 )
 custom_constants/separation = 15
 
-[node name="new" type="Button" parent="InGameMenu/Center/VBoxContainer"]
+[node name="Players" type="HBoxContainer" parent="InGameMenu/Center/VBoxContainer"]
 margin_right = 200.0
-margin_bottom = 50.0
+margin_bottom = 34.0
+theme = ExtResource( 10 )
+
+[node name="Label" type="Label" parent="InGameMenu/Center/VBoxContainer/Players"]
+margin_right = 96.0
+margin_bottom = 34.0
+size_flags_horizontal = 3
+text = "Players"
+
+[node name="SpinBox" type="SpinBox" parent="InGameMenu/Center/VBoxContainer/Players"]
+margin_left = 100.0
+margin_right = 200.0
+margin_bottom = 34.0
+theme = ExtResource( 10 )
+min_value = 2.0
+max_value = 4.0
+value = 2.0
+exp_edit = true
+align = 1
+
+[node name="Start" type="Button" parent="InGameMenu/Center/VBoxContainer"]
+margin_top = 49.0
+margin_right = 200.0
+margin_bottom = 99.0
 rect_min_size = Vector2( 0, 50 )
 hint_tooltip = "Start a new game"
 mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
-text = "New Game"
+theme = ExtResource( 10 )
+text = "Start"
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 0.863355, 0.119604, -0.490217, 0.390857, 0.455925, 0.799602, 0.319138, -0.881945, 0.346877, 0.0799891, 0.0201474, 0.102185 )
@@ -95,4 +119,4 @@ shadow_enabled = true
 shadow_color = Color( 0.117647, 0.121569, 0.215686, 1 )
 directional_shadow_mode = 0
 
-[connection signal="pressed" from="InGameMenu/Center/VBoxContainer/new" to="InGameMenu" method="_on_new_pressed"]
+[connection signal="pressed" from="InGameMenu/Center/VBoxContainer/Start" to="InGameMenu" method="_on_new_pressed"]
