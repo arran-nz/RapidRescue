@@ -3,7 +3,6 @@
 [resource]
 background_mode = 1
 background_sky_custom_fov = 94.8
-background_sky_orientation = Basis( 1, 0, 0, 0, 5, 0, 0, 0, 1 )
 background_color = Color( 0.101961, 0.129412, 0.211765, 1 )
 ambient_light_color = Color( 1, 0.980392, 0.980392, 1 )
 fog_sun_amount = 1.0

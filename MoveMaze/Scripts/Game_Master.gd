@@ -48,11 +48,11 @@ func setup_from_autosave():
 	else:
 		print("No Autosave found.")
 
-func setup_new_game(players=2):
+func setup_new_game(game_config):
 	if board.initialized:
 		return
 	HUD.display_message("Started New Game")
-	board.setup_new(players)
+	board.setup_new(game_config["players"])
 	setup_master()
 	board.spawn_new_collectable()
 

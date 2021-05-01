@@ -44,6 +44,10 @@ Draw3D="*res://Scripts/Draw3D.gd"
 
 gdscript/warnings/enable=false
 
+[gui]
+
+theme/custom="res://UserInterface/interface_theme.tres"
+
 [input]
 
 rotate_hand={

@@ -12,7 +12,8 @@ const FINAL_RADIUS = 0.1
 const ACTOR_TEXTURE = {
 	0 : preload('res://Materials/boat/player1.tres'),
 	1 : preload('res://Materials/boat/player2.tres'),
-	2 : preload('res://Materials/boat/player3.tres')
+	2 : preload('res://Materials/boat/player3.tres'),
+	3 : preload('res://Materials/boat/player4.tres'),
 }
 const PRIMARY_TEX_ALTAS = [0, 2]
 
