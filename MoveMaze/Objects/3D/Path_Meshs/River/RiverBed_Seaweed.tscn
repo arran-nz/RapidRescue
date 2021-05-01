@@ -33,8 +33,7 @@ surfaces/1 = {
 }
 
 [node name="RiverBed_Seaweed" type="MeshInstance"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.96046e-008, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.96046e-08, 0 )
 mesh = SubResource( 1 )
 material/0 = null
 material/1 = null
-

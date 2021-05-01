@@ -3,6 +3,9 @@
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="VSplitContainer" type="VSplitContainer" parent="."]
 anchor_top = 1.0
@@ -11,7 +14,6 @@ margin_top = -233.0
 margin_right = 167.0
 
 [node name="Entry" type="HSplitContainer" parent="VSplitContainer"]
-editor/display_folded = true
 margin_right = 167.0
 hint_tooltip = "Hi
 "
@@ -20,4 +22,3 @@ size_flags_vertical = 0
 
 [node name="Panel" type="Panel" parent="VSplitContainer/Entry"]
 margin_right = 167.0
-

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Game_Master.gd" type="Script" id=1]
 [ext_resource path="res://Objects/3D/Board.tscn" type="PackedScene" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=8]
 [ext_resource path="res://Scripts/System/UI/InGameMenu.gd" type="Script" id=9]
 [ext_resource path="res://UserInterface/main_theme.tres" type="Theme" id=10]
+[ext_resource path="res://Scripts/System/UI/HUD.gd" type="Script" id=11]
 
 [node name="Root" type="Spatial"]
 
@@ -28,7 +29,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
 script = ExtResource( 3 )
 
 [node name="Player_Indicator" type="Spatial" parent="Game_Master"]
-editor/display_folded = true
 transform = Transform( 4, 0, 0, 0, 4, 0, 0, 0, 4, -3.89888, 6.68884, 3.43326 )
 script = ExtResource( 4 )
 
@@ -51,7 +51,6 @@ max_yaw = 0.0
 max_offset = 1.0
 
 [node name="InGameMenu" type="MarginContainer" parent="."]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -1.50732
@@ -61,6 +60,9 @@ custom_constants/margin_top = 80
 custom_constants/margin_left = 120
 custom_constants/margin_bottom = 80
 script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Center" type="CenterContainer" parent="InGameMenu"]
 margin_left = 120.0
@@ -85,6 +87,43 @@ hint_tooltip = "Start a new game"
 mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
 text = "New Game"
+
+[node name="HUD" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -2.74121
+margin_top = 0.622345
+margin_right = -2.74121
+margin_bottom = 0.622314
+mouse_filter = 2
+input_pass_on_modal_close_click = false
+script = ExtResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="HUD"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -139.0
+margin_right = 286.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HUD/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+tab_size = 2
+fit_content_height = true
+scroll_following = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 0.863355, 0.119604, -0.490217, 0.390857, 0.455925, 0.799602, 0.319138, -0.881945, 0.346877, 0.0799891, 0.0201474, 0.102185 )

@@ -199,11 +199,11 @@ func _distribute_paths():
 	_available_paths  = _shuffleList(paths)
 
 func _shuffleList(list):
-    var shuffled_list = []
-    var index_list = range(list.size())
+	var shuffled_list = []
+	var index_list = range(list.size())
 #warning-ignore:unused_variable
-    for i in range(list.size()):
-        var x = randi()%index_list.size()
-        shuffled_list.append(list[index_list[x]])
-        index_list.remove(x)
-    return shuffled_list
+	for i in range(list.size()):
+		var x = randi()%index_list.size()
+		shuffled_list.append(list[index_list[x]])
+		index_list.remove(x)
+	return shuffled_list

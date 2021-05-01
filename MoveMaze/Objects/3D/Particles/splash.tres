@@ -12,4 +12,3 @@ material = SubResource( 1 )
 flip_faces = true
 radial_segments = 10
 rings = 10
-

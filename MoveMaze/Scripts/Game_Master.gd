@@ -12,6 +12,7 @@ onready var hand = $Hand
 
 var path_selector
 var board
+var HUD
 
 # Turn Mananger
 var tm
@@ -25,6 +26,7 @@ const AMOUNT_TO_RESCUE = 5
 
 func _ready():
 	board = get_node("Master_Board/Board")
+	HUD = get_parent().get_node("HUD")
 
 	path_selector = obj_path_selector.instance()
 
@@ -33,7 +35,7 @@ func _ready():
 func setup_from_autosave():
 	# THIS IS BROKEN
 	# TODO: RE-IMPLEMENT SAVE SYSTEM
-	print('Save / Load Function is not operational')
+	HUD.display_message('Save / Load Function is not operational')
 	return
 
 	if board.initialized:
@@ -49,7 +51,7 @@ func setup_from_autosave():
 func setup_new_game(players=2):
 	if board.initialized:
 		return
-	print("New Game")
+	HUD.display_message("Started New Game")
 	board.setup_new(players)
 	setup_master()
 	board.spawn_new_collectable()
@@ -96,6 +98,8 @@ func setup_master():
 
 	# Scoring
 	board.connect('passenger_returned', self, 'reward_score')
+	
+	HUD.display_message("%s, You start" % tm.current_player.display_name)
 
 func auto_save():
 	var data = board.get_repr()
@@ -108,7 +112,7 @@ func path_select(path):
 	var signalled_method = 'disconnect_and_cycle_turn'
 
 	if tm.current_player.actor.is_connected(actor_signal, self, signalled_method):
-		print("Actor is in route, wait!")
+		HUD.display_message("Actor is in route, wait!")
 		return
 
 	if tm.current_state == tm.STATES.WAITING_FOR_MOVEMENT:
@@ -120,7 +124,7 @@ func path_select(path):
 			if success:
 					tm.current_player.actor.connect(actor_signal, self, signalled_method)
 	else:
-		print("%s must place path first!" % tm.current_player.display_name)
+		HUD.display_message("%s must place path first!" % tm.current_player.display_name)
 
 func request_path_injection(injector):
 	"""Called when an injector has been pressed."""
@@ -131,7 +135,7 @@ func request_path_injection(injector):
 		path_selector.current_index = tm.current_player.actor.active_path.index
 
 	else:
-		print("Already placed path, %s please move." % tm.current_player.display_name)
+		HUD.display_message("Already placed path, %s please move." % tm.current_player.display_name)
 
 func disconnect_and_cycle_turn(actor):
 	actor.disconnect("final_target_reached", self, "disconnect_and_cycle_turn")
@@ -140,21 +144,22 @@ func disconnect_and_cycle_turn(actor):
 func reward_score(actor_id):
 	var current_player = players[actor_id]
 	current_player.collect_point()
-	print(current_player.display_name + " Rescued a peep")
+	HUD.display_message(current_player.display_name + " Rescued a peep!" + str(current_player.score) + "/" + str(AMOUNT_TO_RESCUE))
 	if current_player.score >= AMOUNT_TO_RESCUE:
-		print(current_player.display_name + ' won the game!')
+		HUD.display_message(current_player.display_name + " won the game!!!")
 
 func can_current_player_move():
 	"""Check current_player reach - if none, force a turn cycle"""
 	var reach = board.request_actor_reach(tm.current_player.actor)
 	if len(reach) <= 1:
-		print("%s can't move, forcing cycle" % tm.current_player.display_name)
+		HUD.display_message("%s can't move, forcing cycle" % tm.current_player.display_name)
 		cycle_turn()
 
 func cycle_turn():
 	auto_save()
 	tm.cycle()
 	update_current_player_indictator()
+	HUD.display_message("%s, you're up!" % tm.current_player.display_name)
 
 func update_current_player_indictator():
 	player_indc.update_indicator(tm.current_player.actor)
@@ -205,7 +210,6 @@ class TurnManager:
 		else:
 			current_player = _players[0]
 
-		print("%s, you're up!" % current_player.display_name)
 		self.current_state = STATES.WAITING_FOR_INJECTION
 
 class Player:

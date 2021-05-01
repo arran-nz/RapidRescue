@@ -15,3 +15,5 @@ dest_files=[ "res://.import/gem-3-cut.obj-060b26653c55062514991f8d044cb582.mesh"
 
 generate_tangents=true
 scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

@@ -227,7 +227,6 @@ func inject_path(inject_index, dir, injected_path):
 
 	#Update index to injection location
 	injected_path.update_index(inject_index)
-	print(inject_index)
 
 	#Get Existing Line without new path
 	var exsiting_line = get_line(inject_index, dir)
