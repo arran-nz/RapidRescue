@@ -1,5 +1,10 @@
+.. image:: https://ko-fi.com/img/githubbutton_sm.svg
+   :target: https://ko-fi.com/F1F3FW513
+   :alt: Support Arran on Ko-fi
+
 Rapid Rescue
 ============
+
 
 Rapid Rescue is a local multiplayer strategy game inspired by `Labyrinth <https://en.wikipedia.org/wiki/Labyrinth_(board_game)>`_.
 
