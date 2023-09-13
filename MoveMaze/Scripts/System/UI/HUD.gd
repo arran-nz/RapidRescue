@@ -6,9 +6,8 @@ func _ready():
 	label = $Panel/RichTextLabel
 
 func display_message(message):
-	var existing_content = label.text
 	var new_message = "\n" + get_time() + "\t " + message
-	label.text = new_message + existing_content
+	label.text += new_message
 
 func get_time():
 	var time = OS.get_time()
